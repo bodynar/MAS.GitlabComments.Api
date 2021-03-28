@@ -37,13 +37,6 @@
         public string GetDescription(Guid commentId);
 
         /// <summary>
-        /// Get description of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
-        /// <returns>Description if specified; otherwise <see cref="string.Empty"/></returns>
-        public void Delete(params Guid[] commentIds);
-
-        /// <summary>
         /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
@@ -54,5 +47,11 @@
         /// </summary>
         /// <param name="updateCommentModel">Comment new values</param>
         public void Update(UpdateCommentModel updateCommentModel);
+
+        /// <summary>
+        /// Delete comments by specified identifiers
+        /// </summary>
+        /// <param name="commentIds">Array of comment identifiers</param>
+        public void Delete(params Guid[] commentIds);
     }
 }
