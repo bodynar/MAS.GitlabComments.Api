@@ -42,7 +42,7 @@
         /// Add comment by specified values
         /// </summary>
         /// <param name="addCommentModel">Comment values</param>
-        [HttpPost]
+        [HttpPost("add")]
         public BaseServiceResult Add([FromBody] AddCommentModel addCommentModel)
         {
             try
@@ -83,7 +83,7 @@
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
         /// <returns>Service perform operation result</returns>
-        [HttpGet]
+        [HttpGet("description")]
         public BaseServiceResult<string> GetDescription(Guid commentId)
         {
             try
@@ -103,7 +103,7 @@
         /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
-        [HttpPost]
+        [HttpPost("increment")]
         public BaseServiceResult Increment([FromBody] Guid commentId)
         {
             try
@@ -123,7 +123,7 @@
         /// Update specified comment by values
         /// </summary>
         /// <param name="updateCommentModel">Comment new values</param>
-        [HttpPost]
+        [HttpPost("update")]
         public BaseServiceResult Update([FromBody] UpdateCommentModel updateCommentModel)
         {
             try
@@ -143,7 +143,7 @@
         /// Delete comments by specified identifiers
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
-        [HttpPost]
+        [HttpPost("delete")]
         public BaseServiceResult Delete(Guid commentId)
         {
             try
