@@ -11,7 +11,7 @@
     /// Provider of data for specified entity type
     /// </summary>
     /// <typeparam name="TEntity">Type of entity</typeparam>
-    public class DataProvider<TEntity> : IDataProvider<TEntity>
+    public class DapperDataProvider<TEntity> : IDataProvider<TEntity>
         where TEntity : class
     {
         /// <summary>
@@ -39,7 +39,7 @@
         /// </summary>
         /// <param name="dbConnectionFactory">Factory providing database connection</param>
         /// <exception cref="ArgumentNullException">Parameter dbConnectionFactory is null</exception>
-        public DataProvider(IDbConnectionFactory dbConnectionFactory)
+        public DapperDataProvider(IDbConnectionFactory dbConnectionFactory)
         {
             DbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(DbConnectionFactory));
             TableName = typeof(TEntity).Name;
