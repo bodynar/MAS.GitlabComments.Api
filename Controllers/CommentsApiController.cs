@@ -10,7 +10,7 @@
     using Microsoft.Extensions.Logging;
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/comments")]
     public class CommentsApiController : ControllerBase
     {
         /// <summary>
@@ -62,7 +62,7 @@
         /// Get all comments
         /// </summary>
         /// <returns>Service perform operation result</returns>
-        [HttpGet]
+        [HttpGet("getAll")]
         public BaseServiceResult<IEnumerable<CommentModel>> Get()
         {
             try
@@ -84,7 +84,7 @@
         /// <param name="commentId">Comment identifier</param>
         /// <returns>Service perform operation result</returns>
         [HttpGet("description")]
-        public BaseServiceResult<string> GetDescription(Guid commentId)
+        public BaseServiceResult<string> GetDescription([FromQuery]Guid commentId)
         {
             try
             {
@@ -144,7 +144,7 @@
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
         [HttpPost("delete")]
-        public BaseServiceResult Delete(Guid commentId)
+        public BaseServiceResult Delete([FromQuery] Guid commentId)
         {
             try
             {
