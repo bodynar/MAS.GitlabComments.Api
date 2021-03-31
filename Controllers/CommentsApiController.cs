@@ -144,7 +144,7 @@
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
         [HttpPost("delete")]
-        public BaseServiceResult Delete([FromQuery] Guid commentId)
+        public BaseServiceResult Delete([FromBody] Guid commentId)
         {
             try
             {
