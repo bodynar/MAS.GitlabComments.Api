@@ -29,8 +29,20 @@
         /// Add comment by specified values
         /// </summary>
         /// <param name="addCommentModel">Comment values</param>
+        /// <exception cref="ArgumentNullException">Parameter addCommentModel is null</exception>
+        /// <exception cref="ArgumentNullException">Message isn't specified</exception>
         public void Add(AddCommentModel addCommentModel)
         {
+            if (addCommentModel == null)
+            {
+                throw new ArgumentNullException(nameof(addCommentModel));
+            }
+
+            if (string.IsNullOrEmpty(addCommentModel.Message))
+            {
+                throw new ArgumentNullException(nameof(addCommentModel.Message));
+            }
+
             CommentsDataProvider.Add(new Comment
             {
                 Id = Guid.NewGuid(),
@@ -92,16 +104,31 @@
         /// Update specified comment by values
         /// </summary>
         /// <param name="updateCommentModel">Comment new values</param>
+        /// <exception cref="ArgumentNullException">Parameter updateCommentModel is null</exception>
+        /// <exception cref="ArgumentNullException">Message isn't specified</exception>
         /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
         /// <exception cref="EntityNotFoundException">Comment not found</exception>
         public void Update(UpdateCommentModel updateCommentModel)
         {
+            if (updateCommentModel == null)
+            {
+                throw new ArgumentNullException(nameof(updateCommentModel));
+            }
+            if (string.IsNullOrEmpty(updateCommentModel.Message))
+            {
+                throw new ArgumentNullException(nameof(updateCommentModel.Message));
+            }
+
             GetCommentWithWithChecking(updateCommentModel.Id);
 
             var newValues = new ExpandoObject();
 
             newValues.TryAdd(nameof(Comment.Message), updateCommentModel.Message);
-            newValues.TryAdd(nameof(Comment.Description), updateCommentModel.Description);
+
+            if (!string.IsNullOrEmpty(updateCommentModel.Description))
+            {
+                newValues.TryAdd(nameof(Comment.Description), updateCommentModel.Description);
+            }
 
             CommentsDataProvider.Update(updateCommentModel.Id, newValues);
         }
@@ -127,9 +154,18 @@
         /// Delete comments by specifying their identifiers
         /// </summary>
         /// <param name="commentIds">Array of comment identifiers</param>
+        /// <exception cref="ArgumentNullException">Parameter commentIds is null</exception>
         public void Delete(params Guid[] commentIds)
         {
-            CommentsDataProvider.Delete(commentIds);
+            if (commentIds == null)
+            {
+                throw new ArgumentNullException(nameof(commentIds));
+            }
+
+            if (commentIds.Any())
+            {
+                CommentsDataProvider.Delete(commentIds);
+            }
         }
 
         #region Not public API
