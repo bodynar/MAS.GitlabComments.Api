@@ -57,6 +57,7 @@
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <exception cref="ArgumentNullException">Parameter entity is null</exception>
+        /// <exception cref="Exception">No records was added</exception>
         public void Add(TEntity entity)
         {
             if (entity == null)
@@ -111,7 +112,7 @@
                 var fieldNames = setStatements.Select(x => $"[{x.Key}]");
                 var parameterNames = setStatements.Select(x => x.Value);
 
-                sqlQuery += $"({string.Join(", ", fieldNames)}) VALUES ({string.Join(", ", fieldNames)})";
+                sqlQuery += $" ({string.Join(", ", fieldNames)}) VALUES ({string.Join(", ", parameterNames)})";
                 int affectedRows = 0;
 
                 using (var connection = DbConnectionFactory.CreateDbConnection())
@@ -121,7 +122,7 @@
 
                 if (affectedRows == 0)
                 {
-                    throw new Exception("Insert command performed with empty result.");
+                    throw new Exception("Insert command performed with empty result, no record was added.");
                 }
             }
         }
@@ -168,6 +169,7 @@
         /// <param name="newValues">Entity new column values</param>
         /// <exception cref="ArgumentNullException">Parameter entityId is default</exception>
         /// <exception cref="ArgumentNullException">Parameter newValues is null or empty</exception>
+        /// <exception cref="Exception">Update command doesn't applied to any record</exception>
         public void Update(Guid entityId, IDictionary<string, object> newValues)
         {
             if (entityId == default)
@@ -212,11 +214,17 @@
 
                 if (arguments.TryAdd($"P{++argumentsCount}", entityId))
                 {
-                    var sqlQuery = $"UPDATE [{TableName}] {setStatement} WHERE Id = @P{argumentsCount}";
+                    var sqlQuery = $"UPDATE [{TableName}] SET {setStatement} WHERE Id = @P{argumentsCount}";
+                    int affectedRows = 0;
 
                     using (var connection = DbConnectionFactory.CreateDbConnection())
                     {
-                        connection.Execute(sqlQuery, arguments);
+                        affectedRows = connection.Execute(sqlQuery, arguments);
+                    }
+
+                    if (affectedRows == 0)
+                    {
+                        throw new Exception("Update command performed with empty result, no record was updated.");
                     }
                 }
             }
@@ -254,7 +262,7 @@
         /// <returns>List of entity field names</returns>
         private static IEnumerable<string> GetEntityFields()
         {
-            return typeof(TEntity).GetProperties(System.Reflection.BindingFlags.Public).Select(x => x.Name);
+            return typeof(TEntity).GetProperties().Select(x => x.Name);
         }
 
         #endregion
