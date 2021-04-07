@@ -43,18 +43,18 @@
         /// </summary>
         /// <param name="addCommentModel">Comment values</param>
         [HttpPost("add")]
-        public BaseServiceResult Add([FromBody] AddCommentModel addCommentModel)
+        public BaseServiceResult<Guid> Add([FromBody] AddCommentModel addCommentModel)
         {
             try
             {
-                CommentService.Add(addCommentModel);
+                var newId = CommentService.Add(addCommentModel);
 
-                return BaseServiceResult.Success();
+                return BaseServiceResult<Guid>.Success(newId);
             }
             catch (Exception e)
             {
                 Logger?.LogError(e, "Trying to: add comment.");
-                return BaseServiceResult.Error(e);
+                return BaseServiceResult<Guid>.Error(e);
             }
         }
 

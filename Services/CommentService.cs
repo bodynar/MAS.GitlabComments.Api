@@ -31,7 +31,8 @@
         /// <param name="addCommentModel">Comment values</param>
         /// <exception cref="ArgumentNullException">Parameter addCommentModel is null</exception>
         /// <exception cref="ArgumentNullException">Message isn't specified</exception>
-        public void Add(AddCommentModel addCommentModel)
+        /// <returns>Identifier value of new created comment</returns>
+        public Guid Add(AddCommentModel addCommentModel)
         {
             if (addCommentModel == null)
             {
@@ -43,14 +44,18 @@
                 throw new ArgumentNullException(nameof(addCommentModel.Message));
             }
 
+            var newId = Guid.NewGuid();
+
             CommentsDataProvider.Add(new Comment
             {
-                Id = Guid.NewGuid(),
+                Id = newId,
                 AppearanceCount = 0,
                 CreatedOn = DateTime.UtcNow,
                 Message = addCommentModel.Message,
                 Description = addCommentModel.Description
             });
+
+            return newId;
         }
 
         /// <summary>

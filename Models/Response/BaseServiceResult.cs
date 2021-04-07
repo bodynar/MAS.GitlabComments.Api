@@ -53,7 +53,6 @@
     /// <typeparam name="TResult">Type of result model</typeparam>
     [DataContract]
     public sealed class BaseServiceResult<TResult>: BaseServiceResult
-        where TResult: class
     {
         /// <summary>
         /// Result of service operation

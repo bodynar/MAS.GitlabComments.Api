@@ -14,7 +14,8 @@
         /// Add comment by specified values
         /// </summary>
         /// <param name="addCommentModel">Comment values</param>
-        public void Add(AddCommentModel addCommentModel);
+        /// <returns>Identifier value of new created comment</returns>
+        public Guid Add(AddCommentModel addCommentModel);
 
         /// <summary>
         /// Get all comments
