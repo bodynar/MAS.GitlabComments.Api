@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MAS.GitlabComments", "MAS.GitlabComments.csproj", "{DCC7FCA4-282D-4DD6-9AE7-5F99877330BD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6CD7F95A-874E-48F5-91E4-14887E428338}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{902D9031-AA0F-490F-AF37-41E983FFE22C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.GitlabComments.Tests", "Tests\MAS.GitlabComments.Tests\MAS.GitlabComments.Tests.csproj", "{874AE0F1-6995-47D6-A14B-31C1321F10FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.GitlabComments.Tests", "Tests\MAS.GitlabComments.Tests\MAS.GitlabComments.Tests.csproj", "{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,16 +19,16 @@ Global
 		{DCC7FCA4-282D-4DD6-9AE7-5F99877330BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCC7FCA4-282D-4DD6-9AE7-5F99877330BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCC7FCA4-282D-4DD6-9AE7-5F99877330BD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{874AE0F1-6995-47D6-A14B-31C1321F10FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{874AE0F1-6995-47D6-A14B-31C1321F10FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{874AE0F1-6995-47D6-A14B-31C1321F10FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{874AE0F1-6995-47D6-A14B-31C1321F10FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{874AE0F1-6995-47D6-A14B-31C1321F10FE} = {6CD7F95A-874E-48F5-91E4-14887E428338}
+		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A158B714-8CC2-4181-804D-F0D16AC6FB37}
