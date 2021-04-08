@@ -85,7 +85,7 @@
 
             return new CommentModel
             {
-                Id = commentId,
+                Id = entity.Id,
                 AppearanceCount = entity.AppearanceCount,
                 Message = entity.Message,
             };
@@ -166,6 +166,8 @@
             {
                 throw new ArgumentNullException(nameof(commentIds));
             }
+
+            commentIds = commentIds.Where(x => x != default).ToArray();
 
             if (commentIds.Any())
             {
