@@ -91,7 +91,8 @@
 
             moq
                 .Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<IDictionary<string, object>>()))
-                .Callback<Guid, IDictionary<string, object>>((id, data) => {
+                .Callback<Guid, IDictionary<string, object>>((id, data) =>
+                {
                     lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(moq.Object.Update), new object[] { id, data });
 
                     emptyCallback.Invoke();
@@ -99,7 +100,8 @@
 
             moq
                 .Setup(x => x.Delete(It.IsAny<Guid[]>()))
-                .Callback<Guid[]>(id => {
+                .Callback<Guid[]>(id =>
+                {
                     lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(moq.Object.Delete), new object[] { id });
 
                     emptyCallback.Invoke();
