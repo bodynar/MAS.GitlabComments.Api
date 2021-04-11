@@ -32,7 +32,7 @@
         /// <summary>
         /// List of default entity fields which cannot be set manually
         /// </summary>
-        private static IEnumerable<string> DefaultEntityFields { get; } = new[] { "Id", "CreatedOn", "ModifiedOn" };
+        private static IEnumerable<string> DefaultEntityFields { get; } = new[] { "CreatedOn", "ModifiedOn" };
 
         /// <summary>
         /// Initializing <see cref="SqlDataProvider{TEntity}"/>
@@ -91,16 +91,21 @@
 
             if (setStatements.Any())
             {
-                var parameterName = $"@P{setStatements.Count + 1}";
-                if (arguments.TryAdd(parameterName, Guid.NewGuid()))
-                {
-                    setStatements.Add(new KeyValuePair<string, string>("Id", parameterName));
-                }
-                else
-                {
-                    throw new Exception("Cannot build arguments for sql command: [Id].");
-                }
+                string parameterName;
 
+                if (!setStatements.Any(x => x.Key == "Id"))
+                {
+                    parameterName = $"@P{setStatements.Count + 1}";
+                    if (arguments.TryAdd(parameterName, Guid.NewGuid()))
+                    {
+                        setStatements.Add(new KeyValuePair<string, string>("Id", parameterName));
+                    }
+                    else
+                    {
+                        throw new Exception("Cannot build arguments for sql command: [Id].");
+                    }
+                }
+                
                 parameterName = $"@P{setStatements.Count + 1}";
                 if (arguments.TryAdd(parameterName, DateTime.UtcNow))
                 {

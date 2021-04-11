@@ -64,12 +64,16 @@
         /// <returns>All comments</returns>
         public IEnumerable<CommentModel> Get()
         {
-            return CommentsDataProvider.Get().Select(x => new CommentModel
-            {
-                Id = x.Id,
-                Message = x.Message,
-                AppearanceCount = x.AppearanceCount
-            });
+            return
+                CommentsDataProvider
+                    .Get()
+                    .OrderByDescending(x => x.AppearanceCount)
+                    .Select(x => new CommentModel
+                    {
+                        Id = x.Id,
+                        Message = x.Message,
+                        AppearanceCount = x.AppearanceCount
+                    });
         }
 
         /// <summary>
