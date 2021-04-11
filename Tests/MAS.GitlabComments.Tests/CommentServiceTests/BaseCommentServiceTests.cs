@@ -13,6 +13,9 @@
 
     using Xunit;
 
+    /// <summary>
+    /// Base class for <see cref="CommentService"/> tests
+    /// </summary>
     public abstract class BaseCommentServiceTests
     {
         /// <summary>
@@ -51,11 +54,11 @@
         }
 
         /// <summary>
-        /// Initializing <see cref="CommentServiceTests"/> with setup'n all required environment
+        /// Initializing <see cref="BaseCommentServiceTests"/> with setup'n all required environment
         /// </summary>
         public BaseCommentServiceTests()
         {
-            var dataProvider = GetMoqDataProvider();
+            var dataProvider = GetMockDataProvider();
             TestedService = new CommentService(dataProvider);
 
             ReturnedTestedComment = new Comment
@@ -73,42 +76,42 @@
         /// Configure mock object of data provider for comment service
         /// </summary>
         /// <returns>Configured mock object of <see cref="IDataProvider{TEntity}"/></returns>
-        private IDataProvider<Comment> GetMoqDataProvider()
+        private IDataProvider<Comment> GetMockDataProvider()
         {
-            var moq = new Mock<IDataProvider<Comment>>();
+            var mockDataProvider = new Mock<IDataProvider<Comment>>();
             Action emptyCallback = () => { };
 
-            moq
+            mockDataProvider
                 .Setup(x => x.Add(It.IsAny<Comment>()))
                 .Callback(emptyCallback);
 
-            moq
+            mockDataProvider
                 .Setup(x => x.Get())
                 .Returns(() => new[] { ReturnedTestedComment });
 
-            moq
+            mockDataProvider
                 .Setup(x => x.Get(It.IsAny<Guid>()))
                 .Returns(() => ReturnedTestedComment);
 
-            moq
+            mockDataProvider
                 .Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<IDictionary<string, object>>()))
                 .Callback<Guid, IDictionary<string, object>>((id, data) =>
                 {
-                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(moq.Object.Update), new object[] { id, data });
+                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Update), new object[] { id, data });
 
                     emptyCallback.Invoke();
                 });
 
-            moq
+            mockDataProvider
                 .Setup(x => x.Delete(It.IsAny<Guid[]>()))
                 .Callback<Guid[]>(id =>
                 {
-                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(moq.Object.Delete), new object[] { id });
+                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Delete), new object[] { id });
 
                     emptyCallback.Invoke();
                 });
 
-            return moq.Object;
+            return mockDataProvider.Object;
         }
 
         /// <summary>
