@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Services
+﻿namespace MAS.GitlabComments.Services.Implementations
 {
     using System;
     using System.Data;

@@ -1,6 +1,7 @@
 namespace MAS.GitlabComments
 {
     using MAS.GitlabComments.Services;
+    using MAS.GitlabComments.Services.Implementations;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -22,8 +23,9 @@ namespace MAS.GitlabComments
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddTransient<ICommentService, CommentService>()
-                .AddTransient(typeof(IDataProvider<>), typeof(DapperDataProvider<>))
+                .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
                 .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString))
+                .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddControllers()
                 .AddNewtonsoftJson()
             ;

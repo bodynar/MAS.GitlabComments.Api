@@ -7,6 +7,7 @@
     using MAS.GitlabComments.Exceptions;
     using MAS.GitlabComments.Models;
     using MAS.GitlabComments.Services;
+    using MAS.GitlabComments.Services.Implementations;
 
     using Moq;
 

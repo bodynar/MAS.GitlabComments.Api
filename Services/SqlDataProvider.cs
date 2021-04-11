@@ -1,23 +1,23 @@
-﻿namespace MAS.GitlabComments.Services
+﻿namespace MAS.GitlabComments.Services.Implementations
 {
     using System;
     using System.Collections.Generic;
     using System.Dynamic;
     using System.Linq;
 
-    using Dapper;
-
     /// <summary>
     /// Provider of data for specified entity type
     /// </summary>
     /// <typeparam name="TEntity">Type of entity</typeparam>
-    public class DapperDataProvider<TEntity> : IDataProvider<TEntity>
+    public class SqlDataProvider<TEntity> : IDataProvider<TEntity>
         where TEntity : class
     {
         /// <summary>
         /// Factory providing database connection
         /// </summary>
         private IDbConnectionFactory DbConnectionFactory { get; }
+
+        private IDbAdapter DbAdapter { get; }
 
         /// <summary>
         /// Database table name for entity
@@ -35,13 +35,15 @@
         private static IEnumerable<string> DefaultEntityFields { get; } = new[] { "Id", "CreatedOn", "ModifiedOn" };
 
         /// <summary>
-        /// Initializing <see cref="DataProvider"/>
+        /// Initializing <see cref="SqlDataProvider{TEntity}"/>
         /// </summary>
         /// <param name="dbConnectionFactory">Factory providing database connection</param>
         /// <exception cref="ArgumentNullException">Parameter dbConnectionFactory is null</exception>
-        public DapperDataProvider(IDbConnectionFactory dbConnectionFactory)
+        /// <exception cref="ArgumentNullException">Parameter dbAdapter is null</exception>
+        public SqlDataProvider(IDbConnectionFactory dbConnectionFactory, IDbAdapter dbAdapter)
         {
             DbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(DbConnectionFactory));
+            DbAdapter = dbAdapter ?? throw new ArgumentNullException(nameof(dbAdapter));
             TableName = typeof(TEntity).Name;
 
             if (!TableName.EndsWith("s"))
@@ -117,7 +119,7 @@
 
                 using (var connection = DbConnectionFactory.CreateDbConnection())
                 {
-                    affectedRows = connection.Execute(sqlQuery, arguments);
+                    affectedRows = DbAdapter.Execute(connection, sqlQuery, arguments);
                 }
 
                 if (affectedRows == 0)
@@ -138,7 +140,7 @@
             var sqlQuery = $"SELECT * FROM [{TableName}]";
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
-                entities = connection.Query<TEntity>(sqlQuery).ToList();
+                entities = DbAdapter.Query<TEntity>(connection, sqlQuery).ToList();
             }
 
             return entities;
@@ -156,7 +158,7 @@
 
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
-                entity = connection.Query<TEntity>(sqlQuery, new { P1 = entityId }).FirstOrDefault();
+                entity = DbAdapter.Query<TEntity>(connection, sqlQuery, new { P1 = entityId }).FirstOrDefault();
             }
 
             return entity;
@@ -219,7 +221,7 @@
 
                     using (var connection = DbConnectionFactory.CreateDbConnection())
                     {
-                        affectedRows = connection.Execute(sqlQuery, arguments);
+                        affectedRows = DbAdapter.Execute(connection, sqlQuery, arguments);
                     }
 
                     if (affectedRows == 0)
@@ -249,7 +251,7 @@
 
                 using (var connection = DbConnectionFactory.CreateDbConnection())
                 {
-                    connection.Execute(sqlQuery, new { P1 = entityIds });
+                    DbAdapter.Execute(connection, sqlQuery, new { P1 = entityIds });
                 }
             }
         }
