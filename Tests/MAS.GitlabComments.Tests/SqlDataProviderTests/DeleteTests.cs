@@ -44,6 +44,7 @@
 
             Assert.NotNull(lastCommand);
             Assert.Equal(expectedSql, lastCommand.Value.Key);
+            Assert.NotNull(lastCommand.Value.Value);
             AssertArguments(expectedArguments, lastCommand.Value.Value);
         }
     }
