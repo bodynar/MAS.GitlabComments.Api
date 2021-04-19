@@ -24,19 +24,9 @@
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Mock field with DateTime type
-        /// </summary>
-        public DateTime DateTimeField { get; set; }
-
-        /// <summary>
         /// Mock field with string type
         /// </summary>
         public string StringField { get; set; }
-
-        /// <summary>
-        /// Mock field with int type
-        /// </summary>
-        public int IntField { get; set; }
     }
 
     /// <summary>
@@ -105,6 +95,11 @@
             }
         }
 
+        /// <summary>
+        /// Mock affected rows return result from command execution
+        /// </summary>
+        protected int TestedAffectedRowsCount = 0;
+
         private IEnumerable<string> ParamNamesToExcludeFromCheck
             => new[] { "Id", "CreatedOn", "ModifiedOn" };
 
@@ -159,7 +154,7 @@
 
                     lastCommand = new KeyValuePair<string, object>(sql, args);
                 })
-                .Returns(0);
+                .Returns(() => TestedAffectedRowsCount);
 
             return (mockConnectionFactory.Object, mockDbAdapter.Object);
         }
@@ -182,8 +177,18 @@
             foreach (var pair in actualArguments)
             {
                 var expectedValue = expected.First(x => x.Key == pair.Key).Value;
+                var type = expectedValue.GetType();
 
-                Assert.Equal(expectedValue, pair.Value);
+                if (type.Name == nameof(DateTime))
+                {
+                    var timeSpan = (expectedValue as DateTime?).Value - (pair.Value as DateTime?).Value;
+
+                    Assert.True(timeSpan.TotalMinutes < 5);
+                }
+                else
+                {
+                    Assert.Equal(expectedValue, pair.Value);
+                }
             }
         }
 
