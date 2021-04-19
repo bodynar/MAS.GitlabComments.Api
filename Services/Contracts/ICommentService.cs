@@ -28,7 +28,7 @@
         /// </summary>
         /// <param name="commentId">Comment identifier value</param>
         /// <returns>Comment model</returns>
-        public CommentModel Get(Guid commentId);
+        public ExtendedCommentModel Get(Guid commentId);
 
         /// <summary>
         /// Get description of specified comment

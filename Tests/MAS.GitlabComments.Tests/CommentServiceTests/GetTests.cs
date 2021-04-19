@@ -33,18 +33,18 @@
         public void ShouldReturnComment()
         {
             Guid testedId = Guid.NewGuid();
-            CommentModel expectedComment = new()
+            ExtendedCommentModel expectedComment = new()
             {
                 Id = ReturnedTestedComment.Id,
-                AppearanceCount = ReturnedTestedComment.AppearanceCount,
                 Message = ReturnedTestedComment.Message,
+                Description = ReturnedTestedComment.Description
             };
 
-            CommentModel result = TestedService.Get(testedId);
+            ExtendedCommentModel result = TestedService.Get(testedId);
 
             Assert.NotNull(result);
             Assert.Equal(expectedComment.Id, result.Id);
-            Assert.Equal(expectedComment.AppearanceCount, result.AppearanceCount);
+            Assert.Equal(expectedComment.Description, result.Description);
             Assert.Equal(expectedComment.Message, result.Message);
         }
     }

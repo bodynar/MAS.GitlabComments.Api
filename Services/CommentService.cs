@@ -83,15 +83,15 @@
         /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
         /// <exception cref="EntityNotFoundException">Comment not found</exception>
         /// <returns>Comment model</returns>
-        public CommentModel Get(Guid commentId)
+        public ExtendedCommentModel Get(Guid commentId)
         {
             var entity = GetCommentWithWithChecking(commentId);
 
-            return new CommentModel
+            return new ExtendedCommentModel
             {
                 Id = entity.Id,
-                AppearanceCount = entity.AppearanceCount,
                 Message = entity.Message,
+                Description = entity.Description,
             };
         }
 

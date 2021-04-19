@@ -78,6 +78,22 @@
             }
         }
 
+        [HttpGet("get")]
+        public BaseServiceResult<ExtendedCommentModel> Get([FromQuery]Guid commentId)
+        {
+            try
+            {
+                var result = CommentService.Get(commentId);
+
+                return BaseServiceResult<ExtendedCommentModel>.Success(result);
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, $"Trying to: Get comment \"{commentId}\".");
+                return BaseServiceResult<ExtendedCommentModel>.Error(e);
+            }
+        }
+
         /// <summary>
         /// Get description of specified comment
         /// </summary>
