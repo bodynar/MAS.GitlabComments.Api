@@ -55,6 +55,23 @@
         }
 
         /// <summary>
+        /// Check if boxed value is default value
+        /// </summary>
+        /// <param name="boxedValue">Boxed value</param>
+        /// <param name="type">Type of value in the box</param>
+        /// <returns>True if boxed value is default; otherwise false</returns>
+        private bool IsDefaultValue(object boxedValue, Type type)
+        {
+            if (!type.IsValueType)
+            {
+                return boxedValue == default;
+            }
+
+            var def = Activator.CreateInstance(type);
+            return boxedValue.Equals(def);
+        }
+
+        /// <summary>
         /// Add entity
         /// </summary>
         /// <param name="entity">Entity</param>
@@ -76,13 +93,14 @@
 
             foreach (var field in fields)
             {
-                var value = field.GetValue(entity);
+                var boxedValue = field.GetValue(entity);
+                var isDefault = IsDefaultValue(boxedValue, field.PropertyType);
 
-                if (value != default)
+                if (!isDefault)
                 {
                     var parameterName = $"@P{setStatements.Count + 1}";
 
-                    if (arguments.TryAdd(parameterName, value))
+                    if (arguments.TryAdd(parameterName, boxedValue))
                     {
                         setStatements.Add(new KeyValuePair<string, string>(field.Name, parameterName));
                     }
