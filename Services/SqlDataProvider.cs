@@ -210,17 +210,18 @@
             var arguments = new ExpandoObject();
             var argumentsCount = 0;
 
-            foreach (var value in newValues)
+            foreach (var pair in newValues.Where(x => !string.IsNullOrEmpty(x.Key) && x.Value != null))
             {
-                if (!string.IsNullOrEmpty(value.Key)
-                    && value.Value != default
-                    && EntityFields.Contains(value.Key)
-                    && !DefaultEntityFields.Contains(value.Key))
+                var isDefaultValue = IsDefaultValue(pair.Value, pair.Value.GetType());
+
+                if (!isDefaultValue
+                    && EntityFields.Contains(pair.Key)
+                    && !DefaultEntityFields.Contains(pair.Key))
                 {
-                    var parameterName = $"P{argumentsCount + 1}";
-                    if (arguments.TryAdd(parameterName, value.Value))
+                    var parameterName = $"@P{argumentsCount + 1}";
+                    if (arguments.TryAdd(parameterName, pair.Value))
                     {
-                        setStatements.Add($"[{value.Key}] = @{parameterName}");
+                        setStatements.Add($"[{pair.Key}] = {parameterName}");
                         argumentsCount++;
                     }
                 }
@@ -228,18 +229,18 @@
 
             if (setStatements.Any())
             {
-                var parameterName = $"P{argumentsCount + 1}";
+                var parameterName = $"@P{argumentsCount + 1}";
                 if (arguments.TryAdd(parameterName, DateTime.UtcNow))
                 {
-                    setStatements.Add($"[ModifiedOn] = @{parameterName}");
+                    setStatements.Add($"[ModifiedOn] = {parameterName}");
                     argumentsCount++;
                 }
 
                 var setStatement = string.Join(", ", setStatements);
 
-                if (arguments.TryAdd($"P{++argumentsCount}", entityId))
+                if (arguments.TryAdd($"@P{++argumentsCount}", entityId))
                 {
-                    var sqlQuery = $"UPDATE [{TableName}] SET {setStatement} WHERE Id = @P{argumentsCount}";
+                    var sqlQuery = $"UPDATE [{TableName}] SET {setStatement} WHERE [Id] = @P{argumentsCount}";
                     int affectedRows = 0;
 
                     using (var connection = DbConnectionFactory.CreateDbConnection())
