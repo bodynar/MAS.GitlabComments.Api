@@ -27,6 +27,11 @@
         /// Mock field with string type
         /// </summary>
         public string StringField { get; set; }
+
+        /// <summary>
+        /// Mock field with int type
+        /// </summary>
+        public int IntField { get; set; }
     }
 
     /// <summary>
@@ -159,41 +164,8 @@
             return (mockConnectionFactory.Object, mockDbAdapter.Object);
         }
 
-        /// <summary>
-        /// Assert sql configuration arguments.
-        /// Asserts equality of argument keys and values sequently
-        /// </summary>
-        /// <param name="expected">Expected arguments</param>
-        /// <param name="actual">Actual arguments</param>
-        private void AssertArguments(IEnumerable<KeyValuePair<string, object>> expected, ExpandoObject actual)
-        {
-            var actualArguments = actual.Where(x => !ParamNamesToExcludeFromCheck.Contains(x.Key));
-            var objectKeyNames = actualArguments.Select(x => x.Key);
-
-            var hasNotPresentedKeys = expected.Any(pair => !objectKeyNames.Contains(pair.Key));
-
-            Assert.False(hasNotPresentedKeys);
-
-            foreach (var pair in actualArguments)
-            {
-                var expectedValue = expected.First(x => x.Key == pair.Key).Value;
-                var type = expectedValue.GetType();
-
-                if (type.Name == nameof(DateTime))
-                {
-                    var timeSpan = (expectedValue as DateTime?).Value - (pair.Value as DateTime?).Value;
-
-                    Assert.True(timeSpan.TotalMinutes < 5);
-                }
-                else
-                {
-                    Assert.Equal(expectedValue, pair.Value);
-                }
-            }
-        }
-
         #endregion
-        
+
         /// <summary>
         /// Assert sql configuration arguments.
         /// Asserts equality of argument keys and values sequently
@@ -202,25 +174,30 @@
         /// <param name="actual">Actual arguments</param>
         protected void AssertArguments(IEnumerable<KeyValuePair<string, object>> expected, object actual)
         {
-            if (actual is ExpandoObject)
+            if (actual is ExpandoObject actualAsExpando)
             {
-                AssertArguments(expected, actual as ExpandoObject);
-            }
-            else
-            {
-                var objectKeys = actual.GetType().GetProperties();
-                var objectKeyNames = objectKeys.Select(x => x.Name).Except(ParamNamesToExcludeFromCheck);
+                var actualArguments = actualAsExpando.Where(x => !ParamNamesToExcludeFromCheck.Contains(x.Key));
+                var objectKeyNames = actualArguments.Select(x => x.Key);
 
                 var hasNotPresentedKeys = expected.Any(pair => !objectKeyNames.Contains(pair.Key));
 
                 Assert.False(hasNotPresentedKeys);
 
-                foreach (var key in objectKeys)
+                foreach (var pair in actualArguments)
                 {
-                    var actualValue = key.GetValue(actual);
-                    var expectedValue = expected.First(x => x.Key == key.Name).Value;
+                    var expectedValue = expected.First(x => x.Key == pair.Key).Value;
+                    var type = expectedValue.GetType();
 
-                    Assert.Equal(expectedValue, actualValue);
+                    if (type.Name == nameof(DateTime))
+                    {
+                        var timeSpan = (expectedValue as DateTime?).Value - (pair.Value as DateTime?).Value;
+
+                        Assert.True(timeSpan.TotalMinutes < 5);
+                    }
+                    else
+                    {
+                        Assert.Equal(expectedValue, pair.Value);
+                    }
                 }
             }
         }
