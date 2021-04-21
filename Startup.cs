@@ -28,6 +28,8 @@ namespace MAS.GitlabComments
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddControllers()
                 .AddNewtonsoftJson()
+                .Services
+                    .AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
             ;
         }
 
@@ -38,10 +40,13 @@ namespace MAS.GitlabComments
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection()
-                .UseRouting()
+            app.UseRouting()
+                .UseStaticFiles()
                 .UseEndpoints(endpoints => endpoints.MapControllers())
+                .UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; })
             ;
+
+            app.UseSpaStaticFiles();
         }
     }
 }
