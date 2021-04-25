@@ -22,14 +22,14 @@ namespace MAS.GitlabComments
         {
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
+            services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
+
             services.AddTransient<ICommentService, CommentService>()
                 .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
                 .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString))
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddControllers()
                 .AddNewtonsoftJson()
-                .Services
-                    .AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
             ;
         }
 
@@ -40,13 +40,15 @@ namespace MAS.GitlabComments
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSpaStaticFiles();
+
             app.UseRouting()
                 .UseStaticFiles()
                 .UseEndpoints(endpoints => endpoints.MapControllers())
-                .UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; })
+                .UseSpa(spa => {
+                    spa.Options.SourcePath = "ClientApp";
+                })
             ;
-
-            app.UseSpaStaticFiles();
         }
     }
 }
