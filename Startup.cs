@@ -1,5 +1,7 @@
 namespace MAS.GitlabComments
 {
+    using MAS.GitlabComments.Attributes;
+    using MAS.GitlabComments.Models;
     using MAS.GitlabComments.Services;
     using MAS.GitlabComments.Services.Implementations;
 
@@ -11,8 +13,13 @@ namespace MAS.GitlabComments
 
     public class Startup
     {
+        /// <inheritdoc cref="IConfiguration"/>
         public IConfiguration Configuration { get; }
 
+        /// <summary>
+        /// Initializing <see cref="Startup"/>
+        /// </summary>
+        /// <param name="configuration">Set of key/value application configuration properties</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -22,13 +29,27 @@ namespace MAS.GitlabComments
         {
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new System.Exception("Connection string with name \"DefaultConnection\" is empty.");
+            }
+
+            var settings = Configuration.GetSection("GlobalSettings");
+            bool isReadOnlyMode = default;
+
+            if (settings != default)
+            {
+                isReadOnlyMode = settings.GetValue<bool>("ReadOnlyMode");
+            }
+
             services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
 
             services.AddTransient<ICommentService, CommentService>()
                 .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
                 .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString))
+                .AddSingleton(new AppSettings(isReadOnlyMode))
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
-                .AddControllers()
+                .AddControllers(opts => { opts.Filters.Add<UseReadOnlyModeAttribute>(); })
                 .AddNewtonsoftJson()
             ;
         }
@@ -45,9 +66,7 @@ namespace MAS.GitlabComments
             app.UseRouting()
                 .UseStaticFiles()
                 .UseEndpoints(endpoints => endpoints.MapControllers())
-                .UseSpa(spa => {
-                    spa.Options.SourcePath = "ClientApp";
-                })
+                .UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; })
             ;
         }
     }
