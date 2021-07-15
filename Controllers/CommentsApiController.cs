@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Attributes;
     using MAS.GitlabComments.Models;
     using MAS.GitlabComments.Services;
 
@@ -10,6 +11,7 @@
     using Microsoft.Extensions.Logging;
 
     [ApiController]
+    [UseReadOnlyMode]
     [Route("api/comments")]
     public class CommentsApiController : ControllerBase
     {
@@ -62,6 +64,7 @@
         /// Get all comments
         /// </summary>
         /// <returns>Service perform operation result</returns>
+        [AllowInReadOnly]
         [HttpGet("getAll")]
         public BaseServiceResult<IEnumerable<CommentModel>> Get()
         {
@@ -78,7 +81,13 @@
             }
         }
 
+        /// <summary>
+        /// Get comment item by specifying it's identifier
+        /// </summary>
+        /// <param name="commentId">Comment identifier value</param>
+        /// <returns>Comment model</returns>
         [HttpGet("get")]
+        [AllowInReadOnly]
         public BaseServiceResult<ExtendedCommentModel> Get([FromQuery]Guid commentId)
         {
             try
@@ -99,6 +108,7 @@
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
         /// <returns>Service perform operation result</returns>
+        [AllowInReadOnly]
         [HttpGet("description")]
         public BaseServiceResult<string> GetDescription([FromQuery]Guid commentId)
         {
