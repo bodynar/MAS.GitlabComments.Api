@@ -30,9 +30,9 @@
         /// <returns><see langword="true"/> if read only mode is on; <see langword="false"/> otherwise</returns>
         [AllowInReadOnly]
         [HttpGet("getIsReadOnly")]
-        public bool IsReadOnly()
+        public BaseServiceResult<bool> IsReadOnly()
         {
-            return AppSettings.ReadOnlyMode;
+            return BaseServiceResult<bool>.Success(AppSettings.ReadOnlyMode);
         }
     }
 }

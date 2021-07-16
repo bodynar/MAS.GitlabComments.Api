@@ -11,7 +11,8 @@
 
             var result = TestedController.IsReadOnly();
 
-            Assert.False(result);
+            Assert.NotNull(result);
+            Assert.False(result.Result);
         }
 
         [Fact]
@@ -21,7 +22,8 @@
 
             var result = TestedController.IsReadOnly();
 
-            Assert.True(result);
+            Assert.NotNull(result);
+            Assert.True(result.Result);
         }
     }
 }
