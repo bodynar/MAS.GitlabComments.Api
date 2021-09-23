@@ -49,7 +49,7 @@
             CommentsDataProvider.Add(new Comment
             {
                 Id = newId,
-                AppearanceCount = 0,
+                AppearanceCount = 1,
                 CreatedOn = DateTime.UtcNow,
                 Message = addCommentModel.Message,
                 Description = addCommentModel.Description
