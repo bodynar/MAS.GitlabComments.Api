@@ -7,6 +7,7 @@
 
     using MAS.GitlabComments.Exceptions;
     using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Models.Database;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>
@@ -15,14 +16,22 @@
     {
         private IDataProvider<Comment> CommentsDataProvider { get; }
 
+        private IDataProvider<StoryRecord> StoryRecordsDataProvider { get; }
+
         /// <summary>
         /// Initializing <see cref="CommentService"/>
         /// </summary>
         /// <param name="commentsDataProvider">Comments data provider</param>
+        /// <param name="storyRecordsDataProvider">Story records data provider</param>
         /// <exception cref="ArgumentNullException">Parameter commentsDataProvider is null</exception>
-        public CommentService(IDataProvider<Comment> commentsDataProvider)
+        /// <exception cref="ArgumentNullException">Parameter storyRecordsDataProvider is null</exception>
+        public CommentService(
+            IDataProvider<Comment> commentsDataProvider,
+            IDataProvider<StoryRecord> storyRecordsDataProvider
+        )
         {
             CommentsDataProvider = commentsDataProvider ?? throw new ArgumentNullException(nameof(commentsDataProvider));
+            StoryRecordsDataProvider = storyRecordsDataProvider ?? throw new ArgumentNullException(nameof(storyRecordsDataProvider));
         }
 
         /// <summary>
@@ -157,6 +166,8 @@
             newValues.TryAdd(nameof(Comment.AppearanceCount), entity.AppearanceCount + 1);
 
             CommentsDataProvider.Update(commentId, newValues);
+
+            StoryRecordsDataProvider.Add(new StoryRecord { IsIncrementAction = true, CommentId = commentId });
         }
 
         /// <summary>
