@@ -87,7 +87,6 @@
         /// <param name="commentId">Comment identifier value</param>
         /// <returns>Comment model</returns>
         [HttpGet("get")]
-        [AllowInReadOnly]
         public BaseServiceResult<ExtendedCommentModel> Get([FromQuery]Guid commentId)
         {
             try
