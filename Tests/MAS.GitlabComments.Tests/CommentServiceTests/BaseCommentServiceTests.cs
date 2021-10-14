@@ -29,6 +29,11 @@
         protected Comment ReturnedTestedComment { get; private set; }
 
         /// <summary>
+        /// Instance of StoryRecord which was added last
+        /// </summary>
+        protected StoryRecord LastAddedStoryRecord { get; private set; }
+
+        /// <summary>
         /// Last called command back-field
         /// </summary>
         private KeyValuePair<string, IEnumerable<object>>? lastCommand;
@@ -58,8 +63,10 @@
         /// </summary>
         public BaseCommentServiceTests()
         {
-            var dataProvider = GetMockDataProvider();
-            TestedService = new CommentService(dataProvider);
+            var commentsProvider = GetMockCommentDataProvider();
+            var storyRecordsProvider = GetMockStoryRecordDataProvider();
+
+            TestedService = new CommentService(commentsProvider, storyRecordsProvider);
 
             ReturnedTestedComment = new Comment
             {
@@ -73,10 +80,10 @@
         }
 
         /// <summary>
-        /// Configure mock object of data provider for comment service
+        /// Configure mock object of Comment data provider for comment service
         /// </summary>
         /// <returns>Configured mock object of <see cref="IDataProvider{TEntity}"/></returns>
-        private IDataProvider<Comment> GetMockDataProvider()
+        private IDataProvider<Comment> GetMockCommentDataProvider()
         {
             var mockDataProvider = new Mock<IDataProvider<Comment>>();
             Action emptyCallback = () => { };
@@ -98,8 +105,6 @@
                 .Callback<Guid, IDictionary<string, object>>((id, data) =>
                 {
                     lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Update), new object[] { id, data });
-
-                    emptyCallback.Invoke();
                 });
 
             mockDataProvider
@@ -107,9 +112,26 @@
                 .Callback<Guid[]>(id =>
                 {
                     lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Delete), new object[] { id });
-
-                    emptyCallback.Invoke();
                 });
+
+            return mockDataProvider.Object;
+        }
+
+        /// <summary>
+        /// Configure mock object of StoryRecord data provider for comment service
+        /// </summary>
+        /// <returns>Configured mock object of <see cref="IDataProvider{TEntity}"/></returns>
+        private IDataProvider<StoryRecord> GetMockStoryRecordDataProvider()
+        {
+            var mockDataProvider = new Mock<IDataProvider<StoryRecord>>();
+
+            mockDataProvider
+                .Setup(x => x.Add(It.IsAny<StoryRecord>()))
+                .Callback<StoryRecord>(x =>
+                {
+                    LastAddedStoryRecord = x;
+                });
+
 
             return mockDataProvider.Object;
         }
