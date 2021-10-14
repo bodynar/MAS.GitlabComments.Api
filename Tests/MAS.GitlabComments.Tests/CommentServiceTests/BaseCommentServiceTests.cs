@@ -5,7 +5,7 @@
     using System.Linq;
 
     using MAS.GitlabComments.Exceptions;
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Models.Database;
     using MAS.GitlabComments.Services;
     using MAS.GitlabComments.Services.Implementations;
 

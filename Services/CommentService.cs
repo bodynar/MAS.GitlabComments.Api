@@ -7,6 +7,7 @@
 
     using MAS.GitlabComments.Exceptions;
     using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Models.Database;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>
