@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,8 @@
     using System.Dynamic;
     using System.Linq;
 
-    using MAS.GitlabComments.Services;
-    using MAS.GitlabComments.Services.Implementations;
+    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Data.Services.Implementations;
 
     using Moq;
 

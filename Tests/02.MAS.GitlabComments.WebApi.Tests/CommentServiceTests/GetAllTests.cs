@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Tests.CommentServiceTests
+﻿namespace MAS.GitlabComments.WebApi.Tests.CommentServiceTests
 {
     using System.Collections.Generic;
     using System.Linq;

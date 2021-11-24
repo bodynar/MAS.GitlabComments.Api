@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Tests.CommentsApiControllerTests
+﻿namespace MAS.GitlabComments.WebApi.Tests.CommentsApiControllerTests
 {
     using System;
     using System.Linq;

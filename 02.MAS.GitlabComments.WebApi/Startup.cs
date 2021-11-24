@@ -1,6 +1,8 @@
 namespace MAS.GitlabComments
 {
     using MAS.GitlabComments.Attributes;
+    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Data.Services.Implementations;
     using MAS.GitlabComments.Models;
     using MAS.GitlabComments.Services;
     using MAS.GitlabComments.Services.Implementations;

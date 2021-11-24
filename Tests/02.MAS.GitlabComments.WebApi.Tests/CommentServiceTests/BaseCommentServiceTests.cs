@@ -1,12 +1,12 @@
-﻿namespace MAS.GitlabComments.Tests
+﻿namespace MAS.GitlabComments.WebApi.Tests.CommentServiceTests
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using MAS.GitlabComments.Exceptions;
-    using MAS.GitlabComments.Models.Database;
-    using MAS.GitlabComments.Services;
+    using MAS.GitlabComments.Data.Exceptions;
+    using MAS.GitlabComments.Data.Models;
+    using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Services.Implementations;
 
     using Moq;

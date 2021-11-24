@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
 {
     using Xunit;
 

@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Tests.CommentsApiControllerTests
+﻿namespace MAS.GitlabComments.WebApi.Tests.CommentsApiControllerTests
 {
     using System;
 
@@ -8,7 +8,7 @@
 
     using Xunit;
 
-    public sealed class AddTests: BaseCommentsApiControllerTests
+    public sealed class AddTests : BaseCommentsApiControllerTests
     {
         [Fact]
         public void ShouldReturnBaseServiceResultSuccess()

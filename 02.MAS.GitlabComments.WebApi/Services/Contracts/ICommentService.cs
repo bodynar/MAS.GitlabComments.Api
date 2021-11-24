@@ -4,6 +4,7 @@
     using System.Collections.Generic;
 
     using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Data.Models;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>

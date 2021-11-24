@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Tests.AppApiControllerTests
+﻿namespace MAS.GitlabComments.WebApi.Tests.AppApiControllerTests
 {
     using Xunit;
 

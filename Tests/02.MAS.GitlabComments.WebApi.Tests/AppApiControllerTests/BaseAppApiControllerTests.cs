@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Tests.AppApiControllerTests
+﻿namespace MAS.GitlabComments.WebApi.Tests.AppApiControllerTests
 {
     using MAS.GitlabComments.Controllers;
     using MAS.GitlabComments.Models;
