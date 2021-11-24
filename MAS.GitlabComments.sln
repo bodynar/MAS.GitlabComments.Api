@@ -9,6 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{902D9031
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.WebApi.Tests", "Tests\02.MAS.GitlabComments.WebApi.Tests\02.MAS.GitlabComments.WebApi.Tests.csproj", "{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01.MAS.GitlabComments.Data", "01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj", "{05FCC330-C531-4337-8F41-3232D115F429}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01.MAS.GitlabComments.Data.Tests", "Tests\01.MAS.GitlabComments.Data.Tests\01.MAS.GitlabComments.Data.Tests.csproj", "{A6442276-FA23-4B43-91DB-050426CACAAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,12 +27,21 @@ Global
 		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05FCC330-C531-4337-8F41-3232D115F429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05FCC330-C531-4337-8F41-3232D115F429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05FCC330-C531-4337-8F41-3232D115F429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05FCC330-C531-4337-8F41-3232D115F429}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6442276-FA23-4B43-91DB-050426CACAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6442276-FA23-4B43-91DB-050426CACAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6442276-FA23-4B43-91DB-050426CACAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6442276-FA23-4B43-91DB-050426CACAAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
+		{A6442276-FA23-4B43-91DB-050426CACAAA} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A158B714-8CC2-4181-804D-F0D16AC6FB37}
