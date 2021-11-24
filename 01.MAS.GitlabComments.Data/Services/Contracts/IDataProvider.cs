@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Services
+﻿namespace MAS.GitlabComments.Data.Services
 {
     using System;
     using System.Collections.Generic;

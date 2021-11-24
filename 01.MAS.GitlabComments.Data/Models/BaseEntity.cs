@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Models.Database
+﻿namespace MAS.GitlabComments.Data.Models
 {
     using System;
 

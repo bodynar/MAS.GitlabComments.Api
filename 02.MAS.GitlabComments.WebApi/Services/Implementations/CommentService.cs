@@ -5,9 +5,10 @@
     using System.Dynamic;
     using System.Linq;
 
-    using MAS.GitlabComments.Exceptions;
     using MAS.GitlabComments.Models;
-    using MAS.GitlabComments.Models.Database;
+    using MAS.GitlabComments.Data.Exceptions;
+    using MAS.GitlabComments.Data.Models;
+    using MAS.GitlabComments.Data.Services;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>

@@ -6,7 +6,8 @@
     using System.Threading.Tasks;
 
     using MAS.GitlabComments.Models;
-    using MAS.GitlabComments.Models.Database;
+    using MAS.GitlabComments.Data.Models;
+    using MAS.GitlabComments.Data.Services;
 
     public class StoryRecordService : IStoryRecordService
     {

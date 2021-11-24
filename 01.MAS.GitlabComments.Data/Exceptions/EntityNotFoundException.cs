@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Exceptions
+﻿namespace MAS.GitlabComments.Data.Exceptions
 {
     using System;
 
