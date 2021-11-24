@@ -15,7 +15,6 @@
         /// <param name="entityId">Entity identifier</param>
         public EntityNotFoundException(string entityName, Guid entityId)
             : base($"Entity \"{entityName}\" - \"{entityId}\" not found.")
-        {
-        }
+        { }
     }
 }

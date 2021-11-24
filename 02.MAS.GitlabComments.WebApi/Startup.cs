@@ -46,11 +46,16 @@ namespace MAS.GitlabComments
 
             services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
 
-            services.AddTransient<ICommentService, CommentService>()
+            services
+                .AddTransient<ICommentService, CommentService>()
+                .AddSingleton(new AppSettings(isReadOnlyMode))
+
+                // data services
                 .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
                 .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString))
-                .AddSingleton(new AppSettings(isReadOnlyMode))
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
+                // /data services
+
                 .AddControllers(opts => { opts.Filters.Add<UseReadOnlyModeAttribute>(); })
                 .AddNewtonsoftJson()
             ;

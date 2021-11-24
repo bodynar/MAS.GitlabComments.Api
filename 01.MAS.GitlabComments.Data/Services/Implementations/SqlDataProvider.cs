@@ -5,18 +5,19 @@
     using System.Dynamic;
     using System.Linq;
 
+    using MAS.GitlabComments.Data.Models;
+
     /// <summary>
     /// Provider of data for specified entity type
     /// </summary>
     /// <typeparam name="TEntity">Type of entity</typeparam>
     public class SqlDataProvider<TEntity> : IDataProvider<TEntity>
-        where TEntity : class
+        where TEntity : BaseEntity
     {
-        /// <summary>
-        /// Factory providing database connection
-        /// </summary>
+        /// <inheritdoc cref="IDbConnectionFactory"/>
         private IDbConnectionFactory DbConnectionFactory { get; }
 
+        /// <inheritdoc cref="IDbAdapter"/>
         private IDbAdapter DbAdapter { get; }
 
         /// <summary>
@@ -52,23 +53,6 @@
             }
 
             EntityFields = GetEntityFields();
-        }
-
-        /// <summary>
-        /// Check if boxed value is default value
-        /// </summary>
-        /// <param name="boxedValue">Boxed value</param>
-        /// <param name="type">Type of value in the box</param>
-        /// <returns>True if boxed value is default; otherwise false</returns>
-        private bool IsDefaultValue(object boxedValue, Type type)
-        {
-            if (!type.IsValueType)
-            {
-                return boxedValue == default;
-            }
-
-            var def = Activator.CreateInstance(type);
-            return boxedValue.Equals(def);
         }
 
         /// <summary>
@@ -289,6 +273,23 @@
         private static IEnumerable<string> GetEntityFields()
         {
             return typeof(TEntity).GetProperties().Select(x => x.Name);
+        }
+
+        /// <summary>
+        /// Check if boxed value is default value
+        /// </summary>
+        /// <param name="boxedValue">Boxed value</param>
+        /// <param name="type">Type of value in the box</param>
+        /// <returns>True if boxed value is default; otherwise false</returns>
+        private bool IsDefaultValue(object boxedValue, Type type)
+        {
+            if (!type.IsValueType)
+            {
+                return boxedValue == default;
+            }
+
+            var def = Activator.CreateInstance(type);
+            return boxedValue.Equals(def);
         }
 
         #endregion

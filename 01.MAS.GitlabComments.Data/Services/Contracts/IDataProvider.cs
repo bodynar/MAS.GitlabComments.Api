@@ -3,12 +3,14 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Data.Models;
+
     /// <summary>
     /// Provider of data for specified entity type
     /// </summary>
     /// <typeparam name="TEntity">Type of entity</typeparam>
     public interface IDataProvider<TEntity>
-        where TEntity: class
+        where TEntity : BaseEntity
     {
         /// <summary>
         /// Add entity
