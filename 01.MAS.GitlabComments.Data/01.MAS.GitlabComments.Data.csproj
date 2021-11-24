@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>MAS.GitlabComments.Data</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
