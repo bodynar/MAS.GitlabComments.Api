@@ -123,7 +123,7 @@
                         throw new Exception("Cannot build arguments for sql command: [Id].");
                     }
                 }
-                
+
                 parameterName = $"@P{setStatements.Count + 1}";
                 if (arguments.TryAdd(parameterName, DateTime.UtcNow))
                 {

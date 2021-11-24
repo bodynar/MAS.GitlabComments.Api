@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MAS.GitlabComments.csproj" />
+    <ProjectReference Include="..\..\02.MAS.GitlabComments.WebApi\02.MAS.GitlabComments.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

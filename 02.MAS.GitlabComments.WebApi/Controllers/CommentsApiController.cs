@@ -87,7 +87,7 @@
         /// <param name="commentId">Comment identifier value</param>
         /// <returns>Comment model</returns>
         [HttpGet("get")]
-        public BaseServiceResult<ExtendedCommentModel> Get([FromQuery]Guid commentId)
+        public BaseServiceResult<ExtendedCommentModel> Get([FromQuery] Guid commentId)
         {
             try
             {
@@ -109,7 +109,7 @@
         /// <returns>Service perform operation result</returns>
         [AllowInReadOnly]
         [HttpGet("description")]
-        public BaseServiceResult<string> GetDescription([FromQuery]Guid commentId)
+        public BaseServiceResult<string> GetDescription([FromQuery] Guid commentId)
         {
             try
             {
