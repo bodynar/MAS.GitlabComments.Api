@@ -26,7 +26,7 @@
             var arguments = new Dictionary<string, object>();
             var resultSql = BuildWhereFilter(queryFilterGroup, arguments);
 
-            return (resultSql, arguments);
+            return (resultSql.Trim(), arguments);
         }
 
         #region Not public API
@@ -39,6 +39,8 @@
         /// <returns>Sql text, if filter built properly; otherwise <see cref="string.Empty"/></returns>
         private string BuildWhereFilter(FilterGroup filterGroup, IDictionary<string, object> arguments)
         {
+            // TODO: If has items & groups => build groups & attach build from items
+
             return filterGroup.NestedGroups.Any()
                 ? BuildNestedGroups(filterGroup, arguments)
                 : BuildWhereFilterGroupFromFields(filterGroup, arguments);
@@ -53,7 +55,11 @@
         private string BuildNestedGroups(FilterGroup filterGroup, IDictionary<string, object> arguments)
         {
             var nestedSql = new StringBuilder();
-            var innerFilters = filterGroup.NestedGroups.Where(x => x.LogicalJoinType != FilterJoinType.None).OrderByDescending(x => x.LogicalJoinType);
+            var innerFilters =
+                filterGroup.NestedGroups
+                    .Where(x => x.LogicalJoinType != FilterJoinType.None)
+                    .OrderByDescending(x => x.LogicalJoinType)
+                    .ToList();
 
             if (!innerFilters.Any())
             {
@@ -71,9 +77,19 @@
             {
                 var sqlFilter = BuildWhereFilter(filterGroupItem, arguments);
 
+                if (string.IsNullOrEmpty(sqlFilter))
+                {
+                    continue;
+                }
+
+                if (innerFilters.Count > 1)
+                {
+                    sqlFilter = $"({sqlFilter})";
+                }
+
                 var addition = nestedSql.Length > 0
                     ? $"{filterJointypeOperator} {sqlFilter}"
-                    : sqlFilter;
+                    : $"{sqlFilter}";
 
                 nestedSql.AppendLine(addition);
             }
@@ -131,7 +147,7 @@
                 }
             }
 
-            return $"({string.Join($"{Environment.NewLine}{joinOperator} ", conditions)})";
+            return string.Join($"{Environment.NewLine}{joinOperator} ", conditions);
         }
 
         #endregion
