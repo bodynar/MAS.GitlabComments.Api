@@ -6,6 +6,7 @@
     using System.Dynamic;
     using System.Linq;
 
+    using MAS.GitlabComments.Data.Models;
     using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Data.Services.Implementations;
 
@@ -16,13 +17,8 @@
     /// <summary>
     /// Fake entity for <see cref="SqlDataProvider{TEntity}"/> tests
     /// </summary>
-    public sealed class TestedDataProviderEntity
+    public sealed class TestedDataProviderEntity: BaseEntity
     {
-        /// <summary>
-        /// Fake identifier
-        /// </summary>
-        public Guid Id { get; set; }
-
         /// <summary>
         /// Mock field with string type
         /// </summary>

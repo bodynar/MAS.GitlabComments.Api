@@ -36,12 +36,12 @@
         [Fact]
         public void ShouldAddEntity()
         {
-            string expectedSqlQuery = $"INSERT INTO [{TestedTableName}] ([Id], [StringField], [CreatedOn]) VALUES (@P1, @P2, @P3)";
+            string expectedSqlQuery = $"INSERT INTO [{TestedTableName}] ([StringField], [Id], [CreatedOn]) VALUES (@P1, @P2, @P3)";
 
             TestedDataProviderEntity entity = new() { Id = Guid.NewGuid(), StringField = "Some test data" };
             IEnumerable<KeyValuePair<string, object>> expectedArguments = new[] {
-                new KeyValuePair<string, object>("@P1", entity.Id),
-                new KeyValuePair<string, object>("@P2", entity.StringField),
+                new KeyValuePair<string, object>("@P1", entity.StringField),
+                new KeyValuePair<string, object>("@P2", entity.Id),
                 new KeyValuePair<string, object>("@P3", DateTime.UtcNow),
             };
             TestedAffectedRowsCount = 10;
