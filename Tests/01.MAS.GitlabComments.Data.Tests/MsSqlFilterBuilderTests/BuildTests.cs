@@ -428,6 +428,94 @@
 
         #endregion
 
+        #region Join type
+
+        [Fact]
+        public void ShouldBuildAndJoinType()
+        {
+            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1";
+            var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
+            var expectedParamValues = new[] { true, true };
+            FilterGroup filter = new()
+            {
+                Name = "AndJoinType",
+                LogicalJoinType = FilterJoinType.And,
+                Items = new[]
+                {
+                    new FilterItem
+                    {
+                        FieldName = "TestFieldName1",
+                        Name = "TestFilter",
+                        Value = true,
+                        LogicalComparisonType = ComparisonType.Equal
+                    },
+                    new FilterItem
+                    {
+                        FieldName = "TestFieldName2",
+                        Name = "TestFilter",
+                        Value = true,
+                        LogicalComparisonType = ComparisonType.Equal
+                    },
+                }
+            };
+
+            var (sql, args) = TestedService.Build(filter);
+
+            Assert.NotNull(sql);
+            Assert.NotEqual(0, sql.Length);
+            Assert.Equal(expectedSql, sql);
+
+            Assert.NotNull(args);
+            Assert.NotEmpty(args);
+            Assert.Equal(expectedParamNames.Length, args.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+        }
+
+        [Fact]
+        public void ShouldBuildOrJoinType()
+        {
+            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "OR [TestFieldName2] = @FilterValue1";
+            var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
+            var expectedParamValues = new[] { true, true };
+            FilterGroup filter = new()
+            {
+                Name = "OrJoinType",
+                LogicalJoinType = FilterJoinType.Or,
+                Items = new[]
+                {
+                    new FilterItem
+                    {
+                        FieldName = "TestFieldName1",
+                        Name = "TestFilter",
+                        Value = true,
+                        LogicalComparisonType = ComparisonType.Equal
+                    },
+                    new FilterItem
+                    {
+                        FieldName = "TestFieldName2",
+                        Name = "TestFilter",
+                        Value = true,
+                        LogicalComparisonType = ComparisonType.Equal
+                    },
+                }
+            };
+
+            var (sql, args) = TestedService.Build(filter);
+
+            Assert.NotNull(sql);
+            Assert.NotEqual(0, sql.Length);
+            Assert.Equal(expectedSql, sql);
+
+            Assert.NotNull(args);
+            Assert.NotEmpty(args);
+            Assert.Equal(expectedParamNames.Length, args.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+        }
+
+        #endregion
+
         #region Nesting
 
         [Fact]
@@ -681,6 +769,110 @@
                                     },
                                 }
                             },
+                        }
+                    },
+                }
+            };
+
+            var (sql, args) = TestedService.Build(filter);
+
+            Assert.NotNull(sql);
+            Assert.NotEqual(0, sql.Length);
+            Assert.Equal(expectedSql, sql);
+
+            Assert.NotNull(args);
+            Assert.NotEmpty(args);
+            Assert.Equal(expectedParamNames.Length, args.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+        }
+
+        [Fact]
+        public void ShouldBuildFilterFromGroupsInDifferentLevels()
+        {
+            var expectedSql = "([TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1)" + nl + "OR ([TestFieldName3] = @FilterValue2" + nl + "OR [TestFieldName4] = @FilterValue3)";
+            var expectedParamNames = new[] { "FilterValue0", "FilterValue1", "FilterValue2", "FilterValue3" };
+            var expectedParamValues = new object[] { true, true, true, true };
+            FilterGroup filter = new()
+            {
+                Name = "SingleDeepFilterWithSeveralComparisons",
+                LogicalJoinType = FilterJoinType.Or,
+                NestedGroups = new[]
+                {
+                    new FilterGroup
+                    {
+                        Name = "Group1",
+                        LogicalJoinType = FilterJoinType.Or,
+                        NestedGroups = new[]
+                        {
+                            new FilterGroup
+                            {
+                                Name = "Group2",
+                                LogicalJoinType = FilterJoinType.Or,
+                                NestedGroups = new[]
+                                {
+                                    new FilterGroup
+                                    {
+                                        Name = "Group3",
+                                        LogicalJoinType = FilterJoinType.Or,
+                                        NestedGroups = new[]
+                                        {
+                                            new FilterGroup
+                                            {
+                                                Name = "Group4",
+                                                LogicalJoinType = FilterJoinType.Or,
+                                                NestedGroups = new[]
+                                                {
+                                                    new FilterGroup
+                                                    {
+                                                        Name = "Group5",
+                                                        LogicalJoinType = FilterJoinType.And,
+                                                        Items = new[]
+                                                        {
+                                                            new FilterItem
+                                                            {
+                                                                FieldName = "TestFieldName1",
+                                                                Name = "TestFilter1",
+                                                                Value = true,
+                                                                LogicalComparisonType = ComparisonType.Equal
+                                                            },
+                                                            new FilterItem
+                                                            {
+                                                                FieldName = "TestFieldName2",
+                                                                Name = "TestFilter2",
+                                                                Value = true,
+                                                                LogicalComparisonType = ComparisonType.Equal
+                                                            },
+                                                        }
+                                                    },
+                                                }
+                                            },
+                                        }
+                                    },
+                                }
+                            },
+                            new FilterGroup
+                            {
+                                Name = "Group6",
+                                LogicalJoinType = FilterJoinType.Or,
+                                Items = new[]
+                                {
+                                    new FilterItem
+                                    {
+                                        FieldName = "TestFieldName3",
+                                        Name = "TestFilter1",
+                                        Value = true,
+                                        LogicalComparisonType = ComparisonType.Equal
+                                    },
+                                    new FilterItem
+                                    {
+                                        FieldName = "TestFieldName4",
+                                        Name = "TestFilter2",
+                                        Value = true,
+                                        LogicalComparisonType = ComparisonType.Equal
+                                    },
+                                }
+                            }
                         }
                     },
                 }

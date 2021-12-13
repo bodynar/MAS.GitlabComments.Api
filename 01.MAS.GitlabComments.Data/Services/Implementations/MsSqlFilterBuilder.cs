@@ -94,7 +94,7 @@
                 nestedSql.AppendLine(addition);
             }
 
-            return nestedSql.ToString();
+            return nestedSql.ToString().TrimEnd();
         }
 
         /// <summary>
