@@ -6,6 +6,7 @@
     using System.Dynamic;
     using System.Linq;
 
+    using MAS.GitlabComments.Data.Filter;
     using MAS.GitlabComments.Data.Models;
     using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Data.Services.Implementations;
@@ -101,6 +102,14 @@
         /// </summary>
         protected int TestedAffectedRowsCount = 0;
 
+        /// <summary>
+        /// Mock for result of filter builder call
+        /// </summary>
+        protected Tuple<string, IReadOnlyDictionary<string, object>> FilterBuilderResult;
+
+        /// <summary>
+        /// Name of default columns which shouldn't be checked
+        /// </summary>
         private IEnumerable<string> ParamNamesToExcludeFromCheck
             => new[] { "Id", "CreatedOn", "ModifiedOn" };
 
@@ -109,8 +118,8 @@
         /// </summary>
         protected BaseSqlDataProviderTests()
         {
-            var (dbConnectionFactory, dbAdapter) = GetMockDbAdapter();
-            TestedService = new SqlDataProvider<TestedDataProviderEntity>(dbConnectionFactory, dbAdapter);
+            var (df, da, fb) = GetServiceDependencies();
+            TestedService = new SqlDataProvider<TestedDataProviderEntity>(df, da, fb);
         }
 
         #region Private methods
@@ -120,8 +129,8 @@
         /// </summary>
         /// <exception cref="Exception">Last query has value before test execution</exception>
         /// <exception cref="Exception">Last command has value before test execution</exception>
-        /// <returns>Pair of dependecies <see cref="IDbConnectionFactory"/> and <see cref="IDbAdapter"/></returns>
-        private (IDbConnectionFactory, IDbAdapter) GetMockDbAdapter()
+        /// <returns>Mocked dependecies: <see cref="IDbConnectionFactory"/>, <see cref="IDbAdapter"/>, <see cref="IFilterBuilder"/></returns>
+        private (IDbConnectionFactory, IDbAdapter, IFilterBuilder) GetServiceDependencies()
         {
             var mockConnectionFactory = new Mock<IDbConnectionFactory>();
 
@@ -157,7 +166,21 @@
                 })
                 .Returns(() => TestedAffectedRowsCount);
 
-            return (mockConnectionFactory.Object, mockDbAdapter.Object);
+            var mockFilterBuilder = new Mock<IFilterBuilder>();
+
+            mockFilterBuilder
+                .Setup(x => x.Build(It.IsAny<FilterGroup>()))
+                .Returns(() =>
+                {
+                    if (FilterBuilderResult == null)
+                    {
+                        throw new Exception($"{nameof(FilterBuilderResult)} is empty");
+                    }
+
+                    return (FilterBuilderResult.Item1, FilterBuilderResult.Item2);
+                });
+
+            return (mockConnectionFactory.Object, mockDbAdapter.Object, mockFilterBuilder.Object);
         }
 
         #endregion

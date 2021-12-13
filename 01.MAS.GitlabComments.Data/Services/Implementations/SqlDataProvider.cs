@@ -5,6 +5,7 @@
     using System.Dynamic;
     using System.Linq;
 
+    using MAS.GitlabComments.Data.Filter;
     using MAS.GitlabComments.Data.Models;
 
     /// <summary>
@@ -19,6 +20,9 @@
 
         /// <inheritdoc cref="IDbAdapter"/>
         private IDbAdapter DbAdapter { get; }
+
+        /// <inheritdoc cref="IFilterBuilder"/>
+        private IFilterBuilder FilterBuilder { get; }
 
         /// <summary>
         /// Database table name for entity
@@ -39,12 +43,16 @@
         /// Initializing <see cref="SqlDataProvider{TEntity}"/>
         /// </summary>
         /// <param name="dbConnectionFactory">Factory providing database connection</param>
+        /// <param name="dbAdapter">Database operation adapter</param>
+        /// <param name="filterBuilder">Sql filter builder</param>
         /// <exception cref="ArgumentNullException">Parameter dbConnectionFactory is null</exception>
         /// <exception cref="ArgumentNullException">Parameter dbAdapter is null</exception>
-        public SqlDataProvider(IDbConnectionFactory dbConnectionFactory, IDbAdapter dbAdapter)
+        /// <exception cref="ArgumentNullException">Parameter filterBuilder is null</exception>
+        public SqlDataProvider(IDbConnectionFactory dbConnectionFactory, IDbAdapter dbAdapter, IFilterBuilder filterBuilder)
         {
             DbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(DbConnectionFactory));
             DbAdapter = dbAdapter ?? throw new ArgumentNullException(nameof(dbAdapter));
+            FilterBuilder = filterBuilder ?? throw new ArgumentNullException(nameof(filterBuilder));
             TableName = typeof(TEntity).Name;
 
             if (!TableName.EndsWith("s"))
@@ -262,6 +270,36 @@
                     DbAdapter.Execute(connection, sqlQuery, new { P1 = entityIds });
                 }
             }
+        }
+
+        /// <summary>
+        /// Get entities with filter
+        /// </summary>
+        /// <param name="filter">Filter config</param>
+        /// <returns>Filtered entities</returns>
+        public IEnumerable<TEntity> Where(FilterGroup filter)
+        {
+            if (filter == null)
+            {
+                return Get();
+            }
+
+            var (filterSql, filterArgs) = FilterBuilder.Build(filter);
+
+            if (string.IsNullOrEmpty(filterSql))
+            {
+                return Get();
+            }
+
+            IEnumerable<TEntity> entities = Enumerable.Empty<TEntity>();
+            var sqlQuery = $"SELECT * FROM [{TableName}] WHERE {filterSql}";
+
+            using (var connection = DbConnectionFactory.CreateDbConnection())
+            {
+                entities = DbAdapter.Query<TEntity>(connection, sqlQuery, filterArgs).ToList();
+            }
+
+            return entities;
         }
 
         #region Not public API
