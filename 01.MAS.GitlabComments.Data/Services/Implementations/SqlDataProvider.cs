@@ -168,6 +168,7 @@
         /// <returns>Entity by identifier if it found; otherwise null</returns>
         public TEntity Get(Guid entityId)
         {
+            // TODO: add param check
             TEntity entity = null;
             var sqlQuery = $"SELECT * FROM [{TableName}] WHERE Id = @P1";
 

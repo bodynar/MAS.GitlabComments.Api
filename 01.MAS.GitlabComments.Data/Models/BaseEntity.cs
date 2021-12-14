@@ -16,5 +16,7 @@
         /// Date of creation
         /// </summary>
         public virtual DateTime CreatedOn { get; set; }
+
+        // TODO: Move ModifiedOn here & create sql script for updating StoryRecord
     }
 }
