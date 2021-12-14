@@ -284,6 +284,8 @@
                 return Get();
             }
 
+            // TODO: validate TEntity columns from filter.items
+
             var (filterSql, filterArgs) = FilterBuilder.Build(filter);
 
             if (string.IsNullOrEmpty(filterSql))
