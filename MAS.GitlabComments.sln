@@ -9,9 +9,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{902D9031
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.WebApi.Tests", "Tests\02.MAS.GitlabComments.WebApi.Tests\02.MAS.GitlabComments.WebApi.Tests.csproj", "{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01.MAS.GitlabComments.Data", "01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj", "{05FCC330-C531-4337-8F41-3232D115F429}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.Data", "01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj", "{05FCC330-C531-4337-8F41-3232D115F429}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01.MAS.GitlabComments.Data.Tests", "Tests\01.MAS.GitlabComments.Data.Tests\01.MAS.GitlabComments.Data.Tests.csproj", "{A6442276-FA23-4B43-91DB-050426CACAAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.Data.Tests", "Tests\01.MAS.GitlabComments.Data.Tests\01.MAS.GitlabComments.Data.Tests.csproj", "{A6442276-FA23-4B43-91DB-050426CACAAA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", "{D5DB2FBE-0ECE-408B-8BCE-A8DEE74F49CD}"
+	ProjectSection(SolutionItems) = preProject
+		SqlScripts\001_Init.sql = SqlScripts\001_Init.sql
+		SqlScripts\002_AddStoryRecord.sql = SqlScripts\002_AddStoryRecord.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
