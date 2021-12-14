@@ -4,9 +4,13 @@
     using System.Collections.Generic;
 
     using MAS.GitlabComments.Data.Filter;
+    using MAS.GitlabComments.Data.Services.Implementations;
 
     using Xunit;
 
+    /// <summary>
+    /// Test suit for method <see cref="SqlDataProvider{TEntity}.Where(FilterGroup)"/>
+    /// </summary>
     public sealed class WhereTests : BaseSqlDataProviderTests
     {
         [Fact]

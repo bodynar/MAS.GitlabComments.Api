@@ -3,8 +3,13 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Data.Services.Implementations;
+
     using Xunit;
 
+    /// <summary>
+    /// Test suit for method <see cref="SqlDataProvider{TEntity}.Delete(Guid[])(TEntity)"/>
+    /// </summary>
     public sealed class DeleteTests : BaseSqlDataProviderTests
     {
         [Fact]

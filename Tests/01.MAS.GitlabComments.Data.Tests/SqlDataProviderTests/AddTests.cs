@@ -3,8 +3,13 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Data.Services.Implementations;
+
     using Xunit;
 
+    /// <summary>
+    /// Test suit for method <see cref="SqlDataProvider{TEntity}.Add(TEntity)"/>
+    /// </summary>
     public sealed class AddTests : BaseSqlDataProviderTests
     {
         [Fact]

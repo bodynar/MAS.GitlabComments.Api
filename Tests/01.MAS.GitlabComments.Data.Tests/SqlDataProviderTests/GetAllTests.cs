@@ -1,7 +1,12 @@
 ﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
 {
+    using MAS.GitlabComments.Data.Services.Implementations;
+
     using Xunit;
 
+    /// <summary>
+    /// Test suit for method <see cref="SqlDataProvider{TEntity}.Get"/>
+    /// </summary>
     public sealed class GetAllTests : BaseSqlDataProviderTests
     {
         [Fact]

@@ -3,9 +3,13 @@
     using System;
 
     using MAS.GitlabComments.Data.Filter;
+    using MAS.GitlabComments.Data.Services;
 
     using Xunit;
 
+    /// <summary>
+    /// Test suit for method <see cref="MsSqlFilterBuilder.Build"/>
+    /// </summary>
     public sealed class BuildTests : BaseMsSqlFilterBuilderTests
     {
         [Fact]
