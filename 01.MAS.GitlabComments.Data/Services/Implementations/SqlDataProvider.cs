@@ -277,15 +277,24 @@
         /// Get entities with filter
         /// </summary>
         /// <param name="filter">Filter config</param>
+        /// <exception cref="ArgumentException">Filter contains column not presented in Entity</exception>
         /// <returns>Filtered entities</returns>
         public IEnumerable<TEntity> Where(FilterGroup filter)
         {
-            if (filter == null)
+            if (filter == null || filter.IsEmpty)
             {
                 return Get();
             }
 
-            // TODO: validate TEntity columns from filter.items
+            var entityFields = GetEntityFields();
+            var filterColumns = filter.GetFilterColumns();
+
+            var notValidColumns = filterColumns.Except(entityFields);
+
+            if (notValidColumns.Any())
+            {
+                throw new ArgumentException($"Filter contains columns not presented in entity: {string.Join(", ", notValidColumns)}");
+            }
 
             var (filterSql, filterArgs) = FilterBuilder.Build(filter);
 
@@ -322,7 +331,7 @@
         /// <param name="boxedValue">Boxed value</param>
         /// <param name="type">Type of value in the box</param>
         /// <returns>True if boxed value is default; otherwise false</returns>
-        private bool IsDefaultValue(object boxedValue, Type type)
+        private static bool IsDefaultValue(object boxedValue, Type type)
         {
             if (!type.IsValueType)
             {
