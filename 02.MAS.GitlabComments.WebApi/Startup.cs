@@ -54,6 +54,7 @@ namespace MAS.GitlabComments
                 .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
                 .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString))
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
+                .AddTransient<IFilterBuilder, MsSqlFilterBuilder>()
                 // /data services
 
                 .AddControllers(opts => { opts.Filters.Add<UseReadOnlyModeAttribute>(); })
