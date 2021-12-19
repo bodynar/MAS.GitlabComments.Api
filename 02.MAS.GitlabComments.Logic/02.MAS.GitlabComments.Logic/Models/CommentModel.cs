@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Models
+﻿namespace MAS.GitlabComments.Logic.Models
 {
     using System;
 

@@ -1,11 +1,11 @@
-﻿namespace MAS.GitlabComments.Services.Implementations
+﻿namespace MAS.GitlabComments.Logic.Services.Implementations
 {
     using System;
     using System.Collections.Generic;
     using System.Dynamic;
     using System.Linq;
 
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Data.Exceptions;
     using MAS.GitlabComments.Data.Models;
     using MAS.GitlabComments.Data.Services;

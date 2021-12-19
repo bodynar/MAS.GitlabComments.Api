@@ -3,9 +3,9 @@ namespace MAS.GitlabComments
     using MAS.GitlabComments.Attributes;
     using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.Logic.Services;
+    using MAS.GitlabComments.Logic.Services.Implementations;
     using MAS.GitlabComments.Models;
-    using MAS.GitlabComments.Services;
-    using MAS.GitlabComments.Services.Implementations;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -47,15 +47,20 @@ namespace MAS.GitlabComments
             services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
 
             services
-                .AddTransient<ICommentService, CommentService>()
-                .AddSingleton(new AppSettings(isReadOnlyMode))
-
-                // data services
+                // data registrations
                 .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
                 .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString))
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddTransient<IFilterBuilder, MsSqlFilterBuilder>()
-                // /data services
+                // /data registrations
+
+                // logic registrations
+                .AddTransient<ICommentService, CommentService>()
+                // /logic registrations
+
+                // web registrations
+                .AddSingleton(new AppSettings(isReadOnlyMode))
+                // /web registrations
 
                 .AddControllers(opts => { opts.Filters.Add<UseReadOnlyModeAttribute>(); })
                 .AddNewtonsoftJson()

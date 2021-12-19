@@ -3,6 +3,7 @@
     using System;
 
     using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Logic.Models;
 
     using Moq;
 

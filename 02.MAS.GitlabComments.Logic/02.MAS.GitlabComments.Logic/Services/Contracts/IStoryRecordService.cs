@@ -1,11 +1,9 @@
-﻿namespace MAS.GitlabComments.Services
+﻿namespace MAS.GitlabComments.Logic.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Logic.Models;
 
     /// <summary>
     /// 

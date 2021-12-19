@@ -1,8 +1,8 @@
-﻿namespace MAS.GitlabComments.Models
+﻿namespace MAS.GitlabComments.Logic.Models
 {
     using System;
 
-    public class UpdateCommentModel
+    public class ExtendedCommentModel
     {
         public Guid Id { get; set; }
 

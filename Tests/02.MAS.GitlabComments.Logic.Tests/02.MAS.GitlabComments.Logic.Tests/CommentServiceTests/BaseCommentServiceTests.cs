@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.WebApi.Tests.CommentServiceTests
+﻿namespace MAS.GitlabComments.Logic.Tests.CommentServiceTests
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,7 @@
     using MAS.GitlabComments.Data.Exceptions;
     using MAS.GitlabComments.Data.Models;
     using MAS.GitlabComments.Data.Services;
-    using MAS.GitlabComments.Services.Implementations;
+    using MAS.GitlabComments.Logic.Services.Implementations;
 
     using Moq;
 

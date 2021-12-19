@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.WebApi", "02.MAS.GitlabComments.WebApi\02.MAS.GitlabComments.WebApi.csproj", "{DCC7FCA4-282D-4DD6-9AE7-5F99877330BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "03.MAS.GitlabComments.WebApi", "02.MAS.GitlabComments.WebApi\03.MAS.GitlabComments.WebApi.csproj", "{DCC7FCA4-282D-4DD6-9AE7-5F99877330BD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{902D9031-AA0F-490F-AF37-41E983FFE22C}"
 EndProject
@@ -18,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", 
 		SqlScripts\001_Init.sql = SqlScripts\001_Init.sql
 		SqlScripts\002_AddStoryRecord.sql = SqlScripts\002_AddStoryRecord.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02.MAS.GitlabComments.Logic", "02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj", "{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02.MAS.GitlabComments.Logic.Tests", "Tests\02.MAS.GitlabComments.Logic.Tests\02.MAS.GitlabComments.Logic.Tests\02.MAS.GitlabComments.Logic.Tests.csproj", "{75E81C79-344C-466E-A951-019FFEA54222}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,14 @@ Global
 		{A6442276-FA23-4B43-91DB-050426CACAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6442276-FA23-4B43-91DB-050426CACAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6442276-FA23-4B43-91DB-050426CACAAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75E81C79-344C-466E-A951-019FFEA54222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75E81C79-344C-466E-A951-019FFEA54222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75E81C79-344C-466E-A951-019FFEA54222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75E81C79-344C-466E-A951-019FFEA54222}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +60,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
 		{A6442276-FA23-4B43-91DB-050426CACAAA} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
+		{75E81C79-344C-466E-A951-019FFEA54222} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A158B714-8CC2-4181-804D-F0D16AC6FB37}

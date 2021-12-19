@@ -2,6 +2,7 @@
 {
     using System;
 
+    using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Models;
 
     using Moq;

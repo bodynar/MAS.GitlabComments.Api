@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.WebApi.Tests.CommentServiceTests
+﻿namespace MAS.GitlabComments.Logic.Tests.CommentServiceTests
 {
     using System;
 

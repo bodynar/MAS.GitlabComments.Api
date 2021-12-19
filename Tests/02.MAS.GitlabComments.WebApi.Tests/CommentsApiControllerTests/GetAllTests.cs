@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Models;
 
     using Xunit;

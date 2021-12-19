@@ -5,13 +5,14 @@
 
     using MAS.GitlabComments.Controllers;
     using MAS.GitlabComments.Models;
-    using MAS.GitlabComments.Services;
+    using MAS.GitlabComments.Logic.Services;
 
     using Microsoft.Extensions.Logging;
 
     using Moq;
 
     using Xunit;
+    using MAS.GitlabComments.Logic.Models;
 
     /// <summary>
     /// Base class for <see cref="CommentsApiController"/> tests

@@ -5,7 +5,8 @@
 
     using MAS.GitlabComments.Attributes;
     using MAS.GitlabComments.Models;
-    using MAS.GitlabComments.Services;
+    using MAS.GitlabComments.Logic.Services;
+    using MAS.GitlabComments.Logic.Models;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

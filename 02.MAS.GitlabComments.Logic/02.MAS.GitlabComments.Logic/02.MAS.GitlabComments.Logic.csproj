@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>_02.MAS.GitlabComments.Logic</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj" />
+  </ItemGroup>
+
+</Project>

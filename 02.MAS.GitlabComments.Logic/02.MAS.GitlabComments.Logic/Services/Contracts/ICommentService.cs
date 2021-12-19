@@ -1,9 +1,9 @@
-﻿namespace MAS.GitlabComments.Services
+﻿namespace MAS.GitlabComments.Logic.Services
 {
     using System;
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Data.Models;
 
     /// <summary>

@@ -1,9 +1,9 @@
-﻿namespace MAS.GitlabComments.WebApi.Tests.CommentServiceTests
+﻿namespace MAS.GitlabComments.Logic.Tests.CommentServiceTests
 {
     using System.Collections.Generic;
     using System.Linq;
 
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.Logic.Models;
 
     using Xunit;
 

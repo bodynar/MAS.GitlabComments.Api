@@ -1,13 +1,11 @@
-﻿namespace MAS.GitlabComments.Services
+﻿namespace MAS.GitlabComments.Logic.Services.Implementations
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
-    using MAS.GitlabComments.Models;
     using MAS.GitlabComments.Data.Models;
     using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Logic.Models;
 
     public class StoryRecordService : IStoryRecordService
     {
