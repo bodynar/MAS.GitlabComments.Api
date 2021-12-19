@@ -11,12 +11,16 @@
 
   <ItemGroup>
     <Compile Remove="logs\**" />
+    <Compile Remove="Services\**" />
     <Compile Remove="Tests\**" />
     <Content Remove="logs\**" />
+    <Content Remove="Services\**" />
     <Content Remove="Tests\**" />
     <EmbeddedResource Remove="logs\**" />
+    <EmbeddedResource Remove="Services\**" />
     <EmbeddedResource Remove="Tests\**" />
     <None Remove="logs\**" />
+    <None Remove="Services\**" />
     <None Remove="Tests\**" />
   </ItemGroup>
 
@@ -33,8 +37,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Request\" />
-    <Folder Include="Services\Contracts\" />
-    <Folder Include="Services\Implementations\" />
   </ItemGroup>
 
 </Project>
