@@ -2,25 +2,55 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
+    using MAS.GitlabComments.Data.Filter;
     using MAS.GitlabComments.Data.Models;
     using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Logic.Models;
 
-    public class StoryRecordService : IStoryRecordService
+    public class CommentStoryRecordService : ICommentStoryRecordService
     {
-        private IDataProvider<StoryRecord> StoryRecordDataProvider { get; }
+        private IDataProvider<StoryRecord> DataProvider { get; }
 
-        public StoryRecordService(
-            IDataProvider<StoryRecord> storyRecordDataProvider
+        public CommentStoryRecordService(
+            IDataProvider<StoryRecord> dataProvider
         )
         {
-            StoryRecordDataProvider = storyRecordDataProvider ?? throw new ArgumentNullException(nameof(storyRecordDataProvider));
+            DataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
         }
 
         public IEnumerable<StoryRecordModel> Get(DateTime? start, DateTime? endDate, Guid? commentId, int? count)
         {
-            var dataItems = StoryRecordDataProvider.Get();
+            var filtersDefined = start.HasValue || endDate.HasValue || commentId.HasValue;
+
+            var dataItems = Enumerable.Empty<StoryRecord>();
+
+            if (filtersDefined)
+            {
+                FilterGroup filter = new()
+                {
+
+                };
+
+                dataItems = DataProvider.Where(filter);
+            }
+            else
+            {
+                dataItems = DataProvider.Get();
+            }
+
+            /**
+             * TODO:
+             * 1. Request JOIN model from StoryModel & Comment
+             *      Probably must update DataProvider to support joint columns declared via attribute
+             *      and special generic method
+             *      OR
+             *      special generic method with additional columns
+             *      
+             *      And all must support select with\-out filtering
+            */
+
 
             return null;
         }
