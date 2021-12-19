@@ -6,9 +6,9 @@
     using MAS.GitlabComments.Logic.Models;
 
     /// <summary>
-    /// 
+    /// Comments story records service
     /// </summary>
-    public interface IStoryRecordService
+    public interface ICommentStoryRecordService
     {
         /// <summary>
         /// Read comments modification records by specified filters
