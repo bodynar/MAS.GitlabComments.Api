@@ -119,7 +119,7 @@
         protected BaseSqlDataProviderTests()
         {
             var (df, da, fb) = GetServiceDependencies();
-            TestedService = new SqlDataProvider<TestedDataProviderEntity>(df, da, fb);
+            TestedService = new SqlDataProvider<TestedDataProviderEntity>(df, da, fb, null); // TODO: fix
         }
 
         #region Private methods
