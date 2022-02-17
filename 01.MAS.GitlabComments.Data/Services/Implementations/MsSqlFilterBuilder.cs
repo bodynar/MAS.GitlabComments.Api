@@ -6,6 +6,7 @@
     using System.Text;
 
     using MAS.GitlabComments.Data.Filter;
+    using MAS.GitlabComments.Data.Utilities;
 
     /// <summary>
     /// MsSql filter builder
