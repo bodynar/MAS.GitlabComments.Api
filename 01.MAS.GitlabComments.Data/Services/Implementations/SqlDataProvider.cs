@@ -321,6 +321,68 @@
             return entities;
         }
 
+        /// <summary>
+        /// Select entities into custom model
+        /// </summary>
+        /// <typeparam name="TProjection">Projection model type</typeparam>
+        /// <param name="configuration">Select configuration</param>
+        /// <exception cref="ArgumentNullException">Parameter configuration is null</exception>
+        /// <returns>Entities mapped to specified model</returns>
+        public IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            var filterSql = string.Empty;
+            IReadOnlyDictionary<string, object> filterArgs = new Dictionary<string, object>();
+
+            if (configuration.Filter != null && !configuration.Filter.IsEmpty)
+            {
+                var entityFields = GetEntityFields();
+                var filterColumns = configuration.Filter.GetFilterColumns();
+
+                var notValidColumns = filterColumns.Except(entityFields);
+
+                if (notValidColumns.Any())
+                {
+                    throw new ArgumentException($"Filter contains columns not presented in entity: {string.Join(", ", notValidColumns)}");
+                }
+
+                var builtFilter = FilterBuilder.Build(configuration.Filter);
+
+                filterSql = builtFilter.sqlCondition;
+                filterArgs = builtFilter.sqlArguments;
+            }
+
+            // TODO: select handle
+            //  1. Get columns to select (without attribute)
+            //  2. For joins do not forget to make aliases and use in columns
+
+            var complexColumnData = ComplexColumnQueryBuilder.BuildComplexColumns<TProjection>();
+
+            var columns = "*";
+            var joinPart = "";
+
+            if (complexColumnData == null)
+            {
+
+            }
+
+            
+
+            IEnumerable<TProjection> entities = Enumerable.Empty<TProjection>();
+            var sqlQuery = $"SELECT {columns} FROM [{TableName}] {joinPart} WHERE {filterSql}";
+
+            using (var connection = DbConnectionFactory.CreateDbConnection())
+            {
+                entities = DbAdapter.Query<TProjection>(connection, sqlQuery, filterArgs).ToList();
+            }
+
+            return entities;
+        }
+
         #region Not public API
 
         /// <summary>
