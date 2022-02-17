@@ -7,6 +7,7 @@
 
     using MAS.GitlabComments.Data.Filter;
     using MAS.GitlabComments.Data.Models;
+    using MAS.GitlabComments.Data.Select;
 
     /// <summary>
     /// Provider of data for specified entity type
@@ -23,6 +24,9 @@
 
         /// <inheritdoc cref="IFilterBuilder"/>
         private IFilterBuilder FilterBuilder { get; }
+
+        /// <inheritdoc cref="ComplexColumnQueryBuilder"/>
+        private IComplexColumnQueryBuilder ComplexColumnQueryBuilder { get; }
 
         /// <summary>
         /// Database table name for entity
@@ -45,14 +49,17 @@
         /// <param name="dbConnectionFactory">Factory providing database connection</param>
         /// <param name="dbAdapter">Database operation adapter</param>
         /// <param name="filterBuilder">Sql filter builder</param>
+        /// <param name="complexColumnBuilder">Complex column query builder</param>
         /// <exception cref="ArgumentNullException">Parameter dbConnectionFactory is null</exception>
         /// <exception cref="ArgumentNullException">Parameter dbAdapter is null</exception>
         /// <exception cref="ArgumentNullException">Parameter filterBuilder is null</exception>
-        public SqlDataProvider(IDbConnectionFactory dbConnectionFactory, IDbAdapter dbAdapter, IFilterBuilder filterBuilder)
+        /// <exception cref="ArgumentNullException">Parameter complexColumnBuilder is null</exception>
+        public SqlDataProvider(IDbConnectionFactory dbConnectionFactory, IDbAdapter dbAdapter, IFilterBuilder filterBuilder, IComplexColumnQueryBuilder complexColumnBuilder)
         {
             DbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(DbConnectionFactory));
             DbAdapter = dbAdapter ?? throw new ArgumentNullException(nameof(dbAdapter));
             FilterBuilder = filterBuilder ?? throw new ArgumentNullException(nameof(filterBuilder));
+            ComplexColumnQueryBuilder = complexColumnBuilder ?? throw new ArgumentNullException(nameof(complexColumnBuilder));
             TableName = typeof(TEntity).Name;
 
             if (!TableName.EndsWith("s"))

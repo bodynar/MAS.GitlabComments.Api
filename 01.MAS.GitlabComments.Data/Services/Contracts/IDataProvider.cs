@@ -5,6 +5,7 @@
 
     using MAS.GitlabComments.Data.Filter;
     using MAS.GitlabComments.Data.Models;
+    using MAS.GitlabComments.Data.Select;
 
     /// <summary>
     /// Provider of data for specified entity type
@@ -51,5 +52,13 @@
         /// <param name="filter">Filter config</param>
         /// <returns>Filtered entities</returns>
         IEnumerable<TEntity> Where(FilterGroup filter);
+        
+        /// <summary>
+        /// Select entities into custom model
+        /// </summary>
+        /// <typeparam name="TProjection">Projection model type</typeparam>
+        /// <param name="configuration">Select configuration</param>
+        /// <returns>Entities mapped to specified model</returns>
+        IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration);
     }
 }
