@@ -1,13 +1,14 @@
-﻿namespace MAS.GitlabComments.Data.Filter
+﻿namespace MAS.GitlabComments.Data.Utilities
 {
     using System;
+    using System.Reflection;
 
     using MAS.GitlabComments.Data.Attributes;
 
     /// <summary>
-    /// Utilities for filter models
+    /// Attribute utilities
     /// </summary>
-    public static class FilterUtils
+    public static class AttributeUtils
     {
         /// <summary>
         /// Get enum SqlOperator attribute value
