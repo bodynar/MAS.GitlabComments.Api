@@ -360,7 +360,7 @@
             //  1. Get columns to select (without attribute)
             //  2. For joins do not forget to make aliases and use in columns
 
-            var complexColumnData = ComplexColumnQueryBuilder.BuildComplexColumns<TProjection>();
+            var complexColumnData = ComplexColumnQueryBuilder.BuildComplexColumns<TProjection>(TableName);
 
             var columns = "*";
             var joinPart = "";
