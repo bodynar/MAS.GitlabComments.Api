@@ -28,10 +28,7 @@
 
             if (filtersDefined)
             {
-                FilterGroup filter = new()
-                {
-
-                };
+                var filter = BuildFilter(start, endDate, commentId);
 
                 dataItems = DataProvider.Where(filter);
             }
@@ -53,6 +50,59 @@
 
 
             return null;
+        }
+
+        private FilterGroup BuildFilter(DateTime? start, DateTime? endDate, Guid? commentId)
+        {
+            var filterItems = new List<FilterItem>();
+
+            if (start.HasValue)
+            {
+                filterItems.Add(
+                    new FilterItem()
+                    {
+                        Name = "CreatedOnStart",
+                        FieldName = nameof(StoryRecord.CreatedOn),
+                        LogicalComparisonType = ComparisonType.GreaterOrEqual,
+                        Value = start.Value
+                    }
+                );
+            }
+
+            if (endDate.HasValue)
+            {
+                filterItems.Add(
+                    new FilterItem()
+                    {
+                        Name = "CreatedOnEnd",
+                        FieldName = nameof(StoryRecord.CreatedOn),
+                        LogicalComparisonType = ComparisonType.LessOrEqual,
+                        Value = endDate.Value
+                    }
+                );
+            }
+
+            if (commentId.HasValue)
+            {
+                filterItems.Add(
+                    new FilterItem()
+                    {
+                        Name = "CommentIdEquality",
+                        FieldName = nameof(StoryRecord.CommentId),
+                        LogicalComparisonType = ComparisonType.Equal,
+                        Value = commentId.Value
+                    }
+                );
+            }
+
+            FilterGroup filter = new()
+            {
+                LogicalJoinType = FilterJoinType.And,
+                Name = "StoryRecordFilter",
+                Items = filterItems
+            };
+
+            return filter;
         }
     }
 }
