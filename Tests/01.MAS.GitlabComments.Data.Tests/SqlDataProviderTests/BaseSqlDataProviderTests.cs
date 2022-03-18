@@ -8,6 +8,7 @@
 
     using MAS.GitlabComments.Data.Filter;
     using MAS.GitlabComments.Data.Models;
+    using MAS.GitlabComments.Data.Select;
     using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Data.Services.Implementations;
 
@@ -108,6 +109,11 @@
         protected Tuple<string, IReadOnlyDictionary<string, object>> FilterBuilderResult;
 
         /// <summary>
+        /// Mock for result of complex column query builder call
+        /// </summary>
+        protected ComplexColumnData ComplexColumnQueryBuilderResult;
+
+        /// <summary>
         /// Name of default columns which shouldn't be checked
         /// </summary>
         private IEnumerable<string> ParamNamesToExcludeFromCheck
@@ -118,8 +124,8 @@
         /// </summary>
         protected BaseSqlDataProviderTests()
         {
-            var (df, da, fb) = GetServiceDependencies();
-            TestedService = new SqlDataProvider<TestedDataProviderEntity>(df, da, fb, null); // TODO: fix
+            var (df, da, fb, ccqb) = GetServiceDependencies();
+            TestedService = new SqlDataProvider<TestedDataProviderEntity>(df, da, fb, ccqb);
         }
 
         #region Private methods
@@ -130,7 +136,7 @@
         /// <exception cref="Exception">Last query has value before test execution</exception>
         /// <exception cref="Exception">Last command has value before test execution</exception>
         /// <returns>Mocked dependecies: <see cref="IDbConnectionFactory"/>, <see cref="IDbAdapter"/>, <see cref="IFilterBuilder"/></returns>
-        private (IDbConnectionFactory, IDbAdapter, IFilterBuilder) GetServiceDependencies()
+        private (IDbConnectionFactory, IDbAdapter, IFilterBuilder, IComplexColumnQueryBuilder) GetServiceDependencies()
         {
             var mockConnectionFactory = new Mock<IDbConnectionFactory>();
 
@@ -180,7 +186,21 @@
                     return (FilterBuilderResult.Item1, FilterBuilderResult.Item2);
                 });
 
-            return (mockConnectionFactory.Object, mockDbAdapter.Object, mockFilterBuilder.Object);
+            var mockComplexQueryBuilder = new Mock<IComplexColumnQueryBuilder>();
+
+            mockComplexQueryBuilder
+                .Setup(x => x.BuildComplexColumns<It.IsAnyType>(It.IsAny<string>()))
+                .Returns(() =>
+                {
+                    if (ComplexColumnQueryBuilderResult == null)
+                    {
+                        throw new Exception($"{nameof(ComplexColumnQueryBuilderResult)} is empty");
+                    }
+
+                    return ComplexColumnQueryBuilderResult;
+                });
+
+            return (mockConnectionFactory.Object, mockDbAdapter.Object, mockFilterBuilder.Object, mockComplexQueryBuilder.Object);
         }
 
         #endregion
