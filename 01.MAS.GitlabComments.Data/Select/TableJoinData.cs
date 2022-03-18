@@ -10,6 +10,11 @@
         #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         /// <summary>
+        /// Source string configuration
+        /// </summary>
+        public string Configuration { get; }
+
+        /// <summary>
         /// Left table name
         /// </summary>
         public string LeftTableName { get; set; }
@@ -34,16 +39,27 @@
         /// </summary>
         public TableJoinType JoinType { get; set; }
 
+        /// <summary>
+        /// Left table alias
+        /// </summary>
+        public string Alias { get; set; }
+
+        /// <summary>
+        /// Initializing <see cref="TableJoinData"/>
+        /// </summary>
+        /// <param name="configuration">Configuration</param>
+        /// <exception cref="ArgumentNullException">Parameter configuration is null</exception>
+        public TableJoinData(string configuration)
+        {
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
         /// <inheritdoc cref="Object.Equals"/>
         public override bool Equals(object obj)
         {
             if (obj is TableJoinData compareTableJoinData)
             {
-                return
-                    LeftTableName == compareTableJoinData.LeftTableName
-                    && RightTableName == compareTableJoinData.RightTableName
-                    && LeftTableRelationColumn == compareTableJoinData.LeftTableRelationColumn
-                    && RightTableRelationColumn == compareTableJoinData.RightTableRelationColumn;
+                return Configuration == compareTableJoinData.Configuration;
             }
 
             return base.Equals(obj);
