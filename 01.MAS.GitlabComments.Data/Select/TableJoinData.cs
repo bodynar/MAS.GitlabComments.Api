@@ -64,5 +64,11 @@
 
             return base.Equals(obj);
         }
+
+        /// <inheritdoc cref="Object.ToString"/>
+        public override string ToString()
+        {
+            return Configuration;
+        }
     }
 }
