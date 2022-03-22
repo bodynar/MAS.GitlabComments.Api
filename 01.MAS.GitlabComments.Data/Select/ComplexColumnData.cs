@@ -13,7 +13,7 @@
         /// <summary>
         /// Columns paths to include in select
         /// </summary>
-        public IEnumerable<string> Columns { get; set; }
+        public IEnumerable<ComplexColumn> Columns { get; set; }
 
         /// <summary>
         /// Tables join data
