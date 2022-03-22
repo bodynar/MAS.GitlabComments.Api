@@ -53,32 +53,40 @@
             );
 
             var tableJoinDataItems = new List<TableJoinData>();
-            var selectColumns = columnAttributeMap.Where(x => x.Item1 == null).Select(x => x.Item2.Name).ToList();
+            var selectColumns =
+                columnAttributeMap
+                    .Where(x => x.Item1 == null)
+                    .Select(x =>
+                        new ComplexColumn
+                        {
+                            TableAlias = sourceTableName,
+                            Name = x.Item2.Name,
+                        }
+                    )
+                    .ToList();
 
             var complexColumns = columnAttributeMap.Where(x => x.Item1 != null);
 
             foreach (var complexColumn in complexColumns)
             {
                 var (tableJoinData, column) = GetColumnPathParts(tableJoinDataItems, complexColumn.Item1, sourceTableName);
-
-                if (tableJoinData == null)
+                
+                if (tableJoinData != null)
                 {
-                    if (string.IsNullOrEmpty(column))
-                    {
-                        continue;
-                    }
+                    tableJoinDataItems.AddRange(tableJoinData);
+                }
+
+                if (column != null)
+                {
+                    column.Alias = complexColumn.Item2.Name;
 
                     selectColumns.Add(column);
                 }
-                else
-                {
-                    if (!string.IsNullOrEmpty(column))
-                    {
-                        selectColumns.Add(column);
-                        tableJoinDataItems.AddRange(tableJoinData);
-                    }
-                }
             }
+
+            /*
+                3. Validate result of ComplexColumnPathQueryBuilder before returning?
+             */
 
             return new ComplexColumnData
             {
@@ -94,7 +102,7 @@
         /// <param name="complexColumnPathAttribute"></param>
         /// <param name="sourceTableName"></param>
         /// <returns></returns>
-        private (IEnumerable<TableJoinData>, string) GetColumnPathParts(IEnumerable<TableJoinData> existedJoins, ComplexColumnPathAttribute complexColumnPathAttribute, string sourceTableName)
+        private (IEnumerable<TableJoinData>, ComplexColumn) GetColumnPathParts(IEnumerable<TableJoinData> existedJoins, ComplexColumnPathAttribute complexColumnPathAttribute, string sourceTableName)
         {
             /* 
                 1. [Table1:Table1Column:Table2Column].Value
@@ -126,7 +134,11 @@
 
                 return Regex.IsMatch(part, TableColumnPathPattern)
                     ? (null, null)
-                    : (null, part);
+                    : (null, new ComplexColumn
+                    {
+                        TableAlias = sourceTableName,
+                        Name = part,
+                    });
             }
 
             var lastPart = parts.Last();
@@ -182,9 +194,11 @@
                 tableJoinDataItems.Add(tableJoinData);
             }
 
-            var lastTableJoinData = tableJoinDataItems.Last();
-
-            return (tableJoinDataItems, $"{lastTableJoinData.Alias}.{lastPart}");
+            return (tableJoinDataItems, new ComplexColumn
+            {
+                TableAlias = previousLeftTableName,
+                Name = lastPart,
+            });
         }
 
         /// <summary>
