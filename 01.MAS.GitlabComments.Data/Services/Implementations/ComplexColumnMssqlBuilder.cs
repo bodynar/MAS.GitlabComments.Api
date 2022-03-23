@@ -69,7 +69,7 @@
 
             foreach (var complexColumn in complexColumns)
             {
-                var (tableJoinData, column) = GetColumnPathParts(tableJoinDataItems, complexColumn.Item1, sourceTableName);
+                var (tableJoinData, column) = BuildComplexColumnPathParams(tableJoinDataItems, complexColumn.Item1, sourceTableName);
                 
                 if (tableJoinData != null)
                 {
@@ -96,13 +96,13 @@
         }
 
         /// <summary>
-        /// 
+        /// Building complex column path parameters from attribute
         /// </summary>
-        /// <param name="existedJoins"></param>
-        /// <param name="complexColumnPathAttribute"></param>
-        /// <param name="sourceTableName"></param>
-        /// <returns></returns>
-        private (IEnumerable<TableJoinData>, ComplexColumn) GetColumnPathParts(IEnumerable<TableJoinData> existedJoins, ComplexColumnPathAttribute complexColumnPathAttribute, string sourceTableName)
+        /// <param name="existedJoins">Defined join data items</param>
+        /// <param name="complexColumnPathAttribute">Column complex path attribute</param>
+        /// <param name="sourceTableName">Name of source table</param>
+        /// <returns>Pair of values: Array of table join data items & column configuration if data successfully mapped; otherwise - pair of <see langword="null"/> values</returns>
+        private (IEnumerable<TableJoinData>, ComplexColumn) BuildComplexColumnPathParams(IEnumerable<TableJoinData> existedJoins, ComplexColumnPathAttribute complexColumnPathAttribute, string sourceTableName)
         {
             /* 
                 1. [Table1:Table1Column:Table2Column].Value

@@ -330,8 +330,10 @@
          * 2. Several joins with same table in few attributes
          * 3. Several joins with same table but different ways to join in few attributes
          * ...
-         * 4. <more>
+         * 4. Column with invalid path [Table1:Table1Column:Table2Column].[Table1:Table1Column:Table2Column]
+         * 5. Column with invalid path SomeColumn.[Table1:Table1Column:Table2Column]
+         * N. <more>
          */
-        
+
     }
 }
