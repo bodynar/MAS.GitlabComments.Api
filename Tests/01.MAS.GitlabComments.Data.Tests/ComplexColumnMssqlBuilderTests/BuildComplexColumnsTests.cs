@@ -65,6 +65,46 @@
 
         #endregion
 
+        #region Empty Data When Projected Type Has Column With Invalid Path Only From Joins
+
+        [Fact]
+        public void ShouldReturnEmptyDataWhenProjectedTypeHasColumnWithInvalidPathOnlyFromJoins()
+        {
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>(string.Empty);
+
+            Assert.NotNull(result);
+            Assert.Empty(result.Columns);
+            Assert.Empty(result.Joins);
+        }
+
+        private class ProjectedClassWithInvalidPathFromJoins
+        {
+            [ComplexColumnPath("[Table1:Table1Column:Table2Column].[Table1:Table1Column:Table2Column]")]
+            public string SimplePath { get; set; }
+        }
+
+        #endregion
+
+        #region Empty Data When Projected Type Has Column With Invalid Path From Simple Column And Join
+
+        [Fact]
+        public void ShouldReturnEmptyDataWhenProjectedTypeHasColumnWithInvalidPathFromSimpleColumnAndJoin()
+        {
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>(string.Empty);
+
+            Assert.NotNull(result);
+            Assert.Empty(result.Columns);
+            Assert.Empty(result.Joins);
+        }
+
+        private class ProjectedClassWithInvalidPathFromSimpleColumnAndJoin
+        {
+            [ComplexColumnPath("SomeColumn.[Table1:Table1Column:Table2Column]")]
+            public string SimplePath { get; set; }
+        }
+
+        #endregion
+
         #region Build Data Without Join Data
 
         [Fact]
@@ -324,16 +364,172 @@
 
         #endregion
 
-        /*
-         * TODO:
-         * 1. Several joins in single attribute
-         * 2. Several joins with same table in few attributes
-         * 3. Several joins with same table but different ways to join in few attributes
-         * ...
-         * 4. Column with invalid path [Table1:Table1Column:Table2Column].[Table1:Table1Column:Table2Column]
-         * 5. Column with invalid path SomeColumn.[Table1:Table1Column:Table2Column]
-         * N. <more>
-         */
+        #region Build Data With Several Join Data In Single Attribute
 
+        [Fact]
+        public void ShouldBuildDataWithSeveralJoinDataInSingleAttribute()
+        {
+            var expectedColumns = new[] { "[Middle1].[Value] AS [SimplePath]" };
+            var expectedColumnsCount = 1;
+            var expectedJoinsCount = 2;
+            var expectedJoinDataItems = new[] {
+                new TableJoinData("[RightTable:RightTableColumn:LeftTableColumn]"),
+                new TableJoinData("[MiddleTable:MiddleTableColumn:RightTableMiddleColumn]"),
+            };
+
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithComplexPathWithSeveralJoinsInSingleAttribute>(SourceTableName);
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Columns);
+            Assert.NotEmpty(result.Joins);
+
+            Assert.Equal(expectedColumnsCount, result.Columns.Count());
+            Assert.Equal(expectedJoinsCount, result.Joins.Count());
+
+            CommonAssert.CollectionsWithSameType(expectedColumns, result.Columns.Select(x => x.ToString()),
+                (expected, actual) => Assert.Equal(expected, actual)
+            );
+            CommonAssert.CollectionsWithSameType(expectedJoinDataItems, result.Joins,
+                (expected, actual) => Assert.True(expected.Equals(actual))
+            );
+        }
+
+        private class ProjectedClassWithComplexPathWithSeveralJoinsInSingleAttribute
+        {
+            [ComplexColumnPath("[RightTable:RightTableColumn:LeftTableColumn].[MiddleTable:MiddleTableColumn:RightTableMiddleColumn].Value")]
+            public string SimplePath { get; set; }
+        }
+
+        #endregion
+
+        #region Build Data With Several Join Data In Several Attribute With Same Join Path
+
+        [Fact]
+        public void ShouldBuildDataWithSeveralJoinDataInSeveralAttributeWithSameJoinPath()
+        {
+            var expectedColumns = new[] { "[Middle1].[Value] AS [Column]", "[Middle1].[Average] AS [Path]", };
+            var expectedColumnsCount = 2;
+            var expectedJoinsCount = 2;
+            var expectedJoinDataItems = new[] {
+                new TableJoinData("[RightTable:RightTableColumn:LeftTableColumn]"),
+                new TableJoinData("[MiddleTable:MiddleTableColumn:RightTableMiddleColumn]"),
+            };
+
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithComplexPathWithSeveralJoinsInSeveralAttributeWithSameJoinPath>(SourceTableName);
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Columns);
+            Assert.NotEmpty(result.Joins);
+
+            Assert.Equal(expectedColumnsCount, result.Columns.Count());
+            Assert.Equal(expectedJoinsCount, result.Joins.Count());
+
+            CommonAssert.CollectionsWithSameType(expectedColumns, result.Columns.Select(x => x.ToString()),
+                (expected, actual) => Assert.Equal(expected, actual)
+            );
+            CommonAssert.CollectionsWithSameType(expectedJoinDataItems, result.Joins,
+                (expected, actual) => Assert.True(expected.Equals(actual))
+            );
+        }
+
+        private class ProjectedClassWithComplexPathWithSeveralJoinsInSeveralAttributeWithSameJoinPath
+        {
+            [ComplexColumnPath("[RightTable:RightTableColumn:LeftTableColumn].[MiddleTable:MiddleTableColumn:RightTableMiddleColumn].Value")]
+            public string Column { get; set; }
+
+            [ComplexColumnPath("[RightTable:RightTableColumn:LeftTableColumn].[MiddleTable:MiddleTableColumn:RightTableMiddleColumn].Average")]
+            public string Path { get; set; }
+        }
+
+        #endregion
+
+        #region Build Data With Several Join Data In Several Attribute With Same Join Path
+
+        [Fact]
+        public void ShouldBuildDataWithSeveralJoinDataInSeveralAttributeWithDifferentJoinPath()
+        {
+            var expectedColumns = new[] { "[Middle1].[Value] AS [Column]", "[Another1].[Average] AS [Path]", };
+            var expectedColumnsCount = 2;
+            var expectedJoinsCount = 4;
+            var expectedJoinDataItems = new[] {
+                new TableJoinData("[RightTable:RightTableColumn:LeftTableColumn]"),
+                new TableJoinData("[MiddleTable:MiddleTableColumn:RightTableMiddleColumn]"),
+
+                new TableJoinData("[TestTable:TestTableColumn:LeftTableColumn]"),
+                new TableJoinData("[AnotherTestTable:AnotherTestTableColumn:AnotherTestTestColumn]"),
+            };
+
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithComplexPathWithSeveralJoinsInSeveralAttributeWithDifferentJoinPath>(SourceTableName);
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Columns);
+            Assert.NotEmpty(result.Joins);
+
+            Assert.Equal(expectedColumnsCount, result.Columns.Count());
+            Assert.Equal(expectedJoinsCount, result.Joins.Count());
+
+            CommonAssert.CollectionsWithSameType(expectedColumns, result.Columns.Select(x => x.ToString()),
+                (expected, actual) => Assert.Equal(expected, actual)
+            );
+            CommonAssert.CollectionsWithSameType(expectedJoinDataItems, result.Joins,
+                (expected, actual) => Assert.True(expected.Equals(actual))
+            );
+        }
+
+        private class ProjectedClassWithComplexPathWithSeveralJoinsInSeveralAttributeWithDifferentJoinPath
+        {
+            [ComplexColumnPath("[RightTable:RightTableColumn:LeftTableColumn].[MiddleTable:MiddleTableColumn:RightTableMiddleColumn].Value")]
+            public string Column { get; set; }
+
+            [ComplexColumnPath("[TestTable:TestTableColumn:LeftTableColumn].[AnotherTestTable:AnotherTestTableColumn:AnotherTestTestColumn].Average")]
+            public string Path { get; set; }
+        }
+
+        #endregion
+
+        #region Build Data With Several Join Data In Several Attribute With Same Table But Different Join Params
+
+        // TODO: see ComplexColumnMssqlBuilder TODO p.1
+
+        [Fact]
+        public void ShouldBuildDataWithSeveralJoinDataInSeveralAttributeWithSameTableButDifferentJoinParams()
+        {
+            var expectedColumns = new[] { "[Middle1].[Value] AS [Column]", "[Middle1].[Average] AS [Path]", };
+            var expectedColumnsCount = 2;
+            var expectedJoinsCount = 3;
+            var expectedJoinDataItems = new[] {
+                new TableJoinData("[RightTable:RightTableColumn:LeftTableColumn]"),
+                new TableJoinData("[MiddleTable:MiddleTableColumn:RightTableMiddleColumn]"),
+
+                new TableJoinData("[RightTable:RightTableExtraColumn:LeftTableExtraColumn]"),
+            };
+
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithComplexPathWithSeveralJoinsInSeveralAttributeWithSameTableButDifferentJoinParams>(SourceTableName);
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result.Columns);
+            Assert.NotEmpty(result.Joins);
+
+            Assert.Equal(expectedColumnsCount, result.Columns.Count());
+            Assert.Equal(expectedJoinsCount, result.Joins.Count());
+
+            CommonAssert.CollectionsWithSameType(expectedColumns, result.Columns.Select(x => x.ToString()),
+                (expected, actual) => Assert.Equal(expected, actual)
+            );
+            CommonAssert.CollectionsWithSameType(expectedJoinDataItems, result.Joins,
+                (expected, actual) => Assert.True(expected.Equals(actual))
+            );
+        }
+
+        private class ProjectedClassWithComplexPathWithSeveralJoinsInSeveralAttributeWithSameTableButDifferentJoinParams
+        {
+            [ComplexColumnPath("[RightTable:RightTableColumn:LeftTableColumn].[MiddleTable:MiddleTableColumn:RightTableMiddleColumn].Value")]
+            public string Column { get; set; }
+
+            [ComplexColumnPath("[RightTable:RightTableExtraColumn:LeftTableExtraColumn].[MiddleTable:MiddleTableColumn:RightTableMiddleColumn].Average")]
+            public string Path { get; set; }
+        }
+
+        #endregion
     }
 }

@@ -85,7 +85,10 @@
             }
 
             /*
-                3. Validate result of ComplexColumnPathQueryBuilder before returning?
+             * TODO: (next release)
+             *  1. When path contains same 2nd+ join, but different previous - make another join data
+             *      1.1. Update test ShouldBuildDataWithSeveralJoinDataInSeveralAttributeWithSameTableButDifferentJoinParams
+             *  2. Validate result of ComplexColumnPathQueryBuilder before returning
              */
 
             return new ComplexColumnData
