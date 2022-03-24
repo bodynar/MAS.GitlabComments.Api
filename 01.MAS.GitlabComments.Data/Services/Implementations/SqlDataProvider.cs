@@ -352,28 +352,24 @@
 
                 var builtFilter = FilterBuilder.Build(configuration.Filter);
 
-                filterSql = builtFilter.sqlCondition;
+                filterSql = $"WHERE {builtFilter.sqlCondition}";
                 filterArgs = builtFilter.sqlArguments;
             }
-
-            // TODO: select handle
-            //  1. Get columns to select (without attribute)
-            //  2. For joins do not forget to make aliases and use in columns
 
             var complexColumnData = ComplexColumnQueryBuilder.BuildComplexColumns<TProjection>(TableName);
 
             var columns = "*";
             var joinPart = "";
 
-            if (complexColumnData == null)
+            if (complexColumnData != null)
             {
+                columns = string.Join($"{Environment.NewLine}, ", complexColumnData.Columns.Select(column => column.ToString()));
 
+                joinPart = string.Join(Environment.NewLine, complexColumnData.Joins.Select(joinData => joinData.ToQueryPart()));
             }
 
-            
-
             IEnumerable<TProjection> entities = Enumerable.Empty<TProjection>();
-            var sqlQuery = $"SELECT {columns} FROM [{TableName}] {joinPart} WHERE {filterSql}";
+            var sqlQuery = $"SELECT {columns} FROM [{TableName}] {joinPart} {filterSql}";
 
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
