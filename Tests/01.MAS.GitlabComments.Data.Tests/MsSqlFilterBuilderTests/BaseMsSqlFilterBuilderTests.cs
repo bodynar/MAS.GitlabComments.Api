@@ -2,7 +2,7 @@
 {
     using System;
 
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Data.Services.Implementations;
 
     /// <summary>
     /// Base class for <see cref="MsSqlFilterBuilder"/> tests

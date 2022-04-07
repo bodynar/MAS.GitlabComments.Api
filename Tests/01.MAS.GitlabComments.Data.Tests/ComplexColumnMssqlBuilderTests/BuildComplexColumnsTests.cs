@@ -4,7 +4,7 @@
 
     using MAS.GitlabComments.Data.Attributes;
     using MAS.GitlabComments.Data.Select;
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Data.Services.Implementations;
 
     using Xunit;
 

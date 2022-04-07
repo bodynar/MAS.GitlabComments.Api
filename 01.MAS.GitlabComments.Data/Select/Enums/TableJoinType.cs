@@ -1,7 +1,7 @@
-﻿using MAS.GitlabComments.Data.Attributes;
-
-namespace MAS.GitlabComments.Data.Select
+﻿namespace MAS.GitlabComments.Data.Select
 {
+    using MAS.GitlabComments.Data.Attributes;
+
     /// <summary>
     /// Type of sql table join
     /// </summary>

@@ -15,7 +15,7 @@
     /// </summary>
     public class CommentStoryRecordService : ICommentStoryRecordService
     {
-        /// <inheritdoc cref="IDataProvider{TEntity}"/>
+        /// <summary> Data provider of StoryRecords </summary>
         private IDataProvider<StoryRecord> DataProvider { get; }
 
         /// <summary>
