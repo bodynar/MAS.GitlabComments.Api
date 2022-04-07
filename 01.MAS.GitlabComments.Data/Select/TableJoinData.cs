@@ -2,10 +2,12 @@
 {
     using System;
 
+    using MAS.GitlabComments.Data.Utilities;
+
     /// <summary>
     /// Information about table join
     /// </summary>
-        #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class TableJoinData
         #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
@@ -69,6 +71,20 @@
         public override string ToString()
         {
             return Configuration;
+        }
+
+        /// <summary>
+        /// Converting table join data into mssql query join
+        /// </summary>
+        /// <returns>MS SQL script</returns>
+        public string ToQueryPart()
+        {
+            var joinType = JoinType.GetSqlOperator();
+
+            // LEFT OUTER JOIN [Table] AS [Alias] WITH(NOLOCK)
+            //      ON [Alias].[TableColumn] = [SourceTableAlias].[SourceTableColumn]
+
+            return $"{joinType} [{RightTableName}] as [{Alias}] with(nolock) on ([{Alias}].[{RightTableRelationColumn}] = [{LeftTableName}].[{LeftTableRelationColumn}])".ToUpper();
         }
     }
 }
