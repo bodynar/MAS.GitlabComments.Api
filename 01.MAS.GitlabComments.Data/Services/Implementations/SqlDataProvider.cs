@@ -293,17 +293,7 @@
                 return Get();
             }
 
-            var entityFields = GetEntityFields();
-            var filterColumns = filter.GetFilterColumns();
-
-            var notValidColumns = filterColumns.Except(entityFields);
-
-            if (notValidColumns.Any())
-            {
-                throw new ArgumentException($"Filter contains columns not presented in entity: {string.Join(", ", notValidColumns)}");
-            }
-
-            var (filterSql, filterArgs) = FilterBuilder.Build(filter);
+            var (filterSql, filterArgs) = GetFilterValue(filter);
 
             if (string.IsNullOrEmpty(filterSql))
             {
@@ -327,6 +317,7 @@
         /// <typeparam name="TProjection">Projection model type</typeparam>
         /// <param name="configuration">Select configuration</param>
         /// <exception cref="ArgumentNullException">Parameter configuration is null</exception>
+        /// <exception cref="ArgumentException">Filter contains column not presented in Entity</exception>
         /// <returns>Entities mapped to specified model</returns>
         public IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration)
         {
@@ -405,6 +396,27 @@
 
             var def = Activator.CreateInstance(type);
             return boxedValue.Equals(def);
+        }
+
+        /// <summary>
+        /// Building sql filter from filter configuration
+        /// </summary>
+        /// <param name="filter">Entities filter</param>
+        /// <exception cref="ArgumentException">Filter contains column not presented in Entity</exception>
+        /// <returns>Pair of sql text and built sql arguments</returns>
+        private (string, IReadOnlyDictionary<string, object>) GetFilterValue(FilterGroup filter)
+        {
+            var entityFields = GetEntityFields();
+            var filterColumns = filter.GetFilterColumns();
+
+            var notValidColumns = filterColumns.Except(entityFields);
+
+            if (notValidColumns.Any())
+            {
+                throw new ArgumentException($"Filter contains columns not presented in entity: {string.Join(", ", notValidColumns)}");
+            }
+
+            return FilterBuilder.Build(filter);
         }
 
         #endregion
