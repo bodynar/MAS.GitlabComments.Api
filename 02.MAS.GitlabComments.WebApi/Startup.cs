@@ -60,10 +60,12 @@ namespace MAS.GitlabComments.WebApi
                 .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString, queryOptions))
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddTransient<IFilterBuilder, MsSqlFilterBuilder>()
+                .AddTransient<IComplexColumnQueryBuilder, ComplexColumnMssqlBuilder>()
                 // /data registrations
 
                 // logic registrations
                 .AddTransient<ICommentService, CommentService>()
+                .AddTransient<ICommentStoryRecordService, CommentStoryRecordService>()
                 // /logic registrations
 
                 // web registrations

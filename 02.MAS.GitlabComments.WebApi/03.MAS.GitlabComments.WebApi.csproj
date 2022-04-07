@@ -35,8 +35,4 @@
     <ProjectReference Include="..\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Request\" />
-  </ItemGroup>
-
 </Project>
