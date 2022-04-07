@@ -160,6 +160,19 @@
                 .Returns(Enumerable.Empty<TestedDataProviderEntity>());
 
             mockDbAdapter
+                .Setup(x => x.Query<SelectTests.EmptyProjectedClass>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
+                .Callback<IDbConnection, string, object>((_, sql, args) =>
+                {
+                    if (lastQuery.HasValue)
+                    {
+                        throw new Exception($"{nameof(LastQuery)} is not empty");
+                    }
+
+                    lastQuery = new KeyValuePair<string, object>(sql, args);
+                })
+                .Returns(Enumerable.Empty<SelectTests.EmptyProjectedClass>());
+
+            mockDbAdapter
                 .Setup(x => x.Execute(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
                 .Callback<IDbConnection, string, object>((_, sql, args) =>
                 {
@@ -190,15 +203,7 @@
 
             mockComplexQueryBuilder
                 .Setup(x => x.BuildComplexColumns<It.IsAnyType>(It.IsAny<string>()))
-                .Returns(() =>
-                {
-                    if (ComplexColumnQueryBuilderResult == null)
-                    {
-                        throw new Exception($"{nameof(ComplexColumnQueryBuilderResult)} is empty");
-                    }
-
-                    return ComplexColumnQueryBuilderResult;
-                });
+                .Returns(() => ComplexColumnQueryBuilderResult);
 
             return (mockConnectionFactory.Object, mockDbAdapter.Object, mockFilterBuilder.Object, mockComplexQueryBuilder.Object);
         }
