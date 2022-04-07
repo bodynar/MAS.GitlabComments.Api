@@ -331,20 +331,10 @@
 
             if (configuration.Filter != null && !configuration.Filter.IsEmpty)
             {
-                var entityFields = GetEntityFields();
-                var filterColumns = configuration.Filter.GetFilterColumns();
+                var builtFilter = GetFilterValue(configuration.Filter);
 
-                var notValidColumns = filterColumns.Except(entityFields);
-
-                if (notValidColumns.Any())
-                {
-                    throw new ArgumentException($"Filter contains columns not presented in entity: {string.Join(", ", notValidColumns)}");
-                }
-
-                var builtFilter = FilterBuilder.Build(configuration.Filter);
-
-                filterSql = $"WHERE {builtFilter.sqlCondition}";
-                filterArgs = builtFilter.sqlArguments;
+                filterSql = $"WHERE {builtFilter.Item1}";
+                filterArgs = builtFilter.Item2;
             }
 
             var complexColumnData = ComplexColumnQueryBuilder.BuildComplexColumns<TProjection>(TableName);
@@ -354,13 +344,13 @@
 
             if (complexColumnData != null)
             {
-                columns = string.Join($"{Environment.NewLine}, ", complexColumnData.Columns.Select(column => column.ToString()));
+                columns = string.Join($",{Environment.NewLine}", complexColumnData.Columns.Select(column => column.ToString()));
 
                 joinPart = string.Join(Environment.NewLine, complexColumnData.Joins.Select(joinData => joinData.ToQueryPart()));
             }
 
-            IEnumerable<TProjection> entities = Enumerable.Empty<TProjection>();
-            var sqlQuery = $"SELECT {columns} FROM [{TableName}] {joinPart} {filterSql}";
+            var entities = Enumerable.Empty<TProjection>();
+            var sqlQuery = $"SELECT {columns} FROM [{TableName}] {joinPart} {filterSql}".TrimEnd(' ');
 
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
