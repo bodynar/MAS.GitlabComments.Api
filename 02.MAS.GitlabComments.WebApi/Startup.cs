@@ -44,12 +44,20 @@ namespace MAS.GitlabComments
                 isReadOnlyMode = settings.GetValue<bool>("ReadOnlyMode");
             }
 
+            var maxQueryCount = settings.GetValue<int>("MaxQueryRows");
+
+            var queryOptions = new DbConnectionQueryOptions
+            {
+                MaxRowCount = maxQueryCount
+            };
+
+
             services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
 
             services
                 // data registrations
                 .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
-                .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString))
+                .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString, queryOptions))
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddTransient<IFilterBuilder, MsSqlFilterBuilder>()
                 // /data registrations
