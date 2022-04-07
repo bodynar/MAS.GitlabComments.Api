@@ -31,14 +31,14 @@
         }
 
         /// <inheritdoc cref="ICommentStoryRecordService.Get(DateTime?, DateTime?, Guid?, int?)"/>
-        public IEnumerable<StoryRecordViewModel> Get(DateTime? start, DateTime? endDate, Guid? commentId, int? count)
+        public IEnumerable<StoryRecordViewModel> Get(DateTime? startDate, DateTime? endDate, Guid? commentId, int? count)
         {
-            var filtersDefined = start.HasValue || endDate.HasValue || commentId.HasValue;
+            var filtersDefined = startDate.HasValue || endDate.HasValue || commentId.HasValue;
 
-            var filter = filtersDefined ? BuildFilter(start, endDate, commentId) : null;
+            var filter = filtersDefined ? BuildFilter(startDate, endDate, commentId) : null;
 
             var dataItems = DataProvider
-                .Select<StoryRecordViewModel>(new SelectConfiguration { Filter = filter })
+                .Select<StoryRecordReadModel>(new SelectConfiguration { Filter = filter })
                 .ToList()
                 .GroupBy(x => x.CommentId, x => x.CommentText)
                 .Select(x => new StoryRecordViewModel()
