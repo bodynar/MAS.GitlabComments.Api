@@ -1,9 +1,9 @@
-﻿namespace MAS.GitlabComments.Attributes
+﻿namespace MAS.GitlabComments.WebApi.Attributes
 {
     using System;
     using System.Linq;
 
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Controllers;

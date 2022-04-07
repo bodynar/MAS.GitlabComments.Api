@@ -2,7 +2,7 @@
 {
     using System;
 
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.WebApi.Models;
 
     using Moq;
 

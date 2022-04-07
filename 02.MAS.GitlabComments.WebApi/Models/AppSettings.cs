@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Models
+﻿namespace MAS.GitlabComments.WebApi.Models
 {
     /// <summary>
     /// Global application settings

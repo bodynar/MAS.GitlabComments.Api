@@ -1,11 +1,11 @@
-namespace MAS.GitlabComments
+namespace MAS.GitlabComments.WebApi
 {
-    using MAS.GitlabComments.Attributes;
+    using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Data.Services.Implementations;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;

@@ -3,8 +3,8 @@
     using System;
     using System.Linq;
 
-    using MAS.GitlabComments.Controllers;
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.WebApi.Controllers;
+    using MAS.GitlabComments.WebApi.Models;
     using MAS.GitlabComments.Logic.Services;
 
     using Microsoft.Extensions.Logging;

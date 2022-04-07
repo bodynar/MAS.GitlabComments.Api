@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Logger
+﻿namespace MAS.GitlabComments.WebApi.Logger
 {
     using System;
     using System.IO;

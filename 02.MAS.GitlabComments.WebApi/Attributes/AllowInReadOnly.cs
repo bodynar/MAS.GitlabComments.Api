@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Attributes
+﻿namespace MAS.GitlabComments.WebApi.Attributes
 {
     using System;
 

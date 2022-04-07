@@ -1,7 +1,7 @@
 ﻿namespace MAS.GitlabComments.WebApi.Tests.AppApiControllerTests
 {
-    using MAS.GitlabComments.Controllers;
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.WebApi.Controllers;
+    using MAS.GitlabComments.WebApi.Models;
 
     using Moq;
 

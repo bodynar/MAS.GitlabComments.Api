@@ -1,10 +1,10 @@
-﻿namespace MAS.GitlabComments.Controllers
+﻿namespace MAS.GitlabComments.WebApi.Controllers
 {
     using System;
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.Attributes;
-    using MAS.GitlabComments.Models;
+    using MAS.GitlabComments.WebApi.Attributes;
+    using MAS.GitlabComments.WebApi.Models;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Models;
 

@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Models
+﻿namespace MAS.GitlabComments.WebApi.Models
 {
     using System;
     using System.Runtime.Serialization;
