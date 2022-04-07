@@ -6,13 +6,23 @@
 
     using MAS.GitlabComments.Data.Filter;
     using MAS.GitlabComments.Data.Models;
+    using MAS.GitlabComments.Data.Select;
     using MAS.GitlabComments.Data.Services;
     using MAS.GitlabComments.Logic.Models;
 
+    /// <summary>
+    /// Implementation of <see cref="ICommentStoryRecordService"/>
+    /// </summary>
     public class CommentStoryRecordService : ICommentStoryRecordService
     {
+        /// <inheritdoc cref="IDataProvider{TEntity}"/>
         private IDataProvider<StoryRecord> DataProvider { get; }
 
+        /// <summary>
+        /// Initializing <see cref="CommentStoryRecordService"/>
+        /// </summary>
+        /// <param name="dataProvider">Instance of data provider of <see cref="StoryRecord"/></param>
+        /// <exception cref="ArgumentNullException">Param dataProvider is null</exception>
         public CommentStoryRecordService(
             IDataProvider<StoryRecord> dataProvider
         )
@@ -20,36 +30,26 @@
             DataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
         }
 
-        public IEnumerable<StoryRecordModel> Get(DateTime? start, DateTime? endDate, Guid? commentId, int? count)
+        /// <inheritdoc cref="ICommentStoryRecordService.Get(DateTime?, DateTime?, Guid?, int?)"/>
+        public IEnumerable<StoryRecordViewModel> Get(DateTime? start, DateTime? endDate, Guid? commentId, int? count)
         {
             var filtersDefined = start.HasValue || endDate.HasValue || commentId.HasValue;
 
-            var dataItems = Enumerable.Empty<StoryRecord>();
+            var filter = filtersDefined ? BuildFilter(start, endDate, commentId) : null;
 
-            if (filtersDefined)
-            {
-                var filter = BuildFilter(start, endDate, commentId);
+            var dataItems = DataProvider
+                .Select<StoryRecordViewModel>(new SelectConfiguration { Filter = filter })
+                .ToList()
+                .GroupBy(x => x.CommentId, x => x.CommentText)
+                .Select(x => new StoryRecordViewModel()
+                {
+                    CommentId = x.Key,
+                    IncrementCount = x.Count(),
+                    CommentText = x.First()
+                })
+                .OrderBy(x => x.IncrementCount);
 
-                dataItems = DataProvider.Where(filter);
-            }
-            else
-            {
-                dataItems = DataProvider.Get();
-            }
-
-            /**
-             * TODO:
-             * 1. Request JOIN model from StoryModel & Comment
-             *      Probably must update DataProvider to support joint columns declared via attribute
-             *      and special generic method
-             *      OR
-             *      special generic method with additional columns
-             *      
-             *      And all must support select with\-out filtering
-            */
-
-
-            return null;
+            return dataItems;
         }
 
         private FilterGroup BuildFilter(DateTime? start, DateTime? endDate, Guid? commentId)
