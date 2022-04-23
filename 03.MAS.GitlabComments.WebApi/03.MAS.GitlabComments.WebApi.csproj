@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj" />
-    <ProjectReference Include="..\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj" />
+    <ProjectReference Include="..\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj" />
   </ItemGroup>
 
 </Project>

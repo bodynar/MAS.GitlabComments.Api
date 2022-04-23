@@ -2,9 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>_02.MAS.GitlabComments.Logic.Tests</RootNamespace>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>MAS.GitlabComments.WebApi.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,15 +16,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="1.3.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj" />
-    <ProjectReference Include="..\..\..\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj" />
+    <ProjectReference Include="..\..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj" />
+    <ProjectReference Include="..\..\03.MAS.GitlabComments.WebApi\03.MAS.GitlabComments.WebApi.csproj" />
   </ItemGroup>
 
 </Project>
