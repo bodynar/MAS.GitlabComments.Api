@@ -44,10 +44,11 @@
                 .Select(x => new StoryRecordViewModel()
                 {
                     CommentId = x.Key,
-                    IncrementCount = x.Count(),
+                    Count = x.Count(),
                     CommentText = x.First()
                 })
-                .OrderBy(x => x.IncrementCount);
+                .OrderBy(x => x.Count)
+                .ToList();
 
             return dataItems;
         }
@@ -99,7 +100,8 @@
             {
                 LogicalJoinType = FilterJoinType.And,
                 Name = "StoryRecordFilter",
-                Items = filterItems
+                Items = filterItems,
+                TableAlias = $"{nameof(StoryRecord)}s"
             };
 
             return filter;

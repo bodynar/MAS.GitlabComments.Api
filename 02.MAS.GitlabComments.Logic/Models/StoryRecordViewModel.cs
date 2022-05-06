@@ -20,6 +20,6 @@
         /// <summary>
         /// Amount of increment during selected period
         /// </summary>
-        public int IncrementCount { get; set; }
+        public int Count { get; set; }
     }
 }

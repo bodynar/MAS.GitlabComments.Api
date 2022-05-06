@@ -96,7 +96,7 @@
         [Fact]
         public void ShouldBuildQueryWithSpecificColumnsWhenProjectedModelHasRequiredAttributes()
         {
-            var expectedSql = $"SELECT [Table1].[Column1],{Environment.NewLine}[Table2].[Column2] FROM [{TestedTableName}]";
+            var expectedSql = $"SELECT [Table1].[Column1],[Table2].[Column2] FROM [{TestedTableName}]";
 
             SelectConfiguration configuration = new() { };
             ComplexColumnQueryBuilderResult = new ComplexColumnData()

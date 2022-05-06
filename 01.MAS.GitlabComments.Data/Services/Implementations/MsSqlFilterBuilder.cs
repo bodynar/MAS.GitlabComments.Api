@@ -140,7 +140,11 @@
 
                 if (arguments.TryAdd(paramName, filter.Value))
                 {
-                    conditions.Add($"[{filter.FieldName}] {comparisonOperator} @{paramName}");
+                    var fieldName = string.IsNullOrEmpty(filterGroup.TableAlias)
+                        ? $"[{filter.FieldName}]"
+                        : $"[{filterGroup.TableAlias}].[{filter.FieldName}]";
+
+                    conditions.Add($"{fieldName} {comparisonOperator} @{paramName}");
                 }
                 else
                 {

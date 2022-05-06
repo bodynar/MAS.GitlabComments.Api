@@ -84,7 +84,7 @@
             // LEFT OUTER JOIN [Table] AS [Alias] WITH(NOLOCK)
             //      ON [Alias].[TableColumn] = [SourceTableAlias].[SourceTableColumn]
 
-            return $"{joinType} join [{RightTableName}] as [{Alias}] with(nolock) on ([{Alias}].[{RightTableRelationColumn}] = [{LeftTableName}].[{LeftTableRelationColumn}])".ToUpper();
+            return $"{joinType} JOIN [{RightTableName}] AS [{Alias}] WITH(NOLOCK) ON ([{Alias}].[{RightTableRelationColumn}] = [{LeftTableName}].[{LeftTableRelationColumn}])";
         }
     }
 }

@@ -344,9 +344,9 @@
 
             if (complexColumnData != null)
             {
-                columns = string.Join($",{Environment.NewLine}", complexColumnData.Columns.Select(column => column.ToString()));
+                columns = string.Join($",", complexColumnData.Columns.Select(column => column.ToString()));
 
-                joinPart = string.Join(Environment.NewLine, complexColumnData.Joins.Select(joinData => joinData.ToQueryPart()));
+                joinPart = string.Join(" ", complexColumnData.Joins.Select(joinData => joinData.ToQueryPart()));
             }
 
             var entities = Enumerable.Empty<TProjection>();

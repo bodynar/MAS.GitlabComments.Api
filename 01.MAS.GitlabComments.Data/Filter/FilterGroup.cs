@@ -18,6 +18,11 @@
         public FilterJoinType LogicalJoinType { get; set; }
 
         /// <summary>
+        /// Alias for root table
+        /// </summary>
+        public string TableAlias { get; set; }
+
+        /// <summary>
         /// Filter items
         /// </summary>
         public IEnumerable<FilterItem> Items { get; set; } = Enumerable.Empty<FilterItem>();
