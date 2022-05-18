@@ -65,7 +65,7 @@
                         Name = "CreatedOnStart",
                         FieldName = nameof(StoryRecord.CreatedOn),
                         LogicalComparisonType = ComparisonType.GreaterOrEqual,
-                        Value = start.Value
+                        Value = start.Value.AddDays(-1) // TODO: temporary, till implement converting to DATE
                     }
                 );
             }
@@ -78,7 +78,7 @@
                         Name = "CreatedOnEnd",
                         FieldName = nameof(StoryRecord.CreatedOn),
                         LogicalComparisonType = ComparisonType.LessOrEqual,
-                        Value = endDate.Value
+                        Value = endDate.Value.AddDays(1) // TODO: temporary, till implement converting to DATE
                     }
                 );
             }
