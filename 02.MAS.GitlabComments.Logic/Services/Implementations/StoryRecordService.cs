@@ -47,7 +47,7 @@
                     Count = x.Count(),
                     CommentText = x.First()
                 })
-                .OrderBy(x => x.Count)
+                .OrderByDescending(x => x.Count)
                 .ToList();
 
             return dataItems;
