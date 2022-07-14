@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>e9af2a7f-bca8-45ac-bcff-57d115079c7d</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+    <Version>1.2.1</Version>
+    <RootNamespace>MAS.GitlabComments.WebApi</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="logs\**" />
+    <Compile Remove="Services\**" />
+    <Compile Remove="Tests\**" />
+    <Content Remove="logs\**" />
+    <Content Remove="Services\**" />
+    <Content Remove="Tests\**" />
+    <EmbeddedResource Remove="logs\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="logs\**" />
+    <None Remove="Services\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj" />
+    <ProjectReference Include="..\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj" />
+  </ItemGroup>
+
+</Project>
