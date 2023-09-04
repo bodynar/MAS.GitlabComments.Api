@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Attributes
+﻿namespace MAS.GitlabComments.DataAccess.Attributes
 {
     using System;
 

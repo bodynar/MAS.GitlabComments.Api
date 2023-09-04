@@ -5,10 +5,10 @@
     using System.Dynamic;
     using System.Linq;
 
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Exceptions;
+    using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.Logic.Models;
-    using MAS.GitlabComments.Data.Exceptions;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Services;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>
@@ -51,7 +51,7 @@
 
             if (string.IsNullOrEmpty(addCommentModel.Message))
             {
-                throw new ArgumentNullException(nameof(addCommentModel.Message));
+                throw new ArgumentNullException(nameof(AddCommentModel.Message));
             }
 
             var newId = Guid.NewGuid();
@@ -135,7 +135,7 @@
             }
             if (string.IsNullOrEmpty(updateCommentModel.Message))
             {
-                throw new ArgumentNullException(nameof(updateCommentModel.Message));
+                throw new ArgumentNullException(nameof(UpdateCommentModel.Message));
             }
 
             GetCommentWithWithChecking(updateCommentModel.Id);

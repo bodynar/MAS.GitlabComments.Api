@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Exceptions;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Exceptions;
+    using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
 
     using Moq;

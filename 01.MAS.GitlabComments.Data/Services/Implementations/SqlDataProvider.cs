@@ -1,13 +1,13 @@
-﻿namespace MAS.GitlabComments.Data.Services.Implementations
+﻿namespace MAS.GitlabComments.DataAccess.Services.Implementations
 {
     using System;
     using System.Collections.Generic;
     using System.Dynamic;
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Select;
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
 
     /// <summary>
     /// Provider of data for specified entity type

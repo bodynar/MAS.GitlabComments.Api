@@ -1,8 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Tests.FilterGroupTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.FilterGroupTests
 {
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Filter;
+    using MAS.GitlabComments.DataAccess.Filter;
 
     using Xunit;
 

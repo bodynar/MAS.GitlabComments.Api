@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Data;
     using MAS.GitlabComments.Logic.Models;
-    using MAS.GitlabComments.Data.Models;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>

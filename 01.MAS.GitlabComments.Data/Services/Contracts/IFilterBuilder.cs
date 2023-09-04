@@ -1,8 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Services
+﻿namespace MAS.GitlabComments.DataAccess.Services
 {
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.Data.Filter;
+    using MAS.GitlabComments.DataAccess.Filter;
 
     /// <summary>
     /// Sql filter builder

@@ -4,10 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Select;
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
+    using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.Logic.Models;
 
     /// <summary>

@@ -1,9 +1,9 @@
-﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Services.Implementations;
 
     using Xunit;
 

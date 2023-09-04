@@ -1,6 +1,6 @@
-﻿namespace MAS.GitlabComments.Data.Select
+﻿namespace MAS.GitlabComments.DataAccess.Select
 {
-    using MAS.GitlabComments.Data.Attributes;
+    using MAS.GitlabComments.DataAccess.Attributes;
 
     /// <summary>
     /// Type of sql table join

@@ -1,10 +1,10 @@
-﻿namespace MAS.GitlabComments.Data.Tests.ComplexColumnMssqlBuilderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.ComplexColumnMssqlBuilderTests
 {
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Attributes;
-    using MAS.GitlabComments.Data.Select;
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Attributes;
+    using MAS.GitlabComments.DataAccess.Select;
+    using MAS.GitlabComments.DataAccess.Services.Implementations;
 
     using Xunit;
 

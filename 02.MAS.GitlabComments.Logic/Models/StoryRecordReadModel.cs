@@ -2,9 +2,9 @@
 {
     using System;
 
-    using MAS.GitlabComments.Data.Attributes;
-    using MAS.GitlabComments.Data.Select;
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.DataAccess.Attributes;
+    using MAS.GitlabComments.DataAccess.Select;
+    using MAS.GitlabComments.DataAccess.Services;
 
     /// <summary>
     /// Comment story record model to read via <see cref="IDataProvider{TEntity}.Select{TProjection}(SelectConfiguration)"/>

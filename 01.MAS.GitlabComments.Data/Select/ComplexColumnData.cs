@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Select
+﻿namespace MAS.GitlabComments.DataAccess.Select
 {
     using System.Collections.Generic;
     using System.Linq;

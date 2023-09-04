@@ -1,12 +1,12 @@
-﻿namespace MAS.GitlabComments.Data.Services.Implementations
+﻿namespace MAS.GitlabComments.DataAccess.Services.Implementations
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Utilities;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Utilities;
 
     /// <summary>
     /// MsSql filter builder

@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Services.Implementations
+﻿namespace MAS.GitlabComments.DataAccess.Services.Implementations
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,8 @@
     using System.Reflection;
     using System.Text.RegularExpressions;
 
-    using MAS.GitlabComments.Data.Attributes;
-    using MAS.GitlabComments.Data.Select;
+    using MAS.GitlabComments.DataAccess.Attributes;
+    using MAS.GitlabComments.DataAccess.Select;
 
     /// <summary>
     /// Implementation of <see cref="IComplexColumnQueryBuilder"/> for MSSql

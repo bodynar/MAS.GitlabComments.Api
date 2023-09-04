@@ -1,8 +1,8 @@
 namespace MAS.GitlabComments.WebApi
 {
     using MAS.GitlabComments.WebApi.Attributes;
-    using MAS.GitlabComments.Data.Services;
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Services;
+    using MAS.GitlabComments.DataAccess.Services.Implementations;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
     using MAS.GitlabComments.WebApi.Models;

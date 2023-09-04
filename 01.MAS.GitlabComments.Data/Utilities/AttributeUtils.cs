@@ -1,9 +1,9 @@
-﻿namespace MAS.GitlabComments.Data.Utilities
+﻿namespace MAS.GitlabComments.DataAccess.Utilities
 {
     using System;
     using System.Reflection;
 
-    using MAS.GitlabComments.Data.Attributes;
+    using MAS.GitlabComments.DataAccess.Attributes;
 
     /// <summary>
     /// Attribute utilities

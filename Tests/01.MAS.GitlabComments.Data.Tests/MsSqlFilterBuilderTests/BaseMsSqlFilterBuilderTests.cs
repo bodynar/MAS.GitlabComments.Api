@@ -1,8 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Tests.MsSqlFilterBuilderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.MsSqlFilterBuilderTests
 {
     using System;
 
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Services.Implementations;
 
     /// <summary>
     /// Base class for <see cref="MsSqlFilterBuilder"/> tests

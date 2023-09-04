@@ -1,9 +1,9 @@
-﻿namespace MAS.GitlabComments.Data.Tests.MsSqlFilterBuilderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.MsSqlFilterBuilderTests
 {
     using System;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Services;
 
     using Xunit;
 

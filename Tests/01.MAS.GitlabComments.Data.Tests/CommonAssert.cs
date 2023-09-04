@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Tests
+﻿namespace MAS.GitlabComments.DataAccess.Tests
 {
     using System;
     using System.Collections.Generic;

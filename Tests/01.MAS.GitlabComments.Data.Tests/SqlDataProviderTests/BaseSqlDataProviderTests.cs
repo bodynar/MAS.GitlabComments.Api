@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
     using System.Collections.Generic;
@@ -6,11 +6,11 @@
     using System.Dynamic;
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Select;
-    using MAS.GitlabComments.Data.Services;
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
+    using MAS.GitlabComments.DataAccess.Services;
+    using MAS.GitlabComments.DataAccess.Services.Implementations;
 
     using Moq;
 

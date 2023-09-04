@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{902D9031
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "03.MAS.GitlabComments.WebApi.Tests", "Tests\03.MAS.GitlabComments.WebApi.Tests\03.MAS.GitlabComments.WebApi.Tests.csproj", "{5E0CCD20-7528-49EA-A3F8-F6EE73187A93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.Data", "01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj", "{05FCC330-C531-4337-8F41-3232D115F429}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.DataAccess", "01.MAS.GitlabComments.Data\01.MAS.GitlabComments.DataAccess.csproj", "{05FCC330-C531-4337-8F41-3232D115F429}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.Data.Tests", "Tests\01.MAS.GitlabComments.Data.Tests\01.MAS.GitlabComments.Data.Tests.csproj", "{A6442276-FA23-4B43-91DB-050426CACAAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.DataAccess.Tests", "Tests\01.MAS.GitlabComments.Data.Tests\01.MAS.GitlabComments.DataAccess.Tests.csproj", "{A6442276-FA23-4B43-91DB-050426CACAAA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", "{D5DB2FBE-0ECE-408B-8BCE-A8DEE74F49CD}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,9 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", 
 		SqlScripts\002_AddStoryRecord.sql = SqlScripts\002_AddStoryRecord.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02.MAS.GitlabComments.Logic", "02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj", "{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.Logic", "02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj", "{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02.MAS.GitlabComments.Logic.Tests", "Tests\02.MAS.GitlabComments.Logic.Tests\02.MAS.GitlabComments.Logic.Tests.csproj", "{75E81C79-344C-466E-A951-019FFEA54222}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.Logic.Tests", "Tests\02.MAS.GitlabComments.Logic.Tests\02.MAS.GitlabComments.Logic.Tests.csproj", "{75E81C79-344C-466E-A951-019FFEA54222}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "00.MAS.GitlabComments.Data", "00.MAS.GitlabComments.Data\00.MAS.GitlabComments.Data.csproj", "{0FC84E57-C110-49B0-BBC9-99EA41189674}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{75E81C79-344C-466E-A951-019FFEA54222}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75E81C79-344C-466E-A951-019FFEA54222}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75E81C79-344C-466E-A951-019FFEA54222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FC84E57-C110-49B0-BBC9-99EA41189674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FC84E57-C110-49B0-BBC9-99EA41189674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FC84E57-C110-49B0-BBC9-99EA41189674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FC84E57-C110-49B0-BBC9-99EA41189674}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
