@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", 
 	ProjectSection(SolutionItems) = preProject
 		SqlScripts\001_Init.sql = SqlScripts\001_Init.sql
 		SqlScripts\002_AddStoryRecord.sql = SqlScripts\002_AddStoryRecord.sql
+		003_UpdateEntities.sql = 003_UpdateEntities.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.Logic", "02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj", "{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}"
