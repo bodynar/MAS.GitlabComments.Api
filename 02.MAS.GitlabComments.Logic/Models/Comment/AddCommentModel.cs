@@ -11,8 +11,13 @@
         public string Message { get; set; }
 
         /// <summary>
-        /// Explonation message
+        /// Explanation message
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Comment with link to rules
+        /// </summary>
+        public string CommentWithLinkToRule { get; set; }
     }
 }

@@ -21,5 +21,10 @@
         /// Description
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Comment with link to rules
+        /// </summary>
+        public string CommentWithLinkToRule { get; set; }
     }
 }
