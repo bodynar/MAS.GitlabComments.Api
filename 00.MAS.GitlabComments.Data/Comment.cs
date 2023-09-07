@@ -1,21 +1,17 @@
 ﻿namespace MAS.GitlabComments.Data
 {
-    using System;
-
     /// <summary>
     /// Gitlab comment
     /// </summary>
     public class Comment : BaseEntity
     {
         /// <summary>
-        /// Date of last update
-        /// </summary>
-        public virtual DateTime ModifiedOn { get; set; }
-
-        /// <summary>
         /// Comment text
         /// </summary>
         public virtual string Message { get; set; }
+
+        /// <summary>
+        /// </summary>
 
         /// <summary>
         /// Explonation
