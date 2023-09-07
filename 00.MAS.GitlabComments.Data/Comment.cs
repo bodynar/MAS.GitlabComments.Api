@@ -11,10 +11,12 @@
         public virtual string Message { get; set; }
 
         /// <summary>
+        /// Comment with link to rules
         /// </summary>
+        public virtual string CommentWithLinkToRule { get; set; }
 
         /// <summary>
-        /// Explonation
+        /// Explanation
         /// </summary>
         public virtual string Description { get; set; }
 
