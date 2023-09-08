@@ -60,8 +60,8 @@
             {
                 Id = newId,
                 AppearanceCount = 1,
-                CreatedOn = DateTime.UtcNow,
                 Message = addCommentModel.Message,
+                CommentWithLinkToRule = addCommentModel.CommentWithLinkToRule,
                 Description = addCommentModel.Description
             });
 
@@ -82,7 +82,8 @@
                     {
                         Id = x.Id,
                         Message = x.Message,
-                        AppearanceCount = x.AppearanceCount
+                        CommentWithLinkToRule = x.CommentWithLinkToRule,
+                        AppearanceCount = x.AppearanceCount,
                     });
         }
 
