@@ -51,12 +51,12 @@
         /// <summary>
         /// Last called command back-field
         /// </summary>
-        private KeyValuePair<string, object>? lastCommand;
+        private KeyValuePair<string, IReadOnlyDictionary<string, object>>? lastCommand;
 
         /// <summary>
         /// Last called command of <see cref="IDbAdapter"/> - pair of sql command and arguments
         /// </summary>
-        protected KeyValuePair<string, object>? LastCommand
+        protected KeyValuePair<string, IReadOnlyDictionary<string, object>>? LastCommand
         {
             get
             {
@@ -65,7 +65,7 @@
                     return null;
                 }
 
-                var copy = new KeyValuePair<string, object>(lastCommand.Value.Key, lastCommand.Value.Value);
+                var copy = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(lastCommand.Value.Key, lastCommand.Value.Value);
 
                 lastCommand = null;
 
@@ -76,12 +76,12 @@
         /// <summary>
         /// Last called query back-field
         /// </summary>
-        private KeyValuePair<string, object>? lastQuery;
+        private KeyValuePair<string, IReadOnlyDictionary<string, object>>? lastQuery;
 
         /// <summary>
         /// Last called query of <see cref="IDbAdapter"/> - pair of sql query and arguments
         /// </summary>
-        protected KeyValuePair<string, object>? LastQuery
+        protected KeyValuePair<string, IReadOnlyDictionary<string, object>>? LastQuery
         {
             get
             {
@@ -90,7 +90,7 @@
                     return null;
                 }
 
-                var copy = new KeyValuePair<string, object>(lastQuery.Value.Key, lastQuery.Value.Value);
+                var copy = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(lastQuery.Value.Key, lastQuery.Value.Value);
 
                 lastQuery = null;
 
@@ -147,41 +147,41 @@
             var mockDbAdapter = new Mock<IDbAdapter>();
 
             mockDbAdapter
-                .Setup(x => x.Query<TestedDataProviderEntity>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
-                .Callback<IDbConnection, string, object>((_, sql, args) =>
+                .Setup(x => x.Query<TestedDataProviderEntity>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyDictionary<string, object>>()))
+                .Callback<IDbConnection, string, IReadOnlyDictionary<string, object>>((_, sql, args) =>
                 {
                     if (lastQuery.HasValue)
                     {
                         throw new Exception($"{nameof(LastQuery)} is not empty");
                     }
 
-                    lastQuery = new KeyValuePair<string, object>(sql, args);
+                    lastQuery = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(sql, args);
                 })
                 .Returns(Enumerable.Empty<TestedDataProviderEntity>());
 
             mockDbAdapter
-                .Setup(x => x.Query<SelectTests.EmptyProjectedClass>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
-                .Callback<IDbConnection, string, object>((_, sql, args) =>
+                .Setup(x => x.Query<SelectTests.EmptyProjectedClass>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyDictionary<string, object>>()))
+                .Callback<IDbConnection, string, IReadOnlyDictionary<string, object>>((_, sql, args) =>
                 {
                     if (lastQuery.HasValue)
                     {
                         throw new Exception($"{nameof(LastQuery)} is not empty");
                     }
 
-                    lastQuery = new KeyValuePair<string, object>(sql, args);
+                    lastQuery = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(sql, args);
                 })
                 .Returns(Enumerable.Empty<SelectTests.EmptyProjectedClass>());
 
             mockDbAdapter
-                .Setup(x => x.Execute(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
-                .Callback<IDbConnection, string, object>((_, sql, args) =>
+                .Setup(x => x.Execute(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyDictionary<string, object>>()))
+                .Callback<IDbConnection, string, IReadOnlyDictionary<string, object>>((_, sql, args) =>
                 {
                     if (lastCommand.HasValue)
                     {
                         throw new Exception($"{nameof(LastCommand)} is not empty");
                     }
 
-                    lastCommand = new KeyValuePair<string, object>(sql, args);
+                    lastCommand = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(sql, args);
                 })
                 .Returns(() => TestedAffectedRowsCount);
 

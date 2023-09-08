@@ -86,7 +86,7 @@
             var sqlQuery = $"INSERT INTO [{TableName}]";
 
             var setStatements = new List<KeyValuePair<string, string>>();
-            var arguments = new ExpandoObject();
+            var arguments = new Dictionary<string, object>();
 
             var fields = entity.GetType().GetProperties().Where(x => !DefaultEntityFields.Contains(x.Name));
 
@@ -181,7 +181,7 @@
 
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
-                entity = DbAdapter.Query<TEntity>(connection, sqlQuery, new { P1 = entityId }).FirstOrDefault();
+                entity = DbAdapter.Query<TEntity>(connection, sqlQuery, new Dictionary<string, object>() { { "P1", entityId } }).FirstOrDefault();
             }
 
             return entity;
@@ -207,7 +207,7 @@
             }
 
             var setStatements = new List<string>();
-            var arguments = new ExpandoObject();
+            var arguments = new Dictionary<string, object>();
             var argumentsCount = 0;
 
             foreach (var pair in newValues.Where(x => !string.IsNullOrEmpty(x.Key) && x.Value != null))
@@ -275,7 +275,7 @@
 
                 using (var connection = DbConnectionFactory.CreateDbConnection())
                 {
-                    DbAdapter.Execute(connection, sqlQuery, new { P1 = entityIds });
+                    DbAdapter.Execute(connection, sqlQuery, new Dictionary<string, object>() { { "P1", entityIds } });
                 }
             }
         }

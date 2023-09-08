@@ -15,7 +15,7 @@
         /// <param name="sqlQuery">Sql query</param>
         /// <param name="arguments">Sql query arguments</param>
         /// <returns>Enumeration of selected rows mapped to specified class</returns>
-        IEnumerable<TEntity> Query<TEntity>(IDbConnection connection, string sqlQuery, object arguments = null);
+        IEnumerable<TEntity> Query<TEntity>(IDbConnection connection, string sqlQuery, IReadOnlyDictionary<string, object> arguments = null);
 
         /// <summary>
         /// Execute sql command
@@ -24,6 +24,6 @@
         /// <param name="sqlQuery">Sql command</param>
         /// <param name="arguments">Sql command arguments</param>
         /// <returns>Affected rows count</returns>
-        int Execute(IDbConnection connection, string sqlQuery, object arguments);
+        int Execute(IDbConnection connection, string sqlQuery, IReadOnlyDictionary<string, object> arguments);
     }
 }
