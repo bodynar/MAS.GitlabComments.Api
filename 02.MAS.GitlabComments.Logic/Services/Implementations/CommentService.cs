@@ -54,11 +54,8 @@
                 throw new ArgumentNullException(nameof(AddCommentModel.Message));
             }
 
-            var newId = Guid.NewGuid();
-
-            CommentsDataProvider.Add(new Comment
+            var newId = CommentsDataProvider.Add(new Comment
             {
-                Id = newId,
                 AppearanceCount = 1,
                 Message = addCommentModel.Message,
                 CommentWithLinkToRule = addCommentModel.CommentWithLinkToRule,

@@ -1,11 +1,11 @@
-﻿namespace MAS.GitlabComments.DataAccess.Services.Implementations
+﻿namespace MAS.GitlabComments.DataAccess.Services.Implementations.DataProvider
 {
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.Linq;
 
     using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Exceptions;
     using MAS.GitlabComments.DataAccess.Filter;
     using MAS.GitlabComments.DataAccess.Select;
 
@@ -41,7 +41,8 @@
         /// <summary>
         /// List of default entity fields which cannot be set manually
         /// </summary>
-        private static IEnumerable<string> DefaultEntityFields { get; } = new[] { "CreatedOn", "ModifiedOn" };
+        private static IEnumerable<string> DefaultEntityFields { get; }
+            = typeof(BaseEntity).GetProperties().Select(x => x.Name);
 
         /// <summary>
         /// Initializing <see cref="SqlDataProvider{TEntity}"/>
@@ -74,81 +75,86 @@
         /// Add entity
         /// </summary>
         /// <param name="entity">Entity</param>
+        /// <returns>Identifier column value of new entity</returns>
         /// <exception cref="ArgumentNullException">Parameter entity is null</exception>
-        /// <exception cref="Exception">No records was added</exception>
-        public void Add(TEntity entity)
+        /// <exception cref="QueryExecutionException"><typeparamref name="TEntity"/> is empty</exception>
+        /// <exception cref="QueryExecutionException">No record were inserted</exception>
+        public Guid Add(TEntity entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            var sqlQuery = $"INSERT INTO [{TableName}]";
+            var parameters =
+                entity
+                    .GetType()
+                    .GetProperties()
+                    .Where(x => EntityFields.Contains(x.Name))
+                    .Select((x, i) => {
+                        var boxedValue = x.GetValue(entity);
 
-            var setStatements = new List<KeyValuePair<string, string>>();
-            var arguments = new Dictionary<string, object>();
+                        return new QueryParameter
+                        {
+                            ColumnName = x.Name,
+                            Value = boxedValue,
+                            ParameterName = $"@P{i + 1}",
+                        };
+                    });
 
-            var fields = entity.GetType().GetProperties().Where(x => !DefaultEntityFields.Contains(x.Name));
-
-            foreach (var field in fields)
+            if (!parameters.Any())
             {
-                var boxedValue = field.GetValue(entity);
-                var isDefault = IsDefaultValue(boxedValue, field.PropertyType);
-
-                if (!isDefault)
-                {
-                    var parameterName = $"@P{setStatements.Count + 1}";
-
-                    if (arguments.TryAdd(parameterName, boxedValue))
-                    {
-                        setStatements.Add(new KeyValuePair<string, string>(field.Name, parameterName));
-                    }
-                }
+                throw new QueryExecutionException(
+                    QueryExecutionExceptionState.Before,
+                    $"Operation cannot be performed due to empty model \"{entity.GetType().FullName}\""
+                );
             }
 
-            if (setStatements.Any())
+            var map = parameters.ToDictionary(x => x.ColumnName);
+            Guid id = Guid.NewGuid();
+
+            if (map.ContainsKey(nameof(BaseEntity.Id)))
             {
-                string parameterName;
-
-                if (!setStatements.Any(x => x.Key == "Id"))
-                {
-                    parameterName = $"@P{setStatements.Count + 1}";
-                    if (arguments.TryAdd(parameterName, Guid.NewGuid()))
-                    {
-                        setStatements.Add(new KeyValuePair<string, string>("Id", parameterName));
-                    }
-                    else
-                    {
-                        throw new Exception("Cannot build arguments for sql command: [Id].");
-                    }
-                }
-
-                parameterName = $"@P{setStatements.Count + 1}";
-                if (arguments.TryAdd(parameterName, DateTime.UtcNow))
-                {
-                    setStatements.Add(new KeyValuePair<string, string>("CreatedOn", parameterName));
-                }
-                else
-                {
-                    throw new Exception("Cannot build arguments for sql command: [CreatedOn].");
-                }
-
-                var fieldNames = setStatements.Select(x => $"[{x.Key}]");
-                var parameterNames = setStatements.Select(x => x.Value);
-
-                sqlQuery += $" ({string.Join(", ", fieldNames)}) VALUES ({string.Join(", ", parameterNames)})";
-                int affectedRows = 0;
-
-                using (var connection = DbConnectionFactory.CreateDbConnection())
-                {
-                    affectedRows = DbAdapter.Execute(connection, sqlQuery, arguments);
-                }
-
-                if (affectedRows == 0)
-                {
-                    throw new Exception("Insert command performed with empty result, no record was added.");
-                }
+                id = (map[nameof(BaseEntity.Id)].Value as Guid?).Value;
             }
+            else
+            {
+                map.Add(nameof(BaseEntity.Id), new QueryParameter
+                {
+                    Value = id,
+                    ColumnName = nameof(BaseEntity.Id),
+                    ParameterName = $"@P{map.Count + 1}",
+                });
+            }
+
+            map.Set(nameof(BaseEntity.CreatedOn), DateTime.UtcNow);
+            map.Set(nameof(BaseEntity.ModifiedOn), DateTime.UtcNow);
+
+            var query = $"INSERT INTO [{TableName}]" +
+                $" ({string.Join(", ", map.Keys.Select(x => $"[{x}]"))})" +
+                $" VALUES ({string.Join(", ", map.Values.Select(x => x.ParameterName))})"
+            ;
+
+            int affectedRows = 0;
+
+            using (var connection = DbConnectionFactory.CreateDbConnection())
+            {
+                affectedRows = DbAdapter.Execute(
+                    connection,
+                    query,
+                    map.ToDictionary(x => x.Value.ParameterName, x => x.Value.Value)
+                );
+            }
+
+            if (affectedRows == 0)
+            {
+                throw new QueryExecutionException(
+                    QueryExecutionExceptionState.After,
+                    "Insert command performed with empty result, no record was added."
+                );
+            }
+
+            return id;
         }
 
         /// <summary>
@@ -157,7 +163,7 @@
         /// <returns>All entities</returns>
         public IEnumerable<TEntity> Get()
         {
-            IEnumerable<TEntity> entities = Enumerable.Empty<TEntity>();
+            var entities = Enumerable.Empty<TEntity>();
 
             var sqlQuery = $"SELECT * FROM [{TableName}]";
             using (var connection = DbConnectionFactory.CreateDbConnection())
@@ -210,15 +216,14 @@
             var arguments = new Dictionary<string, object>();
             var argumentsCount = 0;
 
+            var parameterName = $"@P{argumentsCount + 1}";
+
             foreach (var pair in newValues.Where(x => !string.IsNullOrEmpty(x.Key) && x.Value != null))
             {
                 var isDefaultValue = IsDefaultValue(pair.Value, pair.Value.GetType());
 
-                if (!isDefaultValue
-                    && EntityFields.Contains(pair.Key)
-                    && !DefaultEntityFields.Contains(pair.Key))
+                if (!isDefaultValue && EntityFields.Contains(pair.Key))
                 {
-                    var parameterName = $"@P{argumentsCount + 1}";
                     if (arguments.TryAdd(parameterName, pair.Value))
                     {
                         setStatements.Add($"[{pair.Key}] = {parameterName}");
@@ -227,32 +232,36 @@
                 }
             }
 
-            if (setStatements.Any())
+            if (!setStatements.Any())
             {
-                var parameterName = $"@P{argumentsCount + 1}";
-                if (arguments.TryAdd(parameterName, DateTime.UtcNow))
-                {
-                    setStatements.Add($"[ModifiedOn] = {parameterName}");
-                    argumentsCount++;
-                }
+                return;
+            }
 
-                var setStatement = string.Join(", ", setStatements);
+            parameterName = $"@P{argumentsCount + 1}";
+            if (arguments.TryAdd(parameterName, DateTime.UtcNow))
+            {
+                setStatements.Add($"[ModifiedOn] = {parameterName}");
+                argumentsCount++;
+            }
 
-                if (arguments.TryAdd($"@P{++argumentsCount}", entityId))
-                {
-                    var sqlQuery = $"UPDATE [{TableName}] SET {setStatement} WHERE [Id] = @P{argumentsCount}";
-                    int affectedRows = 0;
+            var setStatement = string.Join(", ", setStatements);
 
-                    using (var connection = DbConnectionFactory.CreateDbConnection())
-                    {
-                        affectedRows = DbAdapter.Execute(connection, sqlQuery, arguments);
-                    }
+            if (!arguments.TryAdd($"@P{++argumentsCount}", entityId))
+            {
+                return;
+            }
 
-                    if (affectedRows == 0)
-                    {
-                        throw new Exception("Update command performed with empty result, no record was updated.");
-                    }
-                }
+            var sqlQuery = $"UPDATE [{TableName}] SET {setStatement} WHERE [Id] = @P{argumentsCount}";
+            int affectedRows = 0;
+
+            using (var connection = DbConnectionFactory.CreateDbConnection())
+            {
+                affectedRows = DbAdapter.Execute(connection, sqlQuery, arguments);
+            }
+
+            if (affectedRows == 0)
+            {
+                throw new Exception("Update command performed with empty result, no record was updated.");
             }
         }
 
@@ -368,7 +377,10 @@
         /// <returns>List of entity field names</returns>
         private static IEnumerable<string> GetEntityFields()
         {
-            return typeof(TEntity).GetProperties().Select(x => x.Name);
+            return typeof(TEntity)
+                .GetProperties()
+                .Select(x => x.Name)
+                .Except(DefaultEntityFields);
         }
 
         /// <summary>
@@ -396,10 +408,9 @@
         /// <returns>Pair of sql text and built sql arguments</returns>
         private (string, IReadOnlyDictionary<string, object>) GetFilterValue(FilterGroup filter)
         {
-            var entityFields = GetEntityFields();
             var filterColumns = filter.GetFilterColumns();
 
-            var notValidColumns = filterColumns.Except(entityFields);
+            var notValidColumns = filterColumns.Except(EntityFields);
 
             if (notValidColumns.Any())
             {

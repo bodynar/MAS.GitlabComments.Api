@@ -12,6 +12,7 @@ namespace MAS.GitlabComments.WebApi
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using MAS.GitlabComments.DataAccess.Services.Implementations.DataProvider;
 
     public class Startup
     {

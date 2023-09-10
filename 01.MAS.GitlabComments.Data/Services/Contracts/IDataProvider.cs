@@ -18,7 +18,8 @@
         /// Add entity
         /// </summary>
         /// <param name="entity">Entity</param>
-        void Add(TEntity entity);
+        /// <returns>Identifier column value of new entity</returns>
+        Guid Add(TEntity entity);
 
         /// <summary>
         /// Get all entities
