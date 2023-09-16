@@ -179,9 +179,14 @@
         /// </summary>
         /// <param name="entityId">Identifier value</param>
         /// <returns>Entity by identifier if it found; otherwise null</returns>
+        /// <exception cref="ArgumentNullException">Parameter entityId is not set</exception>
         public TEntity Get(Guid entityId)
         {
-            // TODO: add param check
+            if (entityId == default)
+            {
+                throw new ArgumentNullException(nameof(entityId));
+            }
+
             TEntity entity = null;
             var sqlQuery = $"SELECT * FROM [{TableName}] WHERE Id = @P1";
 

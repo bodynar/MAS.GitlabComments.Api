@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.DataAccess.Services.Implementations;
-
     using Xunit;
 
     /// <summary>
@@ -26,6 +24,20 @@
             Assert.Equal(expectedSqlQuery, lastQuery.Value.Key);
             Assert.NotNull(lastQuery.Value.Value);
             AssertArguments(expectedArguments, lastQuery.Value.Value);
+        }
+
+        [Fact]
+        public void ShouldThrowArgumentNullExceptionWhenIdIsDefault()
+        {
+            Guid entityId = default;
+
+            Exception exception =
+                Record.Exception(
+                    () => TestedService.Get(entityId)
+                );
+
+            Assert.NotNull(exception);
+            Assert.IsType<ArgumentNullException>(exception);
         }
     }
 }
