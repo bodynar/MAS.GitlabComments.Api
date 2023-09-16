@@ -40,10 +40,11 @@
         public void ShouldAddCommentAndReturnNewId()
         {
             AddCommentModel model = new() { Message = "TestedMessage" };
+            string expectedCommandName = "Add";
 
-            Guid result = TestedService.Add(model);
+            Action testedAction = () => TestedService.Add(model);
 
-            Assert.NotEqual(Guid.Empty, result);
+            ShouldExecuteCommand(testedAction, expectedCommandName, new object[] { });
         }
     }
 }

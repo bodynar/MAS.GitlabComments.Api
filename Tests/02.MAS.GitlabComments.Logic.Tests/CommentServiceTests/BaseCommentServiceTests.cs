@@ -86,11 +86,14 @@
         private IDataProvider<Comment> GetMockCommentDataProvider()
         {
             var mockDataProvider = new Mock<IDataProvider<Comment>>();
-            Action emptyCallback = () => { };
 
             mockDataProvider
                 .Setup(x => x.Add(It.IsAny<Comment>()))
-                .Callback(emptyCallback);
+                .Callback(() =>
+                {
+                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), new object[] { });
+                })
+                .Returns(() => Guid.Empty);
 
             mockDataProvider
                 .Setup(x => x.Get())
