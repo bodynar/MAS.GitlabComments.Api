@@ -4,7 +4,6 @@
     using System.Collections.Generic;
 
     using MAS.GitlabComments.DataAccess.Filter;
-    using MAS.GitlabComments.DataAccess.Services.Implementations;
 
     using Xunit;
 
@@ -61,6 +60,7 @@
                     }
                 }
             };
+            string expectedExceptionMessage = $"Filter contains columns not presented in entity: __SomeNotExistedFieldName__";
 
             Exception exception =
                 Record.Exception(
@@ -69,6 +69,7 @@
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentException>(exception);
+            Assert.Equal(expectedExceptionMessage, exception.Message);
         }
 
         [Fact]
