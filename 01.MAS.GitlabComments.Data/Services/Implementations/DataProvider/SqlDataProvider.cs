@@ -150,7 +150,7 @@
             {
                 throw new QueryExecutionException(
                     QueryExecutionExceptionState.After,
-                    "Insert command performed with empty result, no record was added."
+                    "Insert command performed with empty result, no record was added"
                 );
             }
 

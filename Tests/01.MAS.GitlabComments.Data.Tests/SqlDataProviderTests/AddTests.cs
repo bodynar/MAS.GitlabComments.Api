@@ -113,7 +113,7 @@
             TestedAffectedRowsCount = 0;
 
 
-            var expectedMessage = "Insert command performed with empty result, no record was added.";
+            var expectedMessage = "Insert command performed with empty result, no record was added";
             var expectedState = QueryExecutionExceptionState.After;
 
             Exception exception =
