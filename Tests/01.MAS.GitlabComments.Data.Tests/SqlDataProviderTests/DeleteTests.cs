@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.DataAccess.Services.Implementations;
-
     using Xunit;
 
     /// <summary>
@@ -43,6 +41,22 @@
             Guid[] entityIds = new Guid[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
             string expectedSql = $"DELETE FROM [{TestedTableName}] WHERE [Id] IN @P1";
             IEnumerable<KeyValuePair<string, object>> expectedArguments = new[] { new KeyValuePair<string, object>("P1", entityIds) };
+
+            TestedService.Delete(entityIds);
+            var lastCommand = LastCommand;
+
+            Assert.NotNull(lastCommand);
+            Assert.Equal(expectedSql, lastCommand.Value.Key);
+            Assert.NotNull(lastCommand.Value.Value);
+            AssertArguments(expectedArguments, lastCommand.Value.Value);
+        }
+
+        [Fact]
+        public void ShouldExecuteCommandWithoutDefaultParameters()
+        {
+            Guid[] entityIds = new Guid[] { default, Guid.NewGuid(), default };
+            string expectedSql = $"DELETE FROM [{TestedTableName}] WHERE [Id] IN @P1";
+            IEnumerable<KeyValuePair<string, object>> expectedArguments = new[] { new KeyValuePair<string, object>("P1", new[] { entityIds[1] }) };
 
             TestedService.Delete(entityIds);
             var lastCommand = LastCommand;

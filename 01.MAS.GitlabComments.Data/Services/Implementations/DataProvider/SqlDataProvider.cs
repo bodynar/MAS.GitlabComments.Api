@@ -286,14 +286,17 @@
             }
 
             entityIds = entityIds.Where(x => x != default).ToArray();
-            if (entityIds.Any())
-            {
-                var sqlQuery = $"DELETE FROM [{TableName}] WHERE [Id] IN @P1";
 
-                using (var connection = DbConnectionFactory.CreateDbConnection())
-                {
-                    DbAdapter.Execute(connection, sqlQuery, new Dictionary<string, object>() { { "P1", entityIds } });
-                }
+            if (!entityIds.Any())
+            {
+                return;
+            }
+
+            var sqlQuery = $"DELETE FROM [{TableName}] WHERE [Id] IN @P1";
+
+            using (var connection = DbConnectionFactory.CreateDbConnection())
+            {
+                DbAdapter.Execute(connection, sqlQuery, new Dictionary<string, object>() { { "P1", entityIds } });
             }
         }
 
