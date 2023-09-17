@@ -212,61 +212,64 @@
             {
                 throw new ArgumentNullException(nameof(entityId));
             }
+
             if (newValues == null || !newValues.Any())
             {
                 throw new ArgumentNullException(nameof(newValues));
             }
 
-            var setStatements = new List<string>();
-            var arguments = new Dictionary<string, object>();
-            var argumentsCount = 0;
-
-            var parameterName = $"@P{argumentsCount + 1}";
-
-            foreach (var pair in newValues.Where(x => !string.IsNullOrEmpty(x.Key) && x.Value != null))
-            {
-                var isDefaultValue = IsDefaultValue(pair.Value, pair.Value.GetType());
-
-                if (!isDefaultValue && EntityFields.Contains(pair.Key))
-                {
-                    if (arguments.TryAdd(parameterName, pair.Value))
+            var parameters = newValues
+                .Where(x => EntityFields.Contains(x.Key) && x.Value != null)
+                .Select((x, i) => 
+                    new QueryParameter
                     {
-                        setStatements.Add($"[{pair.Key}] = {parameterName}");
-                        argumentsCount++;
+                        ColumnName = x.Key,
+                        Value = x.Value,
+                        ParameterName = $"@P{i + 1}",
                     }
-                }
-            }
+                );
 
-            if (!setStatements.Any())
+            if (!parameters.Any())
             {
-                return;
+                throw new QueryExecutionException(
+                    QueryExecutionExceptionState.Before,
+                    $"Operation cannot be performed due to empty entity values dictionary"
+                );
             }
 
-            parameterName = $"@P{argumentsCount + 1}";
-            if (arguments.TryAdd(parameterName, DateTime.UtcNow))
-            {
-                setStatements.Add($"[ModifiedOn] = {parameterName}");
-                argumentsCount++;
-            }
+            var map = parameters.ToDictionary(x => x.ColumnName);
 
-            var setStatement = string.Join(", ", setStatements);
+            map.Set(nameof(BaseEntity.ModifiedOn), DateTime.UtcNow);
+            map.Set(nameof(BaseEntity.Id), entityId);
 
-            if (!arguments.TryAdd($"@P{++argumentsCount}", entityId))
-            {
-                return;
-            }
+            var setStatements = map
+                .ToList()
+                .Where(x => x.Key != nameof(BaseEntity.Id))
+                .Select(x => $"[{x.Key}] = {x.Value.ParameterName}")
+                .ToList();
 
-            var sqlQuery = $"UPDATE [{TableName}] SET {setStatement} WHERE [Id] = @P{argumentsCount}";
+            var query = $"UPDATE [{TableName}]" +
+                $" SET {string.Join(", ", setStatements)}" +
+                $" WHERE [Id] = {map[nameof(BaseEntity.Id)].ParameterName}"
+            ;
+
             int affectedRows = 0;
 
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
-                affectedRows = DbAdapter.Execute(connection, sqlQuery, arguments);
+                affectedRows = DbAdapter.Execute(
+                    connection,
+                    query,
+                    map.ToDictionary(x => x.Value.ParameterName, x => x.Value.Value)
+                );
             }
 
             if (affectedRows == 0)
             {
-                throw new Exception("Update command performed with empty result, no record was updated.");
+                throw new QueryExecutionException(
+                    QueryExecutionExceptionState.After,
+                    "Update command performed with empty result, no record was updates"
+                );
             }
         }
 
