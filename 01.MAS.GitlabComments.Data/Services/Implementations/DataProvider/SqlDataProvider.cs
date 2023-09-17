@@ -392,23 +392,6 @@
         }
 
         /// <summary>
-        /// Check if boxed value is default value
-        /// </summary>
-        /// <param name="boxedValue">Boxed value</param>
-        /// <param name="type">Type of value in the box</param>
-        /// <returns>True if boxed value is default; otherwise false</returns>
-        private static bool IsDefaultValue(object boxedValue, Type type)
-        {
-            if (!type.IsValueType)
-            {
-                return boxedValue == default;
-            }
-
-            var def = Activator.CreateInstance(type);
-            return boxedValue.Equals(def);
-        }
-
-        /// <summary>
         /// Building sql filter from filter configuration
         /// </summary>
         /// <param name="filter">Entities filter</param>
