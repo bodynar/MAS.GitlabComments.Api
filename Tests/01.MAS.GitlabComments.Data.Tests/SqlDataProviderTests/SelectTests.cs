@@ -1,10 +1,10 @@
 ﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
+    using System.Collections.Generic;
 
     using MAS.GitlabComments.DataAccess.Filter;
     using MAS.GitlabComments.DataAccess.Select;
-    using MAS.GitlabComments.DataAccess.Services.Implementations;
 
     using Xunit;
 
@@ -13,7 +13,7 @@
     /// </summary>
     public sealed class SelectTests : BaseSqlDataProviderTests
     {
-        public class EmptyProjectedClass { }
+        public sealed class EmptyProjectedClass { }
 
         [Fact]
         public void ShouldThrowArgumentNullExceptionWhenConfigurationIsNull()
@@ -44,18 +44,21 @@
                     }
                 }
             };
+            string expectedExceptionMessage = $"Filter contains columns not presented in entity: __SomeNotExistedFieldName__";
 
             SelectConfiguration configuration = new SelectConfiguration
             {
                 Filter = filter,
             };
 
-            var exception = Record.Exception(
-                () => TestedService.Select<EmptyProjectedClass>(configuration)
-            );
+            Exception exception =
+                Record.Exception(
+                    () => TestedService.Select<EmptyProjectedClass>(configuration)
+                );
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentException>(exception);
+            Assert.Equal(expectedExceptionMessage, exception.Message);
         }
 
         [Fact]
@@ -73,17 +76,32 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithSpecificColumnWhenProjectedModelHasRequiredAttributes()
+        public void ShouldBuildQueryWithSpecificColumnsWhenProjectedModelHasRequiredAttributes()
         {
-            var expectedSql = $"SELECT [Table1].[Column1] FROM [{TestedTableName}]";
+            var expectedSql = $"SELECT [{TestedTableName}].[Column1], [RightTableName1].[Column2] FROM [{TestedTableName}]" +
+                $" INNER JOIN [RightTableName1] AS [Alias1] WITH(NOLOCK)" +
+                    $" ON ([Alias1].[RightTableRelationColumn1] = [{TestedTableName}].[LeftTableRelationColumn1])";
 
             SelectConfiguration configuration = new() { };
             ComplexColumnQueryBuilderResult = new ComplexColumnData()
             {
                 Columns = new[]
                 {
-                    new ComplexColumn { Name = "Column1", TableAlias = "Table1" }
+                    new ComplexColumn { Name = "Column1", TableAlias = TestedTableName },
+                    new ComplexColumn { Name = "Column2", TableAlias = "RightTableName1" },
                 },
+                Joins = new[]
+                {
+                    new TableJoinData("test_join_data")
+                    {
+                        JoinType = TableJoinType.Inner,
+                        RightTableName = "RightTableName1",
+                        RightTableRelationColumn = "RightTableRelationColumn1",
+                        Alias = "Alias1",
+                        LeftTableName = TestedTableName,
+                        LeftTableRelationColumn = "LeftTableRelationColumn1",
+                    }
+                }
             };
 
             TestedService.Select<EmptyProjectedClass>(configuration);
@@ -94,18 +112,49 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithSpecificColumnsWhenProjectedModelHasRequiredAttributes()
+        public void ShouldBuildQueryWithSpecificColumnsAndFilterWhenProjectedModelHasRequiredAttributes()
         {
-            var expectedSql = $"SELECT [Table1].[Column1],[Table2].[Column2] FROM [{TestedTableName}]";
+            var expectedSql = $"SELECT [{TestedTableName}].[Column1], [RightTableName1].[Column2] FROM [{TestedTableName}]" +
+                $" INNER JOIN [RightTableName1] AS [Alias1] WITH(NOLOCK)" +
+                    $" ON ([Alias1].[RightTableRelationColumn1] = [{TestedTableName}].[LeftTableRelationColumn1])" +
+                    $" WHERE |filterValue|";
 
-            SelectConfiguration configuration = new() { };
+            SelectConfiguration configuration = new()
+            {
+                Filter = new FilterGroup()
+                {
+                    Items = new[]
+                    {
+                        new FilterItem
+                        {
+                            FieldName = nameof(TestedDataProviderEntity.IntField),
+                            LogicalComparisonType = ComparisonType.Equal,
+                            Name = "c",
+                            Value = true
+                        }
+                    }
+                }
+            };
+            FilterBuilderResult = new Tuple<string, IReadOnlyDictionary<string, object>>("|filterValue|", new Dictionary<string, object>() { { "Key1", "Value1" } });
             ComplexColumnQueryBuilderResult = new ComplexColumnData()
             {
                 Columns = new[]
                 {
-                    new ComplexColumn { Name = "Column1", TableAlias = "Table1" },
-                    new ComplexColumn { Name = "Column2", TableAlias = "Table2" },
+                    new ComplexColumn { Name = "Column1", TableAlias = TestedTableName },
+                    new ComplexColumn { Name = "Column2", TableAlias = "RightTableName1" },
                 },
+                Joins = new[]
+                {
+                    new TableJoinData("test_join_data")
+                    {
+                        JoinType = TableJoinType.Inner,
+                        RightTableName = "RightTableName1",
+                        RightTableRelationColumn = "RightTableRelationColumn1",
+                        Alias = "Alias1",
+                        LeftTableName = TestedTableName,
+                        LeftTableRelationColumn = "LeftTableRelationColumn1",
+                    }
+                }
             };
 
             TestedService.Select<EmptyProjectedClass>(configuration);
@@ -113,6 +162,7 @@
 
             Assert.NotNull(lastQuery);
             Assert.Equal(expectedSql, lastQuery.Value.Key);
+            AssertArguments(FilterBuilderResult.Item2, lastQuery.Value.Value);
         }
     }
 }

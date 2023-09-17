@@ -346,17 +346,6 @@
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var filterSql = string.Empty;
-            IReadOnlyDictionary<string, object> filterArgs = new Dictionary<string, object>();
-
-            if (configuration.Filter != null && !configuration.Filter.IsEmpty)
-            {
-                var builtFilter = GetFilterValue(configuration.Filter);
-
-                filterSql = $"WHERE {builtFilter.Item1}";
-                filterArgs = builtFilter.Item2;
-            }
-
             var complexColumnData = ComplexColumnQueryBuilder.BuildComplexColumns<TProjection>(TableName);
 
             var columns = "*";
@@ -364,9 +353,20 @@
 
             if (complexColumnData != null)
             {
-                columns = string.Join($",", complexColumnData.Columns.Select(column => column.ToString()));
+                columns = string.Join($", ", complexColumnData.Columns.Select(column => column.ToString()));
 
                 joinPart = string.Join(" ", complexColumnData.Joins.Select(joinData => joinData.ToQueryPart()));
+            }
+
+            var filterSql = string.Empty;
+            IReadOnlyDictionary<string, object> queryArguments = new Dictionary<string, object>();
+
+            if (configuration.Filter != null && !configuration.Filter.IsEmpty)
+            {
+                var builtFilter = GetFilterValue(configuration.Filter);
+
+                filterSql = $"WHERE {builtFilter.Item1}";
+                queryArguments = builtFilter.Item2;
             }
 
             var entities = Enumerable.Empty<TProjection>();
@@ -374,7 +374,7 @@
 
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
-                entities = DbAdapter.Query<TProjection>(connection, sqlQuery, filterArgs).ToList();
+                entities = DbAdapter.Query<TProjection>(connection, sqlQuery, queryArguments).ToList();
             }
 
             return entities;
