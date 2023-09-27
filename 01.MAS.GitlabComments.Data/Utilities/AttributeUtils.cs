@@ -1,7 +1,6 @@
 ﻿namespace MAS.GitlabComments.DataAccess.Utilities
 {
     using System;
-    using System.Reflection;
 
     using MAS.GitlabComments.DataAccess.Attributes;
 

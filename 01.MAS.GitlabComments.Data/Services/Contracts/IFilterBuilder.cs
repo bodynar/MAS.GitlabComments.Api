@@ -1,7 +1,5 @@
 ﻿namespace MAS.GitlabComments.DataAccess.Services
 {
-    using System.Collections.Generic;
-
     using MAS.GitlabComments.DataAccess.Filter;
 
     /// <summary>
@@ -13,7 +11,7 @@
         /// Build filter from filter model
         /// </summary>
         /// <param name="queryFilterGroup">Filter model</param>
-        /// <returns>Pair of sql text and built sql arguments</returns>
-        (string sqlCondition, IReadOnlyDictionary<string, object> sqlArguments) Build(FilterGroup queryFilterGroup);
+        /// <returns>Built filter data</returns>
+        FilterResult Build(FilterGroup queryFilterGroup);
     }
 }

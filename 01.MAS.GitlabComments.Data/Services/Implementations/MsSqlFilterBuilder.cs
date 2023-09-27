@@ -17,7 +17,7 @@
         private const string FilterParamNameTemplate = "FilterValue{0}";
 
         /// <inheritdoc cref="IFilterBuilder.Build(FilterGroup)"/>
-        public (string sqlCondition, IReadOnlyDictionary<string, object> sqlArguments) Build(FilterGroup queryFilterGroup)
+        public FilterResult Build(FilterGroup queryFilterGroup)
         {
             if (queryFilterGroup == null || queryFilterGroup.IsEmpty)
             {
@@ -27,7 +27,11 @@
             var arguments = new Dictionary<string, object>();
             var resultSql = BuildWhereFilter(queryFilterGroup, arguments);
 
-            return (resultSql.Trim(), arguments);
+            return new FilterResult()
+            {
+                Sql = resultSql.Trim(),
+                Values = arguments,
+            };
         }
 
         #region Not public API
@@ -38,10 +42,8 @@
         /// <param name="filterGroup">Filter group</param>
         /// <param name="arguments">Sql argument dictionary</param>
         /// <returns>Sql text, if filter built properly; otherwise <see cref="string.Empty"/></returns>
-        private string BuildWhereFilter(FilterGroup filterGroup, IDictionary<string, object> arguments)
+        private static string BuildWhereFilter(FilterGroup filterGroup, IDictionary<string, object> arguments)
         {
-            // TODO: If has items & groups => build groups & attach build from items
-
             return filterGroup.NestedGroups.Any()
                 ? BuildNestedGroups(filterGroup, arguments)
                 : BuildWhereFilterGroupFromFields(filterGroup, arguments);
@@ -53,7 +55,7 @@
         /// <param name="filterGroup">Filter group</param>
         /// <param name="arguments">Sql argument dictionary</param>
         /// <returns>Sql text, if filter built properly; otherwise <see cref="string.Empty"/></returns>
-        private string BuildNestedGroups(FilterGroup filterGroup, IDictionary<string, object> arguments)
+        private static string BuildNestedGroups(FilterGroup filterGroup, IDictionary<string, object> arguments)
         {
             var nestedSql = new StringBuilder();
             var innerFilters =
@@ -89,10 +91,10 @@
                 }
 
                 var addition = nestedSql.Length > 0
-                    ? $"{filterJointypeOperator} {sqlFilter}"
-                    : $"{sqlFilter}";
+                    ? $"{filterJointypeOperator} {sqlFilter} "
+                    : $"{sqlFilter} ";
 
-                nestedSql.AppendLine(addition);
+                nestedSql.Append(addition);
             }
 
             return nestedSql.ToString().TrimEnd();
@@ -105,7 +107,7 @@
         /// <param name="arguments">Sql argument dictionary</param>
         /// <exception cref="ArgumentException">Method called for filter group with nested groups</exception>
         /// <returns>Sql text, if filter built properly; otherwise <see cref="string.Empty"/></returns>
-        private string BuildWhereFilterGroupFromFields(FilterGroup filterGroup, IDictionary<string, object> arguments)
+        private static string BuildWhereFilterGroupFromFields(FilterGroup filterGroup, IDictionary<string, object> arguments)
         {
             if (filterGroup.IsEmpty || filterGroup.NestedGroups.Any())
             {
@@ -125,34 +127,38 @@
                 return string.Empty;
             }
 
-            var conditions = new List<string>(); // TODO: To StringBuilder?
+            var conditions = new StringBuilder();
 
-            foreach (var filter in filterItems)
+            var hasAlias = string.IsNullOrEmpty(filterGroup.TableAlias);
+            var comparisonTypeDictionary = new Dictionary<ComparisonType, string>();
+
+            foreach (var filterItem in filterItems)
             {
-                var comparisonOperator = filter.LogicalComparisonType.GetSqlOperator();
+                var sqlOperator = comparisonTypeDictionary.ContainsKey(filterItem.LogicalComparisonType)
+                    ? comparisonTypeDictionary[filterItem.LogicalComparisonType]
+                    : filterItem.LogicalComparisonType.GetSqlOperator();
 
-                if (string.IsNullOrEmpty(comparisonOperator))
+                if (string.IsNullOrWhiteSpace(sqlOperator))
                 {
                     continue;
                 }
 
                 var paramName = string.Format(FilterParamNameTemplate, arguments.Count);
 
-                if (arguments.TryAdd(paramName, filter.Value))
-                {
-                    var fieldName = string.IsNullOrEmpty(filterGroup.TableAlias)
-                        ? $"[{filter.FieldName}]"
-                        : $"[{filterGroup.TableAlias}].[{filter.FieldName}]";
+                arguments.Add(paramName, filterItem.Value);
 
-                    conditions.Add($"{fieldName} {comparisonOperator} @{paramName}");
-                }
-                else
-                {
-                    // TODO: log somehow
-                }
+                var fieldName = hasAlias
+                    ? $"[{filterItem.FieldName}]"
+                    : $"[{filterGroup.TableAlias}].[{filterItem.FieldName}]";
+
+                conditions.Append($"{fieldName} {comparisonTypeDictionary[filterItem.LogicalComparisonType]} @{paramName} {joinOperator} ");
             }
 
-            return string.Join($"{Environment.NewLine}{joinOperator} ", conditions);
+            /* TODO:
+                - If filters.Count > 1000 - should it be divided into chunks and joined into 10 strings, separated with new line?
+             */
+
+            return conditions.ToString().TrimEnd();
         }
 
         #endregion

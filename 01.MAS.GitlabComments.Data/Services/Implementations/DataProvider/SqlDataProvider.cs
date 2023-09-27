@@ -313,19 +313,19 @@
                 return Get();
             }
 
-            var (filterSql, filterArgs) = GetFilterValue(filter);
+            var filterResult = GetFilterValue(filter);
 
-            if (string.IsNullOrEmpty(filterSql))
+            if (filterResult == default || string.IsNullOrEmpty(filterResult.Sql))
             {
                 return Get();
             }
 
             IEnumerable<TEntity> entities = Enumerable.Empty<TEntity>();
-            var sqlQuery = $"SELECT * FROM [{TableName}] WHERE {filterSql}";
+            var sqlQuery = $"SELECT * FROM [{TableName}] WHERE {filterResult.Sql}";
 
             using (var connection = DbConnectionFactory.CreateDbConnection())
             {
-                entities = DbAdapter.Query<TEntity>(connection, sqlQuery, filterArgs).ToList();
+                entities = DbAdapter.Query<TEntity>(connection, sqlQuery, filterResult.Values).ToList();
             }
 
             return entities;
@@ -365,8 +365,8 @@
             {
                 var builtFilter = GetFilterValue(configuration.Filter);
 
-                filterSql = $"WHERE {builtFilter.Item1}";
-                queryArguments = builtFilter.Item2;
+                filterSql = $"WHERE {builtFilter.Sql}";
+                queryArguments = builtFilter.Values;
             }
 
             var entities = Enumerable.Empty<TProjection>();
@@ -399,8 +399,8 @@
         /// </summary>
         /// <param name="filter">Entities filter</param>
         /// <exception cref="ArgumentException">Filter contains column not presented in Entity</exception>
-        /// <returns>Pair of sql text and built sql arguments</returns>
-        private (string, IReadOnlyDictionary<string, object>) GetFilterValue(FilterGroup filter)
+        /// <returns>Built filter data</returns>
+        private FilterResult GetFilterValue(FilterGroup filter)
         {
             var filterColumns = filter.GetFilterColumns();
 

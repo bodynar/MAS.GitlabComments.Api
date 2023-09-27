@@ -106,7 +106,7 @@
         /// <summary>
         /// Mock for result of filter builder call
         /// </summary>
-        protected Tuple<string, IReadOnlyDictionary<string, object>> FilterBuilderResult;
+        protected FilterResult FilterBuilderResult;
 
         /// <summary>
         /// Mock for result of complex column query builder call
@@ -188,7 +188,7 @@
                         throw new Exception($"{nameof(FilterBuilderResult)} is empty");
                     }
 
-                    return (FilterBuilderResult.Item1, FilterBuilderResult.Item2);
+                    return FilterBuilderResult;
                 });
 
             var mockComplexQueryBuilder = new Mock<IComplexColumnQueryBuilder>();

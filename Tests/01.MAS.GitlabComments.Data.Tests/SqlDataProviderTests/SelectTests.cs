@@ -135,7 +135,11 @@
                     }
                 }
             };
-            FilterBuilderResult = new Tuple<string, IReadOnlyDictionary<string, object>>("|filterValue|", new Dictionary<string, object>() { { "Key1", "Value1" } });
+            FilterBuilderResult = new FilterResult
+            {
+                Sql = "|filterValue|",
+                Values = new Dictionary<string, object>() { { "Key1", "Value1" } }
+            };
             ComplexColumnQueryBuilderResult = new ComplexColumnData()
             {
                 Columns = new[]
@@ -162,7 +166,7 @@
 
             Assert.NotNull(lastQuery);
             Assert.Equal(expectedSql, lastQuery.Value.Key);
-            AssertArguments(FilterBuilderResult.Item2, lastQuery.Value.Value);
+            AssertArguments(FilterBuilderResult.Values, lastQuery.Value.Value);
         }
     }
 }

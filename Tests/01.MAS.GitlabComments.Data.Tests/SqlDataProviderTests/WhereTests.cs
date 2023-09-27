@@ -75,7 +75,7 @@
         [Fact]
         public void ShouldReturnAllEntitiesWhenFilterBuiltAsEmpty()
         {
-            FilterBuilderResult = new Tuple<string, IReadOnlyDictionary<string, object>>(string.Empty, null);
+            FilterBuilderResult = new FilterResult();
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}]";
             FilterGroup filter = new()
             {
@@ -94,7 +94,7 @@
         [Fact]
         public void ShouldReturnFilteredEntitiesWhenFilterBuilt()
         {
-            FilterBuilderResult = new Tuple<string, IReadOnlyDictionary<string, object>>("filter", null);
+            FilterBuilderResult = new FilterResult() { Sql = "filter", };
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}] WHERE filter";
             FilterGroup filter = new()
             {
