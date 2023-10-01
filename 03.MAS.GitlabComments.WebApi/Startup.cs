@@ -1,10 +1,11 @@
 namespace MAS.GitlabComments.WebApi
 {
-    using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.DataAccess.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Services.Implementations.DataProvider;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
+    using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -12,7 +13,6 @@ namespace MAS.GitlabComments.WebApi
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using MAS.GitlabComments.DataAccess.Services.Implementations.DataProvider;
 
     public class Startup
     {

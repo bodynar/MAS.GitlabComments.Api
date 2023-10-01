@@ -19,6 +19,8 @@ namespace MAS.GitlabComments.WebApi
                     webBuilder.UseStartup<Startup>())
                 .ConfigureLogging((hostBuilder, loggerBuilder) =>
                     loggerBuilder.AddFileLogger(options =>
-                        hostBuilder.Configuration.GetSection("Logging").GetSection("FileLogger").GetSection("Options").Bind(options)));
+                        hostBuilder.Configuration
+                            .GetSection("Logging")
+                                .GetSection("FileLogger").GetSection("Options").Bind(options)));
     }
 }

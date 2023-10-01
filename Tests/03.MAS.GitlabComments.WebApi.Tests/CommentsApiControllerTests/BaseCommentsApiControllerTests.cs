@@ -27,12 +27,12 @@
         /// <summary>
         /// Should exception be thrown during comment service execution
         /// </summary>
-        protected bool ShouldThrowExceptionDuringExection { get; set; }
+        protected bool ShouldThrowExceptionDuringExecution { get; set; }
 
         /// <summary>
-        /// Exception message which will be thrown if <see cref="ShouldThrowExceptionDuringExection"/> is true
+        /// Exception message which will be thrown if <see cref="ShouldThrowExceptionDuringExecution"/> is true
         /// </summary>
-        protected string ExceptionDuringExectionText { get; set; }
+        protected string ExceptionDuringExecutionText { get; set; }
 
         /// <summary>
         /// Initializing <see cref="BaseCommentsApiControllerTests"/> with setup'n all required environment
@@ -57,9 +57,9 @@
 
             Action commentServiceExceptionCallback = () =>
             {
-                if (ShouldThrowExceptionDuringExection)
+                if (ShouldThrowExceptionDuringExecution)
                 {
-                    throw new Exception(ExceptionDuringExectionText);
+                    throw new Exception(ExceptionDuringExecutionText);
                 }
             };
 
@@ -98,14 +98,14 @@
         protected void AssertBaseServiceResultError<TResult>(Func<TResult> action)
             where TResult : BaseServiceResult
         {
-            ExceptionDuringExectionText = "Tested exception message";
-            ShouldThrowExceptionDuringExection = true;
+            ExceptionDuringExecutionText = "Tested exception message";
+            ShouldThrowExceptionDuringExecution = true;
 
             TResult baseServiceResult = action.Invoke();
 
             Assert.NotNull(baseServiceResult);
             Assert.False(baseServiceResult.IsSuccess);
-            Assert.Equal(ExceptionDuringExectionText, baseServiceResult.ErrorMessage);
+            Assert.Equal(ExceptionDuringExecutionText, baseServiceResult.ErrorMessage);
         }
     }
 }

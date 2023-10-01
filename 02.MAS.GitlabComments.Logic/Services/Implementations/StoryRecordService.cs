@@ -53,7 +53,7 @@
             return dataItems;
         }
 
-        private FilterGroup BuildFilter(DateTime? start, DateTime? endDate, Guid? commentId)
+        private static FilterGroup BuildFilter(DateTime? start, DateTime? endDate, Guid? commentId)
         {
             var filterItems = new List<FilterItem>();
 
