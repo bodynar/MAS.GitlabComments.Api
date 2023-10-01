@@ -36,7 +36,8 @@
         /// <summary>
         /// List of entity fields
         /// </summary>
-        private IEnumerable<string> EntityFields { get; }
+        private static IEnumerable<string> EntityFields { get; }
+            = GetEntityFields();
 
         /// <summary>
         /// List of default entity fields which cannot be set manually
@@ -55,7 +56,10 @@
         /// <exception cref="ArgumentNullException">Parameter dbAdapter is null</exception>
         /// <exception cref="ArgumentNullException">Parameter filterBuilder is null</exception>
         /// <exception cref="ArgumentNullException">Parameter complexColumnBuilder is null</exception>
-        public SqlDataProvider(IDbConnectionFactory dbConnectionFactory, IDbAdapter dbAdapter, IFilterBuilder filterBuilder, IComplexColumnQueryBuilder complexColumnBuilder)
+        public SqlDataProvider(
+            IDbConnectionFactory dbConnectionFactory, IDbAdapter dbAdapter,
+            IFilterBuilder filterBuilder, IComplexColumnQueryBuilder complexColumnBuilder
+        )
         {
             DbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(DbConnectionFactory));
             DbAdapter = dbAdapter ?? throw new ArgumentNullException(nameof(dbAdapter));
@@ -67,8 +71,6 @@
             {
                 TableName += "s";
             }
-
-            EntityFields = GetEntityFields();
         }
 
         /// <summary>
