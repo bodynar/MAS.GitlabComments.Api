@@ -13,7 +13,7 @@
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Message
+        /// Message text
         /// </summary>
         public string Message { get; set; }
 
@@ -21,6 +21,11 @@
         /// Amount of appearance time
         /// </summary>
         public long AppearanceCount { get; set; }
+
+        /// <summary>
+        /// Explanation description
+        /// </summary>
+        public string Description { get; set; }
 
         /// <summary>
         /// Comment with link to rules
