@@ -60,6 +60,6 @@
         /// <typeparam name="TProjection">Projection model type</typeparam>
         /// <param name="configuration">Select configuration</param>
         /// <returns>Entities mapped to specified model</returns>
-        IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration);
+        IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration = null);
     }
 }

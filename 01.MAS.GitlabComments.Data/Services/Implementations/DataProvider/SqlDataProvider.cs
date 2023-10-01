@@ -341,13 +341,8 @@
         /// <exception cref="ArgumentNullException">Parameter configuration is null</exception>
         /// <exception cref="ArgumentException">Filter contains column not presented in Entity</exception>
         /// <returns>Entities mapped to specified model</returns>
-        public IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration)
+        public IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration = null)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
             var complexColumnData = ComplexColumnQueryBuilder.BuildComplexColumns<TProjection>(TableName);
 
             var columns = "*";
