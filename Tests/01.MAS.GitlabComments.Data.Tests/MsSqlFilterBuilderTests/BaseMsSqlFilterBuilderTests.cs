@@ -1,7 +1,5 @@
 ﻿namespace MAS.GitlabComments.DataAccess.Tests.MsSqlFilterBuilderTests
 {
-    using System;
-
     using MAS.GitlabComments.DataAccess.Services.Implementations;
 
     /// <summary>
@@ -13,9 +11,6 @@
         /// Instance of <see cref="MsSqlFilterBuilder"/> for tests
         /// </summary>
         protected MsSqlFilterBuilder TestedService { get; }
-
-        /// <summary> New line </summary>
-        protected static string nl = Environment.NewLine;
 
         /// <summary>
         /// Initializing <see cref="BaseSqlDataProviderTests"/> with setup'n all required environment

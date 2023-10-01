@@ -441,7 +441,7 @@
         [Fact]
         public void ShouldBuildAndJoinType()
         {
-            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1";
+            var expectedSql = "[TestFieldName1] = @FilterValue0 AND [TestFieldName2] = @FilterValue1";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new[] { true, true };
             FilterGroup filter = new()
@@ -484,7 +484,7 @@
         [Fact]
         public void ShouldBuildOrJoinType()
         {
-            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "OR [TestFieldName2] = @FilterValue1";
+            var expectedSql = "[TestFieldName1] = @FilterValue0 OR [TestFieldName2] = @FilterValue1";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new[] { true, true };
             FilterGroup filter = new()
@@ -531,7 +531,7 @@
         [Fact]
         public void ShouldBuildFilterFromFlatModelWithSeveralComparisons()
         {
-            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1";
+            var expectedSql = "[TestFieldName1] = @FilterValue0 AND [TestFieldName2] = @FilterValue1";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new object[] { true, true };
             FilterGroup filter = new()
@@ -574,7 +574,7 @@
         [Fact]
         public void ShouldBuildFilterFromFewGroupsWithFlatFilters()
         {
-            var expectedSql = "([TestFieldName1] = @FilterValue0)" + nl + "AND ([TestFieldName2] = @FilterValue1)";
+            var expectedSql = "([TestFieldName1] = @FilterValue0) AND ([TestFieldName2] = @FilterValue1)";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new object[] { true, true };
             FilterGroup filter = new()
@@ -633,8 +633,8 @@
         [Fact]
         public void ShouldBuildFilterFromFewGroupsWithSeveralComparisons()
         {
-            var expectedSql = "([TestFieldName1] = @FilterValue0" + nl + "OR [TestFieldName2] = @FilterValue1)"
-                + nl + "AND ([TestFieldName3] = @FilterValue2" + nl + "AND [TestFieldName4] = @FilterValue3)";
+            var expectedSql = "([TestFieldName1] = @FilterValue0 OR [TestFieldName2] = @FilterValue1)"
+                + " AND ([TestFieldName3] = @FilterValue2 AND [TestFieldName4] = @FilterValue3)";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1", "FilterValue2", "FilterValue3" };
             var expectedParamValues = new object[] { true, true, true, true };
             FilterGroup filter = new()
@@ -805,7 +805,7 @@
         [Fact]
         public void ShouldBuildFilterFromGroupsInDifferentLevels()
         {
-            var expectedSql = "([TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1)" + nl + "OR ([TestFieldName3] = @FilterValue2" + nl + "OR [TestFieldName4] = @FilterValue3)";
+            var expectedSql = "([TestFieldName1] = @FilterValue0 AND [TestFieldName2] = @FilterValue1) OR ([TestFieldName3] = @FilterValue2 OR [TestFieldName4] = @FilterValue3)";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1", "FilterValue2", "FilterValue3" };
             var expectedParamValues = new object[] { true, true, true, true };
             FilterGroup filter = new()

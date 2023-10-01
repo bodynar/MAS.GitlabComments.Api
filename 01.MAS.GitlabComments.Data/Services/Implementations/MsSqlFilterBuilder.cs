@@ -76,6 +76,8 @@
                 return string.Empty;
             }
 
+            // TODO: for each group add new line?
+
             foreach (var filterGroupItem in innerFilters)
             {
                 var sqlFilter = BuildWhereFilter(filterGroupItem, arguments);
@@ -143,6 +145,11 @@
                     continue;
                 }
 
+                if (!comparisonTypeDictionary.ContainsKey(filterItem.LogicalComparisonType))
+                {
+                    comparisonTypeDictionary.Add(filterItem.LogicalComparisonType, sqlOperator);
+                }
+
                 var paramName = string.Format(FilterParamNameTemplate, arguments.Count);
 
                 arguments.Add(paramName, filterItem.Value);
@@ -151,7 +158,14 @@
                     ? $"[{filterItem.FieldName}]"
                     : $"[{filterGroup.TableAlias}].[{filterItem.FieldName}]";
 
-                conditions.Append($"{fieldName} {comparisonTypeDictionary[filterItem.LogicalComparisonType]} @{paramName} {joinOperator} ");
+                var line = $"{fieldName} {comparisonTypeDictionary[filterItem.LogicalComparisonType]} @{paramName} ";
+
+                if (conditions.Length > 0)
+                {
+                    line = $"{joinOperator} {line}";
+                }
+
+                conditions.Append(line);
             }
 
             /* TODO:

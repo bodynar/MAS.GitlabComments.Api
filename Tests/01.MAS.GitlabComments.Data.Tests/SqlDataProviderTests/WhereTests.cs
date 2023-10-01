@@ -1,7 +1,6 @@
 ﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
-    using System.Collections.Generic;
 
     using MAS.GitlabComments.DataAccess.Filter;
 
@@ -117,7 +116,7 @@
 
             Assert.NotNull(lastQuery);
             Assert.Equal(expectedSqlQuery, lastQuery.Value.Key);
-            Assert.Null(lastQuery.Value.Value);
+            Assert.Empty(lastQuery.Value.Value);
         }
     }
 }

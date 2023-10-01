@@ -58,7 +58,7 @@
         [Fact]
         public void ShouldThrowExceptionWhenAffectedRowsIsZero()
         {
-            string expectedErrorMessage = "Insert command performed with empty result, no record was added.";
+            string expectedErrorMessage = "Insert command performed with empty result, no record was added";
             TestedDataProviderEntity entity = new() { Id = Guid.NewGuid(), StringField = "Some test data" };
             TestedAffectedRowsCount = 0;
 
