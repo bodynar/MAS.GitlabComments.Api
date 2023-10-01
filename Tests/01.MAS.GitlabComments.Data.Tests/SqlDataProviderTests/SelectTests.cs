@@ -16,19 +16,6 @@
         public sealed class EmptyProjectedClass { }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenConfigurationIsNull()
-        {
-            SelectConfiguration configuration = null;
-
-            var exception = Record.Exception(
-                () => TestedService.Select<EmptyProjectedClass>(configuration)
-            );
-
-            Assert.NotNull(exception);
-            Assert.IsType<ArgumentNullException>(exception);
-        }
-
-        [Fact]
         public void ShouldThrowArgumentExceptionWhenConfigurationContainsFilterWithInvalidColumns()
         {
             FilterGroup filter = new()

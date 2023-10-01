@@ -25,13 +25,6 @@
         public IEnumerable<CommentModel> Get();
 
         /// <summary>
-        /// Get comment item by specifying it's identifier
-        /// </summary>
-        /// <param name="commentId">Comment identifier value</param>
-        /// <returns>Comment model</returns>
-        public ExtendedCommentModel Get(Guid commentId);
-
-        /// <summary>
         /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
         /// </summary>
         /// <param name="commentId">Comment identifier</param>

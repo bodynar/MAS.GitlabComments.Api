@@ -6,7 +6,9 @@
 
     using MAS.GitlabComments.Data;
     using MAS.GitlabComments.DataAccess.Exceptions;
+    using MAS.GitlabComments.DataAccess.Select;
     using MAS.GitlabComments.DataAccess.Services;
+    using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Logic.Services.Implementations;
 
     using Moq;
@@ -24,9 +26,14 @@
         protected CommentService TestedService { get; }
 
         /// <summary>
-        /// Instance of <see cref="Comment"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Get"/> methods
+        /// Instance of <see cref="Comment"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Get"/> method
         /// </summary>
         protected Comment ReturnedTestedComment { get; private set; }
+
+        /// <summary>
+        /// Instance of <see cref="CommentModel"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Select{TProjection}(SelectConfiguration)"/> method
+        /// </summary>
+        protected CommentModel ProjectedTestComment { get; private set; }
 
         /// <summary>
         /// Instance of StoryRecord which was added last
@@ -76,6 +83,16 @@
                 ModifiedOn = DateTime.UtcNow,
                 Message = nameof(Comment.Message),
                 Description = nameof(Comment.Description),
+                CommentWithLinkToRule = nameof(Comment.CommentWithLinkToRule),
+            };
+
+            ProjectedTestComment = new CommentModel
+            {
+                Id = Guid.Empty,
+                AppearanceCount = 10,
+                Message = nameof(CommentModel.Message),
+                Description = nameof(CommentModel.Description),
+                CommentWithLinkToRule = nameof(CommentModel.CommentWithLinkToRule),
             };
         }
 
@@ -94,6 +111,10 @@
                     lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), new object[] { });
                 })
                 .Returns(() => Guid.Empty);
+
+            mockDataProvider // custom case
+                .Setup(x => x.Select<CommentModel>(It.IsAny<SelectConfiguration>()))
+                .Returns(() => new[] { ProjectedTestComment });
 
             mockDataProvider
                 .Setup(x => x.Get())

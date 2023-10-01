@@ -73,35 +73,9 @@
         {
             return
                 CommentsDataProvider
-                    .Get()
+                    .Select<CommentModel>()
                     .OrderByDescending(x => x.AppearanceCount)
-                    .Select(x => new CommentModel
-                    {
-                        Id = x.Id,
-                        Message = x.Message,
-                        CommentWithLinkToRule = x.CommentWithLinkToRule,
-                        AppearanceCount = x.AppearanceCount,
-                    });
-
-        /// <summary>
-        /// Get comment item by specifying it's identifier
-        /// </summary>
-        /// <param name="commentId">Comment identifier value</param>
-        /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
-        /// <exception cref="EntityNotFoundException">Comment not found</exception>
-        /// <returns>Comment model</returns>
-        public ExtendedCommentModel Get(Guid commentId)
-        {
-            var entity = GetCommentWithWithChecking(commentId);
-
-            return new ExtendedCommentModel
-            {
-                Id = entity.Id,
-                Message = entity.Message,
-                Description = entity.Description,
-            };
-        }
-
+                    .ToList();
         }
 
         /// <summary>
