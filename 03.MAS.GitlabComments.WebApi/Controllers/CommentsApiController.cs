@@ -102,29 +102,6 @@
                 return BaseServiceResult<ExtendedCommentModel>.Error(e);
             }
         }
-
-        /// <summary>
-        /// Get description of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
-        /// <returns>Service perform operation result</returns>
-        [AllowInReadOnly]
-        [HttpGet("description")]
-        public BaseServiceResult<string> GetDescription([FromQuery] Guid commentId)
-        {
-            try
-            {
-                var result = CommentService.GetDescription(commentId);
-
-                return BaseServiceResult<string>.Success(result);
-            }
-            catch (Exception e)
-            {
-                Logger?.LogError(e, $"Trying to: Get description of comment \"{commentId}\".");
-                return BaseServiceResult<string>.Error(e);
-            }
-        }
-
         /// <summary>
         /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
         /// </summary>

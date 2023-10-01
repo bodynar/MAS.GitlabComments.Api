@@ -32,13 +32,6 @@
         public ExtendedCommentModel Get(Guid commentId);
 
         /// <summary>
-        /// Get description of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
-        /// <returns>Description if specified; otherwise <see cref="string.Empty"/></returns>
-        public string GetDescription(Guid commentId);
-
-        /// <summary>
         /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
         /// </summary>
         /// <param name="commentId">Comment identifier</param>

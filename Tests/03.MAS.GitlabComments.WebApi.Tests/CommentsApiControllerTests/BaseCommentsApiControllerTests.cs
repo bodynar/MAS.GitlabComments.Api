@@ -74,11 +74,6 @@
                 .Returns(Enumerable.Empty<CommentModel>());
 
             mockCommentsService
-                .Setup(x => x.GetDescription(It.IsAny<Guid>()))
-                .Callback(commentServiceExceptionCallback)
-                .Returns(string.Empty);
-
-            mockCommentsService
                 .Setup(x => x.Increment(It.IsAny<Guid>()))
                 .Callback(commentServiceExceptionCallback);
 

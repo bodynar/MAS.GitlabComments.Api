@@ -82,7 +82,6 @@
                         CommentWithLinkToRule = x.CommentWithLinkToRule,
                         AppearanceCount = x.AppearanceCount,
                     });
-        }
 
         /// <summary>
         /// Get comment item by specifying it's identifier
@@ -103,18 +102,6 @@
             };
         }
 
-        /// <summary>
-        /// Get description of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
-        /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
-        /// <exception cref="EntityNotFoundException">Comment not found</exception>
-        /// <returns>Description if specified; otherwise <see cref="string.Empty"/></returns>
-        public string GetDescription(Guid commentId)
-        {
-            var comment = GetCommentWithWithChecking(commentId);
-
-            return comment.Description ?? string.Empty;
         }
 
         /// <summary>
