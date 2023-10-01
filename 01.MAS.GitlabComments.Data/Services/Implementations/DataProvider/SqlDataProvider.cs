@@ -34,16 +34,16 @@
         private string TableName { get; }
 
         /// <summary>
-        /// List of entity fields
-        /// </summary>
-        private static IEnumerable<string> EntityFields { get; }
-            = GetEntityFields();
-
-        /// <summary>
         /// List of default entity fields which cannot be set manually
         /// </summary>
         private static IEnumerable<string> DefaultEntityFields { get; }
             = typeof(BaseEntity).GetProperties().Select(x => x.Name);
+
+        /// <summary>
+        /// List of entity fields
+        /// </summary>
+        private static IEnumerable<string> EntityFields { get; }
+            = GetEntityFields();
 
         /// <summary>
         /// Initializing <see cref="SqlDataProvider{TEntity}"/>
