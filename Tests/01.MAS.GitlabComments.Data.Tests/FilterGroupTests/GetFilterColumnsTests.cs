@@ -207,7 +207,7 @@
         }
 
         [Fact]
-        public void ShouldReturnDistinctedColumnNames()
+        public void ShouldReturnDistinctColumnNames()
         {
             var expectedColumnNames = new[] { "Column" };
             FilterGroup testedFilter = new()
