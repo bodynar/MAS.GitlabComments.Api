@@ -83,5 +83,22 @@
 
             ShouldExecuteCommand(testedAction, expectedCommandName, new object[] { firstExpectedArgument, secondExpectedArgument });
         }
+
+        [Fact]
+        public void ShouldUpdateCommentCommentWithLinkToRuleWhenItIsNotEmpty()
+        {
+            UpdateCommentModel model = new() { Id = Guid.NewGuid(), Message = "TestedMessage", Description = "TestedDescription", CommentWithLinkToRule = "TestedCommentWithLinkToRule" };
+            string expectedCommandName = "Update";
+            Guid firstExpectedArgument = model.Id;
+            IDictionary<string, object> secondExpectedArgument = new Dictionary<string, object> {
+                { "Message", "TestedMessage" },
+                { "Description", "TestedDescription" },
+                { "CommentWithLinkToRule", "TestedCommentWithLinkToRule" }
+            };
+
+            Action testedAction = () => TestedService.Update(model);
+
+            ShouldExecuteCommand(testedAction, expectedCommandName, new object[] { firstExpectedArgument, secondExpectedArgument });
+        }
     }
 }

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.Linq;
 
     using MAS.GitlabComments.Data;
@@ -99,13 +98,18 @@
 
             GetCommentWithWithChecking(updateCommentModel.Id);
 
-            var newValues = new ExpandoObject();
-
-            newValues.TryAdd(nameof(Comment.Message), updateCommentModel.Message);
+            var newValues = new Dictionary<string, object>
+            {
+                { nameof(Comment.Message), updateCommentModel.Message }
+            };
 
             if (!string.IsNullOrEmpty(updateCommentModel.Description))
             {
-                newValues.TryAdd(nameof(Comment.Description), updateCommentModel.Description);
+                newValues.Add(nameof(Comment.Description), updateCommentModel.Description);
+            }
+            if (!string.IsNullOrEmpty(updateCommentModel.CommentWithLinkToRule))
+            {
+                newValues.Add(nameof(Comment.CommentWithLinkToRule), updateCommentModel.CommentWithLinkToRule);
             }
 
             CommentsDataProvider.Update(updateCommentModel.Id, newValues);
@@ -121,9 +125,10 @@
         {
             var entity = GetCommentWithWithChecking(commentId);
 
-            var newValues = new ExpandoObject();
-
-            newValues.TryAdd(nameof(Comment.AppearanceCount), entity.AppearanceCount + 1);
+            var newValues = new Dictionary<string, object>
+            {
+                {  nameof(Comment.AppearanceCount), entity.AppearanceCount + 1 },
+            };
 
             CommentsDataProvider.Update(commentId, newValues);
 
