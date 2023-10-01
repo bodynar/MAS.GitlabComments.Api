@@ -29,7 +29,23 @@
             TestedService = new ComplexColumnMssqlBuilder();
         }
 
-        #region Null When Projected Type Has No Columns
+        private class EmptyProjectedClass { }
+
+        [Fact]
+        public void ShouldReturnNullWhenTableAliasIsEmpty()
+        {
+            var result = TestedService.BuildComplexColumns<EmptyProjectedClass>(string.Empty);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void ShouldReturnNullWhenTableAliasIsNull()
+        {
+            var result = TestedService.BuildComplexColumns<EmptyProjectedClass>(null);
+
+            Assert.Null(result);
+        }
 
         [Fact]
         public void ShouldReturnNullWhenProjectedTypeHasNoColumns()
@@ -38,10 +54,6 @@
 
             Assert.Null(result);
         }
-
-        private class EmptyProjectedClass { }
-
-        #endregion
 
         #region Empty Data When Projected Model Has Empty Attributes
 
@@ -70,7 +82,7 @@
         [Fact]
         public void ShouldReturnEmptyDataWhenProjectedTypeHasColumnWithInvalidPathOnlyFromJoins()
         {
-            var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>(string.Empty);
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>("ProjectedClassWithInvalidPathFromJoins");
 
             Assert.NotNull(result);
             Assert.Empty(result.Columns);
@@ -85,12 +97,32 @@
 
         #endregion
 
+        #region Empty Data When Incorrect Attribute
+
+        [Fact]
+        public void ShouldBuildDataWithoutJoinData()
+        {
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithSimplePath>(SourceTableName);
+
+            Assert.NotNull(result);
+            Assert.Empty(result.Columns);
+            Assert.Empty(result.Joins);
+        }
+
+        private class ProjectedClassWithSimplePath
+        {
+            [ComplexColumnPath("SimplePath")]
+            public string SimplePath { get; set; }
+        }
+
+        #endregion
+
         #region Empty Data When Projected Type Has Column With Invalid Path From Simple Column And Join
 
         [Fact]
         public void ShouldReturnEmptyDataWhenProjectedTypeHasColumnWithInvalidPathFromSimpleColumnAndJoin()
         {
-            var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>(string.Empty);
+            var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>(SourceTableName);
 
             Assert.NotNull(result);
             Assert.Empty(result.Columns);
@@ -105,35 +137,12 @@
 
         #endregion
 
-        #region Build Data Without Join Data
-
-        [Fact]
-        public void ShouldBuildDataWithoutJoinData()
-        {
-            var expectedColumn = $"[{SourceTableName}].[SimplePath]";
-            var result = TestedService.BuildComplexColumns<ProjectedClassWithSimplePath>(SourceTableName);
-
-            Assert.NotNull(result);
-            Assert.NotEmpty(result.Columns);
-            Assert.Empty(result.Joins);
-
-            Assert.Equal(expectedColumn, result.Columns.FirstOrDefault().ToString());
-        }
-
-        private class ProjectedClassWithSimplePath
-        {
-            [ComplexColumnPath("SimplePath")]
-            public string SimplePath { get; set; }
-        }
-
-        #endregion
-
         #region Build Data With Single Join Data
 
         [Fact]
         public void ShouldBuildDataWithSingleJoinData()
         {
-            var expectedColumn = "[Right1].[Value] AS [SimplePath]";
+            var expectedColumn = "[RigTab1].[Value] AS [SimplePath]";
             var expectedColumnsCount = 1;
             var expectedJoinsCount = 1;
             var expectedJoinData = new TableJoinData("[RightTable:RightTableColumn:LeftTableColumn]");
@@ -159,12 +168,12 @@
 
         #endregion
 
-        #region Build Data With Single Join Data And PrimitiveColumn
+        #region Build Data With Single Join Data And Primitive Column
 
         [Fact]
         public void ShouldBuildDataWithSingleJoinDataAndPrimitiveColumn()
         {
-            var expectedColumns = new[] { $"[{SourceTableName}].[SimplePath]", "[Right1].[Value] AS [ComplexPath]" };
+            var expectedColumns = new[] { $"[{SourceTableName}].[SimplePath]", "[RigTab1].[Value] AS [ComplexPath]" };
             var expectedColumnsCount = 2;
             var expectedJoinsCount = 1;
             var expectedJoinData = new TableJoinData("[RightTable:RightTableColumn:LeftTableColumn]");
@@ -194,13 +203,13 @@
 
         #endregion
 
-        #region Build Data With Single Join Data And Simple Column
+        #region Build Data With Single Join Data
 
         [Fact]
         public void ShouldBuildDataWithSingleJoinDataAndSimpleColumn()
         {
-            var expectedColumns = new[] { "[Right1].[Value] AS [ComplexPath]", $"[{SourceTableName}].[SimplePath] AS [SimpleColumn]" };
-            var expectedColumnsCount = 2;
+            var expectedColumns = new[] { "[RigTab1].[Value] AS [ComplexPath]" };
+            var expectedColumnsCount = 1;
             var expectedJoinsCount = 1;
             var expectedJoinData = new TableJoinData("[RightTable:RightTableColumn:LeftTableColumn]");
 
@@ -235,7 +244,7 @@
         [Fact]
         public void ShouldBuildDataWithSeveralDifferentJoinData()
         {
-            var expectedColumns = new[] { "[Generic1].[Value] AS [ComplexColumn1]", "[Random1].[Sum] AS [ComplexColumn2]", "[Special1].[Average] AS [ComplexColumn3]" };
+            var expectedColumns = new[] { "[GenTab1].[Value] AS [ComplexColumn1]", "[RanTab1].[Sum] AS [ComplexColumn2]", "[SpeTab1].[Average] AS [ComplexColumn3]" };
             var expectedColumnsCount = 3;
             var expectedJoinsCount = 3;
             var expectedJoinDataItems = new[] {
@@ -280,7 +289,7 @@
         [Fact]
         public void ShouldBuildDataWithSeveralDifferentAndSameJoinData()
         {
-            var expectedColumns = new[] { "[Generic1].[Value] AS [ComplexColumn1]", "[Random1].[Sum] AS [ComplexColumn2]", "[Generic1].[Average] AS [ComplexColumn3]" };
+            var expectedColumns = new[] { "[GenTab1].[Value] AS [ComplexColumn1]", "[RanTab1].[Sum] AS [ComplexColumn2]", "[GenTab1].[Average] AS [ComplexColumn3]" };
             var expectedColumnsCount = 3;
             var expectedJoinsCount = 2;
             var expectedJoinDataItems = new[] {
@@ -324,7 +333,7 @@
         [Fact]
         public void ShouldBuildDataWithJoinDataForSameTableButDifferentWaysToJoin()
         {
-            var expectedColumns = new[] { "[Right1].[Value] AS [ComplexColumn1]", "[Right2].[Sum] AS [ComplexColumn2]", "[Right3].[Average] AS [ComplexColumn3]" };
+            var expectedColumns = new[] { "[RigTab1].[Value] AS [ComplexColumn1]", "[RigTab2].[Sum] AS [ComplexColumn2]", "[RigTab3].[Average] AS [ComplexColumn3]" };
             var expectedColumnsCount = 3;
             var expectedJoinsCount = 3;
             var expectedJoinDataItems = new[] {
@@ -369,7 +378,7 @@
         [Fact]
         public void ShouldBuildDataWithSeveralJoinDataInSingleAttribute()
         {
-            var expectedColumns = new[] { "[Middle1].[Value] AS [SimplePath]" };
+            var expectedColumns = new[] { "[MidTab1].[Value] AS [SimplePath]" };
             var expectedColumnsCount = 1;
             var expectedJoinsCount = 2;
             var expectedJoinDataItems = new[] {
@@ -407,7 +416,7 @@
         [Fact]
         public void ShouldBuildDataWithSeveralJoinDataInSeveralAttributeWithSameJoinPath()
         {
-            var expectedColumns = new[] { "[Middle1].[Value] AS [Column]", "[Middle1].[Average] AS [Path]", };
+            var expectedColumns = new[] { "[MidTab1].[Value] AS [Column]", "[MidTab1].[Average] AS [Path]", };
             var expectedColumnsCount = 2;
             var expectedJoinsCount = 2;
             var expectedJoinDataItems = new[] {
@@ -448,7 +457,7 @@
         [Fact]
         public void ShouldBuildDataWithSeveralJoinDataInSeveralAttributeWithDifferentJoinPath()
         {
-            var expectedColumns = new[] { "[Middle1].[Value] AS [Column]", "[Another1].[Average] AS [Path]", };
+            var expectedColumns = new[] { "[MidTab1].[Value] AS [Column]", "[AnoTesTab1].[Average] AS [Path]", };
             var expectedColumnsCount = 2;
             var expectedJoinsCount = 4;
             var expectedJoinDataItems = new[] {
@@ -494,7 +503,7 @@
         [Fact]
         public void ShouldBuildDataWithSeveralJoinDataInSeveralAttributeWithSameTableButDifferentJoinParams()
         {
-            var expectedColumns = new[] { "[Middle1].[Value] AS [Column]", "[Middle1].[Average] AS [Path]", };
+            var expectedColumns = new[] { "[MidTab1].[Value] AS [Column]", "[MidTab1].[Average] AS [Path]", };
             var expectedColumnsCount = 2;
             var expectedJoinsCount = 3;
             var expectedJoinDataItems = new[] {

@@ -21,24 +21,39 @@
         private const string PascalCasePathPattern = @"(?<=[A-Z])(?=[A-Z][a-z])|(?<=[^A-Z])(?=[A-Z])|(?<=[A-Za-z])(?=[^A-Za-z])";
 
         /// <summary> Instance of <see cref="Regex"/> for table join configuration </summary>
-        private Regex TableColumnPathRegex { get; }
+        private static Regex TableColumnPathRegex { get; }
+            = new Regex(TableColumnPathPattern);
 
         /// <summary> Instance of <see cref="Regex"/> for pascal case text </summary>
-        private Regex PascalCaseRegex { get; }
+        private static Regex PascalCaseRegex { get; }
+            = new Regex(PascalCasePathPattern);
+
+        /// <summary> Cached built complex column configurations </summary>
+        private static Dictionary<KeyValuePair<string, Type>, ComplexColumnData> CachedComplexColumnConfigs { get; }
+            = new Dictionary<KeyValuePair<string, Type>, ComplexColumnData>();
 
         /// <summary>
         /// Initializing <see cref="ComplexColumnMssqlBuilder"/>
         /// </summary>
-        public ComplexColumnMssqlBuilder()
-        {
-            TableColumnPathRegex = new Regex(TableColumnPathPattern);
-            PascalCaseRegex = new Regex(PascalCasePathPattern);
-        }
+        public ComplexColumnMssqlBuilder() { }
 
         /// <inheritdoc cref="IComplexColumnQueryBuilder.BuildComplexColumns{TProjection}"/>
         public ComplexColumnData BuildComplexColumns<TProjection>(string sourceTableName)
         {
-            var columns = typeof(TProjection).GetProperties();
+            if (string.IsNullOrWhiteSpace(sourceTableName))
+            {
+                return null;
+            }
+
+            var projectionType = typeof(TProjection);
+            var cacheKey = new KeyValuePair<string, Type>(sourceTableName, projectionType);
+
+            if (CachedComplexColumnConfigs.ContainsKey(cacheKey))
+            {
+                return CachedComplexColumnConfigs[cacheKey];
+            }
+
+            var columns = projectionType.GetProperties();
 
             if (!columns.Any())
             {
@@ -53,7 +68,7 @@
             );
 
             var tableJoinDataItems = new List<TableJoinData>();
-            var selectColumns =
+            var columnsConfiguration =
                 columnAttributeMap
                     .Where(x => x.Item1 == null)
                     .Select(x =>
@@ -69,19 +84,15 @@
 
             foreach (var complexColumn in complexColumns)
             {
-                var (tableJoinData, column) = BuildComplexColumnPathParams(tableJoinDataItems, complexColumn.Item1, sourceTableName);
-                
-                if (tableJoinData != null)
+                var column = BuildComplexColumnPathParams(tableJoinDataItems, complexColumn.Item1, sourceTableName);
+
+                if (column == null)
                 {
-                    tableJoinDataItems.AddRange(tableJoinData);
+                    continue;
                 }
 
-                if (column != null)
-                {
-                    column.Alias = complexColumn.Item2.Name;
-
-                    selectColumns.Add(column);
-                }
+                column.Alias = complexColumn.Item2.Name;
+                columnsConfiguration.Add(column);
             }
 
             /*
@@ -91,11 +102,15 @@
              *  2. Validate result of ComplexColumnPathQueryBuilder before returning
              */
 
-            return new ComplexColumnData
+            var columnData = new ComplexColumnData
             {
-                Columns = selectColumns,
+                Columns = columnsConfiguration,
                 Joins = tableJoinDataItems
             };
+
+            CachedComplexColumnConfigs.Add(cacheKey, columnData);
+
+            return columnData;
         }
 
         /// <summary>
@@ -104,10 +119,10 @@
         /// <param name="existedJoins">Defined join data items</param>
         /// <param name="complexColumnPathAttribute">Column complex path attribute</param>
         /// <param name="sourceTableName">Name of source table</param>
-        /// <returns>Pair of values: Array of table join data items & column configuration if data successfully mapped; otherwise - pair of <see langword="null"/> values</returns>
-        private (IEnumerable<TableJoinData>, ComplexColumn) BuildComplexColumnPathParams(IEnumerable<TableJoinData> existedJoins, ComplexColumnPathAttribute complexColumnPathAttribute, string sourceTableName)
+        /// <returns>Column configuration if data successfully mapped; otherwise - <see langword="null"/> values</returns>
+        private static ComplexColumn BuildComplexColumnPathParams(List<TableJoinData> existedJoins, ComplexColumnPathAttribute complexColumnPathAttribute, string sourceTableName)
         {
-            /* 
+            /** 
                 1. [Table1:Table1Column:Table2Column].Value
                     => ([
                             { LT: Table1, LTC: Table1Column, RT: {CurrentTable}, RTC: Table2Column, Alias: Table11 },
@@ -126,42 +141,27 @@
 
             var parts = complexColumnPathAttribute.ColumnPath.Split('.');
 
-            if (parts.Length == 0)
+            if (parts.Length <= 1)
             {
-                return (null, null);
-            }
-
-            if (parts.Length == 1)
-            {
-                var part = parts.First();
-
-                return Regex.IsMatch(part, TableColumnPathPattern)
-                    ? (null, null)
-                    : (null, new ComplexColumn
-                    {
-                        TableAlias = sourceTableName,
-                        Name = part,
-                    });
+                return null;
             }
 
             var lastPart = parts.Last();
-            var firstPart = parts.First();
+            var firstPart = parts[0];
 
             if (TableColumnPathRegex.IsMatch(lastPart) || !TableColumnPathRegex.IsMatch(firstPart))
             {
                 // invalid path: [Table1:Table1Column:Table2Column].[Table1:Table1Column:Table2Column]
                 // invalid path: SomeColumn.[Table1:Table1Column:Table2Column]
 
-                return (null, null);
+                return null;
             }
 
             var tableJoinDataItems = new List<TableJoinData>();
             var previousLeftTableName = sourceTableName;
 
-            for (int i = 0; i < parts.Length - 1; i++) // while not last
+            foreach (var part in parts.Take(parts.Length - 1))
             {
-                var part = parts[i];
-
                 var sameJoinData = existedJoins.FirstOrDefault(x => x.Configuration == part);
 
                 if (sameJoinData != null)
@@ -182,26 +182,31 @@
 
                 if (tableNameParts == default || !tableNameParts.Any())
                 {
-                    // TODO: log error
                     continue;
                 }
+
+                var abbriveation = string.Join(
+                    "", tableNameParts.Select(x => 
+                        string.Join("", x.Take(3))
+                    )
+                );
 
                 var sameTablesCount =
                     existedJoins.Count(x => x.RightTableName == tableJoinData.RightTableName)
                     + tableJoinDataItems.Count(x => x.RightTableName == tableJoinData.RightTableName);
 
-                var alias = $"{tableNameParts[0]}{sameTablesCount + 1}";
-                tableJoinData.Alias = alias;
-                previousLeftTableName = tableJoinData.Alias;
+                tableJoinData.Alias = previousLeftTableName = $"{abbriveation}{sameTablesCount + 1}";
 
                 tableJoinDataItems.Add(tableJoinData);
             }
 
-            return (tableJoinDataItems, new ComplexColumn
+            existedJoins.AddRange(tableJoinDataItems);
+
+            return new ComplexColumn
             {
                 TableAlias = previousLeftTableName,
                 Name = lastPart,
-            });
+            };
         }
 
         /// <summary>
@@ -209,7 +214,7 @@
         /// </summary>
         /// <param name="columnPath">String configuration for table joins</param>
         /// <returns>Instance of <see cref="TableJoinData"/> is string is contains table join data; otherwise <see langword="null"/></returns>
-        private TableJoinData GetTableJoinData(string columnPath)
+        private static TableJoinData GetTableJoinData(string columnPath)
         {
             if (!TableColumnPathRegex.IsMatch(columnPath))
             {
