@@ -18,6 +18,6 @@
         /// <param name="commentId">Comment identifier</param>
         /// <param name="count">Comments count</param>
         /// <returns>Collection of comments modification actions</returns>
-        IEnumerable<StoryRecordViewModel> Get(DateTime? startDate, DateTime? endDate, Guid? commentId, int? count);
+        IEnumerable<StoryRecordViewModel> Get(DateTime? startDate, DateTime? endDate, Guid? commentId = null, int? count = null);
     }
 }

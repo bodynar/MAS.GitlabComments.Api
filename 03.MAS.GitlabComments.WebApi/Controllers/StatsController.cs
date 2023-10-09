@@ -51,7 +51,7 @@
         {
             try
             {
-                var result = StoryRecordService.Get(startDate, endDate, null, null);
+                var result = StoryRecordService.Get(startDate, endDate);
 
                 return BaseServiceResult<IEnumerable<StoryRecordViewModel>>.Success(result);
             }
