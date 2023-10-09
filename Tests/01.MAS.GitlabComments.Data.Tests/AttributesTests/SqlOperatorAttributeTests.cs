@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Tests.AttributesTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.AttributesTests
 {
     using System;
 
