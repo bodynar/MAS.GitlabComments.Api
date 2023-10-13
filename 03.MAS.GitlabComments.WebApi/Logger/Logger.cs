@@ -35,8 +35,20 @@
 
             var fileName = LoggerFileProvider.Options.FilePath.Replace("{date}", DateTimeOffset.UtcNow.ToString("yyyy-MM-dd"));
             var filePath = $"{LoggerFileProvider.Options.FolderPath}/{fileName}";
+
+            var formattedMessage = formatter.Invoke(state, exception);
+
+            if (exception != null && !formattedMessage.ToLower().Contains(exception.Message.ToLower()))
+            {
+                formattedMessage += $" =>> {exception.Message}";
+            }
             
-            var record = $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss+00:00}] | {logLevel}: {formatter(state, exception)} {(exception?.StackTrace ?? "")}";
+            var record = $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss+00:00}]" +
+                $" | {logLevel}: {formattedMessage}"
+                + (exception == null 
+                    ? ""
+                    : $"{Environment.NewLine}{(exception?.StackTrace ?? "")}"
+                );
 
             using (var streamWriter = new StreamWriter(filePath, true))
             {
