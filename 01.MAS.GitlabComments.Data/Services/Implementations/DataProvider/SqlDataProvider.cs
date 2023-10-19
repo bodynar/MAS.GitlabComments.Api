@@ -358,7 +358,7 @@
             var filterSql = string.Empty;
             IReadOnlyDictionary<string, object> queryArguments = new Dictionary<string, object>();
 
-            if (configuration.Filter != null && !configuration.Filter.IsEmpty)
+            if (configuration != null && configuration.Filter != null && !configuration.Filter.IsEmpty)
             {
                 var builtFilter = GetFilterValue(configuration.Filter);
 
