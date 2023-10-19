@@ -48,5 +48,17 @@
             Assert.IsType<ArgumentNullException>(exception);
             Assert.Equal("columnPath", (exception as ArgumentNullException).ParamName);
         }
+
+        [Fact]
+        public void ShouldCreateAnInstance()
+        {
+            string opeatorName = "operator";
+
+            ComplexColumnPathAttribute attribute = new ComplexColumnPathAttribute(opeatorName);
+
+            Assert.NotNull(attribute);
+            Assert.NotEmpty(attribute.ColumnPath);
+            Assert.Equal(opeatorName, attribute.ColumnPath);
+        }
     }
 }
