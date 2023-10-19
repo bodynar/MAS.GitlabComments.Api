@@ -63,6 +63,18 @@
         }
 
         [Fact]
+        public void ShouldBuildQueryWithAllColumnsWhenConfigurationIsNull()
+        {
+            var expectedSql = $"SELECT * FROM [{TestedTableName}]";
+
+            TestedService.Select<EmptyProjectedClass>();
+            var lastQuery = LastQuery;
+
+            Assert.NotNull(lastQuery);
+            Assert.Equal(expectedSql, lastQuery.Value.Key);
+        }
+
+        [Fact]
         public void ShouldBuildQueryWithSpecificColumnsWhenProjectedModelHasRequiredAttributes()
         {
             var expectedSql = $"SELECT [{TestedTableName}].[Column1], [RightTableName1].[Column2] FROM [{TestedTableName}]" +
