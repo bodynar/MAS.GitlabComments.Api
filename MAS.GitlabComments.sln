@@ -18,13 +18,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", 
 		SqlScripts\001_Init.sql = SqlScripts\001_Init.sql
 		SqlScripts\002_AddStoryRecord.sql = SqlScripts\002_AddStoryRecord.sql
 		003_UpdateEntities.sql = 003_UpdateEntities.sql
+		004_AddNumber.sql = 004_AddNumber.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.Logic", "02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj", "{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.Logic.Tests", "Tests\02.MAS.GitlabComments.Logic.Tests\02.MAS.GitlabComments.Logic.Tests.csproj", "{75E81C79-344C-466E-A951-019FFEA54222}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "00.MAS.GitlabComments.Data", "00.MAS.GitlabComments.Data\00.MAS.GitlabComments.Data.csproj", "{0FC84E57-C110-49B0-BBC9-99EA41189674}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "00.MAS.GitlabComments.Data", "00.MAS.GitlabComments.Data\00.MAS.GitlabComments.Data.csproj", "{0FC84E57-C110-49B0-BBC9-99EA41189674}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
