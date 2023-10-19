@@ -3,7 +3,7 @@
     /// <summary>
     /// Gitlab comment
     /// </summary>
-    public class Comment : BaseEntity
+    public class Comment : BaseNumberedEntity
     {
         /// <summary>
         /// Comment text
