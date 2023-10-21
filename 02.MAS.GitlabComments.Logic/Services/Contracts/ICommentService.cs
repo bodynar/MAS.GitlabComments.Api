@@ -41,5 +41,14 @@
         /// </summary>
         /// <param name="commentIds">Array of comment identifiers</param>
         public void Delete(params Guid[] commentIds);
+
+        /// <summary>
+        /// Get all comments that incomplete
+        /// <para>
+        ///     - Does not have a number
+        /// </para>
+        /// </summary>
+        /// <returns>Pack of comments</returns>
+        public IEnumerable<CommentModel> GetIncomplete();
     }
 }

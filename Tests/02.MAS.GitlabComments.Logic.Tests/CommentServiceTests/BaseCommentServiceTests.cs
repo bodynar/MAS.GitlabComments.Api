@@ -47,6 +47,11 @@
         protected Comment LastAddedComment { get; private set; }
 
         /// <summary>
+        /// Select configuration of last <see cref="IDataProvider{TEntity}.Select{TProjection}(SelectConfiguration)"/> call
+        /// </summary>
+        protected SelectConfiguration LastSelectConfig { get; private set; }
+
+        /// <summary>
         /// Tested comment number template
         /// </summary>
         protected string CommentNumberTemplate { get; } = "!{0:00}";
@@ -140,6 +145,7 @@
 
             mockDataProvider // custom case
                 .Setup(x => x.Select<CommentModel>(It.IsAny<SelectConfiguration>()))
+                .Callback<SelectConfiguration>(config => LastSelectConfig = config)
                 .Returns(() => new[] { ProjectedTestComment });
 
             mockDataProvider

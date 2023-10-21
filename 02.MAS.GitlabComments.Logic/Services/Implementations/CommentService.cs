@@ -6,6 +6,8 @@
 
     using MAS.GitlabComments.Data;
     using MAS.GitlabComments.DataAccess.Exceptions;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
     using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.Logic.Models;
 
@@ -179,6 +181,33 @@
             {
                 CommentsDataProvider.Delete(commentIds);
             }
+        }
+
+        /// <inheritdoc cref="ICommentService.GetIncomplete"/>
+        public IEnumerable<CommentModel> GetIncomplete()
+        {
+            return
+                CommentsDataProvider
+                    .Select<CommentModel>(
+                        new SelectConfiguration()
+                        {
+                            Filter = new FilterGroup()
+                            {
+                                Items = new[]
+                                {
+                                    new FilterItem()
+                                    {
+                                        Name = "EmptyNumberFilter",
+                                        FieldName = nameof(Comment.Number),
+                                        LogicalComparisonType = ComparisonType.Equal,
+                                        Value = string.Empty
+                                    }
+                                }
+                            }
+                        }
+                    )
+                    .OrderByDescending(x => x.AppearanceCount)
+                    .ToList();
         }
 
         #region Not public API
