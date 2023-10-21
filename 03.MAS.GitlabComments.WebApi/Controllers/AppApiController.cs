@@ -12,14 +12,16 @@
     public class AppApiController
     {
         /// <inheritdoc cref="AppSettings"/>
-        private AppSettings AppSettings { get; }
+        private IApplicationWebSettings AppSettings { get; }
 
         /// <summary>
         /// Initialize <see cref="AppApiController"/>
         /// </summary>
         /// <param name="appSettings">Global application settings</param>
         /// <exception cref="ArgumentNullException">Parameter commentService is null</exception>
-        public AppApiController(AppSettings appSettings)
+        public AppApiController(
+            IApplicationWebSettings appSettings
+        )
         {
             AppSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         }

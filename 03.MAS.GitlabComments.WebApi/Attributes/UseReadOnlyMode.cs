@@ -3,8 +3,6 @@
     using System;
     using System.Linq;
 
-    using MAS.GitlabComments.WebApi.Models;
-
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Controllers;
     using Microsoft.AspNetCore.Mvc.Filters;
@@ -21,7 +19,7 @@
         /// <inheritdoc cref="IActionFilter.OnActionExecuting(ActionExecutingContext)"/>
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var appSettings = context.HttpContext.RequestServices.GetService(typeof(AppSettings)) as AppSettings;
+            var appSettings = context.HttpContext.RequestServices.GetService(typeof(IApplicationWebSettings)) as IApplicationWebSettings;
 
             if (appSettings == null)
             {

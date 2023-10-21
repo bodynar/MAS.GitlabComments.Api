@@ -35,9 +35,9 @@
         /// Configure mock object of data provider for comment service
         /// </summary>
         /// <returns>Mock object of <see cref="AppSettings"/></returns>
-        private AppSettings GetDependencies()
+        private IApplicationWebSettings GetDependencies()
         {
-            var mockSettings = new Mock<AppSettings>(SettingReadOnlyMode);
+            var mockSettings = new Mock<IApplicationWebSettings>();
 
             mockSettings
                 .SetupGet(x => x.ReadOnlyMode)

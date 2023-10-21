@@ -39,11 +39,14 @@ namespace MAS.GitlabComments.WebApi
 
             var settings = Configuration.GetSection("GlobalSettings");
             bool isReadOnlyMode = default;
+            var commentNumberTemplate = string.Empty;
 
             if (settings != default)
             {
                 isReadOnlyMode = settings.GetValue<bool>("ReadOnlyMode");
+                commentNumberTemplate = settings.GetValue<string>("CommentNumberTemplate");
             }
+            var appSettings = new AppSettings(isReadOnlyMode, commentNumberTemplate);
 
             var maxQueryCount = settings.GetValue<int>("MaxQueryRows");
 
@@ -51,7 +54,6 @@ namespace MAS.GitlabComments.WebApi
             {
                 MaxRowCount = maxQueryCount
             };
-
 
             services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
 
@@ -65,13 +67,15 @@ namespace MAS.GitlabComments.WebApi
                 // /data registrations
 
                 // logic registrations
+                .AddSingleton<IApplicationSettings>(appSettings)
+
                 .AddTransient<ICommentService, CommentService>()
                 .AddTransient<ICommentStoryRecordService, CommentStoryRecordService>()
                 .AddTransient<ISystemVariableProvider, SystemVariableProvider>()
                 // /logic registrations
 
                 // web registrations
-                .AddSingleton(new AppSettings(isReadOnlyMode))
+                .AddSingleton<IApplicationWebSettings>(appSettings)
                 // /web registrations
 
                 .AddControllers(opts => { opts.Filters.Add<UseReadOnlyModeAttribute>(); })
