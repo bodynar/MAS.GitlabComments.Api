@@ -14,24 +14,42 @@
     /// </summary>
     public class CommentService : ICommentService
     {
+        /// <summary>
+        /// Data provider of <see cref="Comment"/> entities
+        /// </summary>
         private IDataProvider<Comment> CommentsDataProvider { get; }
 
+        /// <summary>
+        /// Data provider of <see cref="StoryRecord"/> entities
+        /// </summary>
         private IDataProvider<StoryRecord> StoryRecordsDataProvider { get; }
+
+        /// <inheritdoc cref="IApplicationSettings"/>
+        private IApplicationSettings ApplicationSettings { get; }
+
+        /// <inheritdoc cref="ISystemVariableProvider"/>
+        private ISystemVariableProvider SystemVariableProvider { get; }
 
         /// <summary>
         /// Initializing <see cref="CommentService"/>
         /// </summary>
         /// <param name="commentsDataProvider">Comments data provider</param>
         /// <param name="storyRecordsDataProvider">Story records data provider</param>
+        /// <param name="applicationSettings">Application settings</param>
+        /// <param name="systemVariableProvider">System variable data provider</param>
         /// <exception cref="ArgumentNullException">Parameter commentsDataProvider is null</exception>
         /// <exception cref="ArgumentNullException">Parameter storyRecordsDataProvider is null</exception>
         public CommentService(
             IDataProvider<Comment> commentsDataProvider,
-            IDataProvider<StoryRecord> storyRecordsDataProvider
+            IDataProvider<StoryRecord> storyRecordsDataProvider,
+            IApplicationSettings applicationSettings,
+            ISystemVariableProvider systemVariableProvider
         )
         {
             CommentsDataProvider = commentsDataProvider ?? throw new ArgumentNullException(nameof(commentsDataProvider));
             StoryRecordsDataProvider = storyRecordsDataProvider ?? throw new ArgumentNullException(nameof(storyRecordsDataProvider));
+            ApplicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+            SystemVariableProvider = systemVariableProvider ?? throw new ArgumentNullException(nameof(systemVariableProvider));
         }
 
         /// <summary>
@@ -53,13 +71,21 @@
                 throw new ArgumentNullException(nameof(AddCommentModel.Message));
             }
 
-            var newId = CommentsDataProvider.Add(new Comment
-            {
-                AppearanceCount = 1,
-                Message = addCommentModel.Message,
-                CommentWithLinkToRule = addCommentModel.CommentWithLinkToRule,
-                Description = addCommentModel.Description
-            });
+            var number = string.Format(
+                ApplicationSettings.CommentNumberTemplate,
+                SystemVariableProvider.GetValue<int>("LastCommentNumber") + 1
+            );
+
+            var newId = CommentsDataProvider.Add(
+                new Comment
+                {
+                    AppearanceCount = 1,
+                    Message = addCommentModel.Message,
+                    CommentWithLinkToRule = addCommentModel.CommentWithLinkToRule,
+                    Description = addCommentModel.Description,
+                    Number = number,
+                }
+            );
 
             return newId;
         }

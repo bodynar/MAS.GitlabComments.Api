@@ -9,6 +9,7 @@
     using MAS.GitlabComments.DataAccess.Select;
     using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.Logic.Models;
+    using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
 
     using Moq;
@@ -39,6 +40,21 @@
         /// Instance of StoryRecord which was added last
         /// </summary>
         protected StoryRecord LastAddedStoryRecord { get; private set; }
+
+        /// <summary>
+        /// Instance of Comment which was added last
+        /// </summary>
+        protected Comment LastAddedComment { get; private set; }
+
+        /// <summary>
+        /// Tested comment number template
+        /// </summary>
+        protected string CommentNumberTemplate { get; } = "!{0:00}";
+
+        /// <summary>
+        /// Value provided by mock of <see cref="ISystemVariableProvider.GetValue{TValue}(string)"/> for test case
+        /// </summary>
+        protected int IntVariableValue { get; } = 10;
 
         /// <summary>
         /// Last called command back-field
@@ -72,8 +88,15 @@
         {
             var commentsProvider = GetMockCommentDataProvider();
             var storyRecordsProvider = GetMockStoryRecordDataProvider();
+            var appSettings = GetMockAppSettings();
+            var sysVariableProvider = GetMockSysVariableProvider();
 
-            TestedService = new CommentService(commentsProvider, storyRecordsProvider);
+            TestedService = new CommentService(
+                commentsProvider,
+                storyRecordsProvider,
+                appSettings,
+                sysVariableProvider
+            );
 
             ReturnedTestedComment = new Comment
             {
@@ -82,6 +105,7 @@
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,
                 Message = nameof(Comment.Message),
+                Number = "TEST_0001",
                 Description = nameof(Comment.Description),
                 CommentWithLinkToRule = nameof(Comment.CommentWithLinkToRule),
             };
@@ -93,6 +117,7 @@
                 Message = nameof(CommentModel.Message),
                 Description = nameof(CommentModel.Description),
                 CommentWithLinkToRule = nameof(CommentModel.CommentWithLinkToRule),
+                Number = "TEST_0001",
             };
         }
 
@@ -106,9 +131,10 @@
 
             mockDataProvider
                 .Setup(x => x.Add(It.IsAny<Comment>()))
-                .Callback(() =>
+                .Callback<Comment>((comment) =>
                 {
-                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), new object[] { });
+                    LastAddedComment = comment;
+                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), Array.Empty<object>());
                 })
                 .Returns(() => Guid.Empty);
 
@@ -161,6 +187,36 @@
         }
 
         /// <summary>
+        /// Configure mock object of Application settings container for comment service
+        /// </summary>
+        /// <returns>Configured mock object of <see cref="IApplicationSettings"/></returns>
+        private IApplicationSettings GetMockAppSettings()
+        {
+            var mock = new Mock<IApplicationSettings>();
+
+            mock
+                .SetupGet(x => x.CommentNumberTemplate)
+                .Returns(() => CommentNumberTemplate);
+
+            return mock.Object;
+        }
+
+        /// <summary>
+        /// Configure mock object of System variables provider for comment service
+        /// </summary>
+        /// <returns>Configured mock object of <see cref="ISystemVariableProvider"/></returns>
+        private ISystemVariableProvider GetMockSysVariableProvider()
+        {
+            var mock = new Mock<ISystemVariableProvider>();
+
+            mock
+                .Setup(x => x.GetValue<int>(It.IsAny<string>()))
+                .Returns(() => IntVariableValue);
+
+            return mock.Object;
+        }
+
+        /// <summary>
         /// Assert for last <see cref="IDataProvider{TEntity}"/> called command
         /// </summary>
         /// <param name="serviceAction">Tested service action</param>
@@ -197,7 +253,7 @@
         /// Checks parameter validation <see cref="CommentService.GetCommentWithWithChecking"/>
         /// </summary>
         /// <param name="serviceAction">Tested service action</param>
-        protected void ShouldThrowArgumentNullExceptionWhenCommentIdIsDefaultInternal(Action serviceAction)
+        protected static void ShouldThrowArgumentNullExceptionWhenCommentIdIsDefaultInternal(Action serviceAction)
         {
             var exception =
                 Record.Exception(

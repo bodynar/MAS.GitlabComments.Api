@@ -18,6 +18,11 @@
         public string Message { get; set; }
 
         /// <summary>
+        /// Unique personal number
+        /// </summary>
+        public string Number { get; set; }
+
+        /// <summary>
         /// Amount of appearance time
         /// </summary>
         public long AppearanceCount { get; set; }
