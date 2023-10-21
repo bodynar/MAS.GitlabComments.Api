@@ -67,6 +67,7 @@ namespace MAS.GitlabComments.WebApi
                 // logic registrations
                 .AddTransient<ICommentService, CommentService>()
                 .AddTransient<ICommentStoryRecordService, CommentStoryRecordService>()
+                .AddTransient<ISystemVariableProvider, SystemVariableProvider>()
                 // /logic registrations
 
                 // web registrations

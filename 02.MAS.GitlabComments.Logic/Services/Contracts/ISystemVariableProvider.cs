@@ -1,6 +1,7 @@
 ﻿namespace MAS.GitlabComments.Logic.Services
 {
     using System;
+    using System.Collections.Generic;
 
     using MAS.GitlabComments.Logic.Models;
 
@@ -9,6 +10,12 @@
     /// </summary>
     public interface ISystemVariableProvider
     {
+        /// <summary>
+        /// Get data for all system variables
+        /// </summary>
+        /// <returns>Stack of variables data</returns>
+        IEnumerable<SysVariableDisplayModel> GetAllVariables();
+
         /// <summary>
         /// Get variable value
         /// </summary>

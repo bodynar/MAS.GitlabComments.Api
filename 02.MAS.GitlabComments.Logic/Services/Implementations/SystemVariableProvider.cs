@@ -38,6 +38,14 @@
             DataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
         }
 
+        /// <inheritdoc cref="ISystemVariableProvider.GetAllVariables()"/>
+        public IEnumerable<SysVariableDisplayModel> GetAllVariables()
+        {
+            return DataProvider
+                .Select<SysVariableDisplayModel>()
+                .ToList();
+        }
+
         /// <inheritdoc cref="ISystemVariableProvider.GetValue{TValue}(Guid)"/>
         public TValue GetValue<TValue>(Guid variableId)
         {

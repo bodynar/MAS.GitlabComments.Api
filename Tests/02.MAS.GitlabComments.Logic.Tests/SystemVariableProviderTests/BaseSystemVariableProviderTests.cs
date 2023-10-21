@@ -3,12 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     using MAS.GitlabComments.Data;
     using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
     using MAS.GitlabComments.DataAccess.Services;
+    using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Logic.Services.Implementations;
 
     using Moq;
@@ -39,6 +39,11 @@
         /// Single entity that could be obtain from <see cref="IDataProvider{TEntity}"/>
         /// </summary>
         protected SystemVariable TestedEntity { get; }
+
+        /// <summary>
+        /// Single entity that could be obtain from <see cref="IDataProvider{TEntity}"/>
+        /// </summary>
+        protected SysVariableDisplayModel TestedProjectedEntity { get; }
 
         /// <summary>
         /// Last applied filter from <see cref="IDataProvider{TEntity}.Where(FilterGroup)"/>
@@ -134,6 +139,10 @@
             mockDataProvider
                 .Setup(x => x.Get(It.IsAny<Guid>()))
                 .Returns(() => ShouldReturnEntityFromDataProvider ? TestedEntity : default);
+
+            mockDataProvider
+                .Setup(x => x.Select<SysVariableDisplayModel>(It.IsAny<SelectConfiguration>())) // specific case
+                .Returns(() => new SysVariableDisplayModel[] { TestedProjectedEntity });
 
             mockDataProvider
                 .Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<IDictionary<string, object>>()))
