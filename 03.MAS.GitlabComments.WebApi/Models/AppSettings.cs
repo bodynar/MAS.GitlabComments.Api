@@ -31,7 +31,7 @@
 
             CommentNumberTemplate = string.IsNullOrWhiteSpace(commentNumberTemplate)
                     ? CommentDefaultNumberTemplate
-                    : commentNumberTemplate; // TODO: add tests
+                    : commentNumberTemplate;
         }
     }
 }
