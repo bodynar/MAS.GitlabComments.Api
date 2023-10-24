@@ -362,8 +362,11 @@
             {
                 var builtFilter = GetFilterValue(configuration.Filter);
 
-                filterSql = $"WHERE {builtFilter.Sql}";
-                queryArguments = builtFilter.Values;
+                if (builtFilter != null && !string.IsNullOrWhiteSpace(builtFilter.Sql))
+                {
+                    filterSql = $"WHERE {builtFilter.Sql}";
+                    queryArguments = builtFilter.Values;
+                }
             }
 
             var entities = Enumerable.Empty<TProjection>();

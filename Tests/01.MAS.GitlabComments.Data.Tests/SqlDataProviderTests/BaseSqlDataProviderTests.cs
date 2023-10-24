@@ -180,15 +180,7 @@
 
             mockFilterBuilder
                 .Setup(x => x.Build(It.IsAny<FilterGroup>()))
-                .Returns(() =>
-                {
-                    if (FilterBuilderResult == null)
-                    {
-                        throw new Exception($"{nameof(FilterBuilderResult)} is empty");
-                    }
-
-                    return FilterBuilderResult;
-                });
+                .Returns(() => FilterBuilderResult);
 
             var mockComplexQueryBuilder = new Mock<IComplexColumnQueryBuilder>();
 

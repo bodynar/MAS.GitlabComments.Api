@@ -49,6 +49,36 @@
         }
 
         [Fact]
+        public void ShouldBuildQueryWithoutFilterWhenFilterCannotBeBuilt()
+        {
+            FilterGroup filter = new()
+            {
+                Items = new[]
+                {
+                    new FilterItem
+                    {
+                        FieldName = nameof(TestedDataProviderEntity.IntField),
+                        LogicalComparisonType = ComparisonType.Equal,
+                        Name = "c",
+                        Value = true
+                    }
+                }
+            };
+            var expectedSql = $"SELECT * FROM [{TestedTableName}]";
+
+            SelectConfiguration configuration = new SelectConfiguration
+            {
+                Filter = filter,
+            };
+
+            TestedService.Select<EmptyProjectedClass>(configuration);
+            var lastQuery = LastQuery;
+
+            Assert.NotNull(lastQuery);
+            Assert.Equal(expectedSql, lastQuery.Value.Key);
+        }
+
+        [Fact]
         public void ShouldBuildQueryWithAllColumnsWhenProjectedModelDoesNotHasRequiredAttributes()
         {
             var expectedSql = $"SELECT * FROM [{TestedTableName}]";
@@ -166,6 +196,63 @@
             Assert.NotNull(lastQuery);
             Assert.Equal(expectedSql, lastQuery.Value.Key);
             AssertArguments(FilterBuilderResult.Values, lastQuery.Value.Value);
+        }
+
+        [Fact]
+        public void ShouldBuildQueryWithoutFilterWhenFilterBuildAnEmptyFilter()
+        {
+            var expectedSql = $"SELECT [{TestedTableName}].[Column1], [RightTableName1].[Column2] FROM [{TestedTableName}]" +
+                $" INNER JOIN [RightTableName1] AS [Alias1] WITH(NOLOCK)" +
+                    $" ON ([Alias1].[RightTableRelationColumn1] = [{TestedTableName}].[LeftTableRelationColumn1])";
+
+            SelectConfiguration configuration = new()
+            {
+                Filter = new FilterGroup()
+                {
+                    Items = new[]
+                    {
+                        new FilterItem
+                        {
+                            FieldName = nameof(TestedDataProviderEntity.IntField),
+                            LogicalComparisonType = ComparisonType.Equal,
+                            Name = "c",
+                            Value = true
+                        }
+                    }
+                }
+            };
+            FilterBuilderResult = new FilterResult
+            {
+                Sql = string.Empty,
+                Values = new Dictionary<string, object>() { { "Key1", "Value1" } }
+            };
+            ComplexColumnQueryBuilderResult = new ComplexColumnData()
+            {
+                Columns = new[]
+                {
+                    new ComplexColumn { Name = "Column1", TableAlias = TestedTableName },
+                    new ComplexColumn { Name = "Column2", TableAlias = "RightTableName1" },
+                },
+                Joins = new[]
+                {
+                    new TableJoinData("test_join_data")
+                    {
+                        JoinType = TableJoinType.Inner,
+                        RightTableName = "RightTableName1",
+                        RightTableRelationColumn = "RightTableRelationColumn1",
+                        Alias = "Alias1",
+                        LeftTableName = TestedTableName,
+                        LeftTableRelationColumn = "LeftTableRelationColumn1",
+                    }
+                }
+            };
+
+            TestedService.Select<EmptyProjectedClass>(configuration);
+            var lastQuery = LastQuery;
+
+            Assert.NotNull(lastQuery);
+            Assert.Equal(expectedSql, lastQuery.Value.Key);
+            Assert.Empty(lastQuery.Value.Value);
         }
     }
 }
