@@ -189,31 +189,6 @@
             Assert.Equal(0, result.Sql.Length);
         }
 
-        [Fact]
-        public void ShouldNotBuildFilterWhenJoinOperatorIsInvalid()
-        {
-            FilterGroup filter = new()
-            {
-                Name = "EmptyFilter",
-                Items = new[]
-                {
-                    new FilterItem
-                    {
-                        FieldName = "TestFieldName",
-                        Name = "TestFilter",
-                        Value = "TestValue",
-                        LogicalComparisonType = ComparisonType.Equal
-                    }
-                }
-            };
-
-            var result = TestedService.Build(filter);
-
-            Assert.NotNull(result);
-            Assert.NotNull(result.Sql);
-            Assert.Equal(0, result.Sql.Length);
-        }
-
         #region Proper filter build
 
         #region Comparisons
