@@ -73,10 +73,8 @@
                 throw new ArgumentNullException(nameof(AddCommentModel.Message));
             }
 
-            var number = string.Format(
-                ApplicationSettings.CommentNumberTemplate,
-                SystemVariableProvider.GetValue<int>("LastCommentNumber") + 1
-            );
+            var newNumber = SystemVariableProvider.GetValue<int>("LastCommentNumber") + 1;
+            var number = string.Format(ApplicationSettings.CommentNumberTemplate, newNumber);
 
             var newId = CommentsDataProvider.Add(
                 new Comment
@@ -88,6 +86,11 @@
                     Number = number,
                 }
             );
+
+            if (newId != default)
+            {
+                SystemVariableProvider.Set("LastCommentNumber", newNumber);
+            }
 
             return newId;
         }

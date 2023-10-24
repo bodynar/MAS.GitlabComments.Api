@@ -59,6 +59,16 @@
         protected SelectConfiguration LastSelectConfig { get; private set; }
 
         /// <summary>
+        /// Created entity id returned from <see cref="IDataProvider{TEntity}.Add(TEntity)"/>
+        /// </summary>
+        protected Guid ReturnedCreatedCommentId { get; set; } = Guid.Empty;
+
+        /// <summary>
+        /// Was <see cref="ISystemVariableProvider.Set{TValue}(string, TValue)"/> called for "LastCommentNumber" variable
+        /// </summary>
+        protected bool IsSetNumberVariableCalled { get; private set; }
+
+        /// <summary>
         /// Tested comment number template
         /// </summary>
         protected string CommentNumberTemplate { get; } = "!{0:00}";
@@ -154,7 +164,7 @@
                     LastAddedComment = comment;
                     lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), Array.Empty<object>());
                 })
-                .Returns(() => Guid.Empty);
+                .Returns(() => ReturnedCreatedCommentId);
 
             mockDataProvider // custom case
                 .Setup(x => x.Select<CommentModel>(It.IsAny<SelectConfiguration>()))
@@ -236,6 +246,10 @@
             mock
                 .Setup(x => x.GetValue<int>(It.IsAny<string>()))
                 .Returns(() => IntVariableValue);
+
+            mock
+                .Setup(x => x.Set("LastCommentNumber", It.IsAny<int>()))
+                .Callback(() => IsSetNumberVariableCalled = true);
 
             return mock.Object;
         }
