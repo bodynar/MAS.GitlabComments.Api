@@ -184,11 +184,11 @@
         }
 
         /// <inheritdoc cref="ICommentService.GetIncomplete"/>
-        public IEnumerable<CommentModel> GetIncomplete()
+        public IEnumerable<IncompleteCommentData> GetIncomplete()
         {
             return
                 CommentsDataProvider
-                    .Select<CommentModel>(
+                    .Select<IncompleteCommentData>(
                         new SelectConfiguration()
                         {
                             Filter = new FilterGroup()
@@ -206,7 +206,6 @@
                             }
                         }
                     )
-                    .OrderByDescending(x => x.AppearanceCount)
                     .ToList();
         }
 

@@ -49,6 +49,6 @@
         /// </para>
         /// </summary>
         /// <returns>Pack of comments</returns>
-        public IEnumerable<CommentModel> GetIncomplete();
+        public IEnumerable<IncompleteCommentData> GetIncomplete();
     }
 }

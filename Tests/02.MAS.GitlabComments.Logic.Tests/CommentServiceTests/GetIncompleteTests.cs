@@ -19,18 +19,14 @@
             string expectedFieldName = "Number";
             string expectedFilterValue = string.Empty;
             ComparisonType expectedComparisonType = ComparisonType.Equal;
-            CommentModel expectedCommentModel = new()
+            IncompleteCommentData expectedCommentModel = new()
             {
-                Id = ReturnedTestedComment.Id,
-                AppearanceCount = ReturnedTestedComment.AppearanceCount,
-                Message = ReturnedTestedComment.Message,
-                CommentWithLinkToRule = ReturnedTestedComment.CommentWithLinkToRule,
-                Description = ReturnedTestedComment.Description,
-                Number = ReturnedTestedComment.Number,
+                Id = ProjectedIncompleteTestComment.Id,
+                AppearanceCount = ProjectedIncompleteTestComment.AppearanceCount,
             };
 
 
-            IEnumerable<CommentModel> result = TestedService.GetIncomplete();
+            IEnumerable<IncompleteCommentData> result = TestedService.GetIncomplete();
             var firstItem = result.FirstOrDefault();
 
 
@@ -40,10 +36,6 @@
             Assert.NotNull(firstItem);
             Assert.Equal(expectedCommentModel.Id, firstItem.Id);
             Assert.Equal(expectedCommentModel.AppearanceCount, firstItem.AppearanceCount);
-            Assert.Equal(expectedCommentModel.Message, firstItem.Message);
-            Assert.Equal(expectedCommentModel.CommentWithLinkToRule, firstItem.CommentWithLinkToRule);
-            Assert.Equal(expectedCommentModel.Description, firstItem.Description);
-            Assert.Equal(expectedCommentModel.Number, firstItem.Number);
 
             Assert.NotNull(LastSelectConfig);
             Assert.NotNull(LastSelectConfig.Filter);

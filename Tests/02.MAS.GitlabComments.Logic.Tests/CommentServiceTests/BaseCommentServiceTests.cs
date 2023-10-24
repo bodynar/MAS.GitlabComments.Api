@@ -32,9 +32,16 @@
         protected Comment ReturnedTestedComment { get; private set; }
 
         /// <summary>
-        /// Instance of <see cref="CommentModel"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Select{TProjection}(SelectConfiguration)"/> method
+        /// Instance of <see cref="CommentModel"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Select{TProjection}(SelectConfiguration)"/> method 
+        /// for getting all comments
         /// </summary>
         protected CommentModel ProjectedTestComment { get; private set; }
+
+        /// <summary>
+        /// Instance of <see cref="IncompleteCommentData"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Select{TProjection}(SelectConfiguration)"/> method
+        /// for getting incomplete comments
+        /// </summary>
+        protected IncompleteCommentData ProjectedIncompleteTestComment { get; private set; }
 
         /// <summary>
         /// Instance of StoryRecord which was added last
@@ -124,6 +131,12 @@
                 CommentWithLinkToRule = nameof(CommentModel.CommentWithLinkToRule),
                 Number = "TEST_0001",
             };
+
+            ProjectedIncompleteTestComment = new IncompleteCommentData
+            {
+                Id = Guid.Empty,
+                AppearanceCount = 10,
+            };
         }
 
         /// <summary>
@@ -147,6 +160,11 @@
                 .Setup(x => x.Select<CommentModel>(It.IsAny<SelectConfiguration>()))
                 .Callback<SelectConfiguration>(config => LastSelectConfig = config)
                 .Returns(() => new[] { ProjectedTestComment });
+
+            mockDataProvider // custom case
+                .Setup(x => x.Select<IncompleteCommentData>(It.IsAny<SelectConfiguration>()))
+                .Callback<SelectConfiguration>(config => LastSelectConfig = config)
+                .Returns(() => new[] { ProjectedIncompleteTestComment });
 
             mockDataProvider
                 .Setup(x => x.Get())
