@@ -41,7 +41,8 @@ BEGIN
 	INSERT INTO [SystemVariables]
 		([CreatedOn], [Code], [Type], [RawValue])
 	VALUES
-		(GETDATE(), 'LastCommentNumber', 'Int', '0')
+		(GETDATE(), 'LastCommentNumber', 'Int', '0'),
+		(GETDATE(), 'IsChangeNumberUnique', 'Bool', 'false')
 	;
 
 	INSERT INTO [ScriptLog]

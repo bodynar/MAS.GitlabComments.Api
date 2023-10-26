@@ -141,5 +141,25 @@
                 return BaseServiceResult.Error(e);
             }
         }
+
+        /// <summary>
+        /// Update comment table definition
+        /// </summary>
+        [HttpGet("updateCommentTable")]
+        public BaseServiceResult UpdateCommentTable()
+        {
+            try
+            {
+                CommentService.MakeNumberColumnUnique();
+
+                return BaseServiceResult.Success();
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Updating comment table with unique constraint for Number column failed");
+                return BaseServiceResult.Error(e);
+            }
+            
+        }
     }
 }

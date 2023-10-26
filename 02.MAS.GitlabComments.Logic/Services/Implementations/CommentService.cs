@@ -32,6 +32,9 @@
         /// <inheritdoc cref="ISystemVariableProvider"/>
         private ISystemVariableProvider SystemVariableProvider { get; }
 
+        /// <inheritdoc cref="ITempDatabaseModifier"/>
+        private ITempDatabaseModifier TempDatabaseModifier { get; }
+
         /// <summary>
         /// Initializing <see cref="CommentService"/>
         /// </summary>
@@ -45,13 +48,16 @@
             IDataProvider<Comment> commentsDataProvider,
             IDataProvider<StoryRecord> storyRecordsDataProvider,
             IApplicationSettings applicationSettings,
-            ISystemVariableProvider systemVariableProvider
+            ISystemVariableProvider systemVariableProvider,
+
+            ITempDatabaseModifier tempDatabaseModifier
         )
         {
             CommentsDataProvider = commentsDataProvider ?? throw new ArgumentNullException(nameof(commentsDataProvider));
             StoryRecordsDataProvider = storyRecordsDataProvider ?? throw new ArgumentNullException(nameof(storyRecordsDataProvider));
             ApplicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
             SystemVariableProvider = systemVariableProvider ?? throw new ArgumentNullException(nameof(systemVariableProvider));
+            TempDatabaseModifier = tempDatabaseModifier ?? throw new ArgumentNullException(nameof(tempDatabaseModifier));
         }
 
         /// <summary>
@@ -239,6 +245,28 @@
             }
 
             SystemVariableProvider.Set("LastCommentNumber", lastNumber);
+        }
+
+        /// <inheritdoc cref="ICommentService.MakeNumberColumnUnique"/>
+        public void MakeNumberColumnUnique()
+        {
+            var incomplete = GetIncomplete();
+
+            if (incomplete.Any())
+            {
+                return;
+            }
+
+            var isChangeAppliedAlreadyVariable = SystemVariableProvider.Get("IsChangeNumberUnique");
+
+            if (isChangeAppliedAlreadyVariable == default || bool.Parse(isChangeAppliedAlreadyVariable.RawValue))
+            {
+                return;
+            }
+
+            TempDatabaseModifier.ApplyModifications();
+
+            SystemVariableProvider.Set("IsChangeNumberUnique", true);
         }
 
         #region Not public API

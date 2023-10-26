@@ -64,6 +64,8 @@ namespace MAS.GitlabComments.WebApi
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddTransient<IFilterBuilder, MsSqlFilterBuilder>()
                 .AddTransient<IComplexColumnQueryBuilder, ComplexColumnMssqlBuilder>()
+
+                .AddSingleton<ITempDatabaseModifier, TempDatabaseModifier>()
                 // /data registrations
 
                 // logic registrations

@@ -58,5 +58,11 @@
         /// </para>
         /// </summary>
         public void UpdateIncomplete();
+
+        /// <summary>
+        /// Add unique constraint for Number column for comment in database
+        /// </summary>
+        [Obsolete("v1.3 | Will be removed in v1.4")]
+        public void MakeNumberColumnUnique();
     }
 }
