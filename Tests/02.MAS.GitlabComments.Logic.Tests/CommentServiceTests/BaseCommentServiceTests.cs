@@ -44,6 +44,16 @@
         protected IncompleteCommentData ProjectedIncompleteTestComment { get; private set; }
 
         /// <summary>
+        /// Result of <see cref="ICommentService.GetIncomplete"/> for manual mocking
+        /// </summary>
+        protected IEnumerable<IncompleteCommentData> ManualIncompleteData { get; set; }
+
+        /// <summary>
+        /// Use <see cref="ManualIncompleteData"/> for <see cref="ICommentService.GetIncomplete"/>
+        /// </summary>
+        protected bool UseManualIncompleteData { get; set; }
+
+        /// <summary>
         /// Instance of StoryRecord which was added last
         /// </summary>
         protected StoryRecord LastAddedStoryRecord { get; private set; }
@@ -77,6 +87,17 @@
         /// Value provided by mock of <see cref="ISystemVariableProvider.GetValue{TValue}(string)"/> for test case
         /// </summary>
         protected int IntVariableValue { get; } = 10;
+
+        /// <summary>
+        /// Last value of <see cref="ISystemVariableProvider.Set{TValue}(string, TValue)"/> for last comment number variable
+        /// </summary>
+        protected int? LastCommentNumber { get; private set; }
+
+        /// <summary>
+        /// Queue of arguments from call <see cref="IDataProvider{TEntity}.Update(Guid, IDictionary{string, object})"/>
+        /// </summary>
+        protected IEnumerable<KeyValuePair<Guid, IDictionary<string, object>>> UpdateDataProviderArguments { get; private set; }
+            = Enumerable.Empty<KeyValuePair<Guid, IDictionary<string, object>>>();
 
         /// <summary>
         /// Last called command back-field
@@ -174,7 +195,7 @@
             mockDataProvider // custom case
                 .Setup(x => x.Select<IncompleteCommentData>(It.IsAny<SelectConfiguration>()))
                 .Callback<SelectConfiguration>(config => LastSelectConfig = config)
-                .Returns(() => new[] { ProjectedIncompleteTestComment });
+                .Returns(() => UseManualIncompleteData ? ManualIncompleteData : new[] { ProjectedIncompleteTestComment });
 
             mockDataProvider
                 .Setup(x => x.Get())
@@ -189,6 +210,11 @@
                 .Callback<Guid, IDictionary<string, object>>((id, data) =>
                 {
                     lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Update), new object[] { id, data });
+                    UpdateDataProviderArguments = UpdateDataProviderArguments.Union(new[] {
+                        new KeyValuePair<Guid, IDictionary<string, object>>(
+                            id, data
+                        )
+                    });
                 });
 
             mockDataProvider
@@ -249,7 +275,10 @@
 
             mock
                 .Setup(x => x.Set("LastCommentNumber", It.IsAny<int>()))
-                .Callback(() => IsSetNumberVariableCalled = true);
+                .Callback<string, int>((_, value) => {
+                    IsSetNumberVariableCalled = true;
+                    LastCommentNumber = value;
+                });
 
             return mock.Object;
         }

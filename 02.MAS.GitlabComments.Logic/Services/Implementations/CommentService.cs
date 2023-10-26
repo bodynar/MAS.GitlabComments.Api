@@ -212,6 +212,35 @@
                     .ToList();
         }
 
+        /// <inheritdoc cref="ICommentService.UpdateIncomplete"/>
+        public void UpdateIncomplete()
+        {
+            var incompleteData = GetIncomplete();
+
+            if (!incompleteData.Any())
+            {
+                return;
+            }
+
+            var lastNumber = SystemVariableProvider.GetValue<int>("LastCommentNumber");
+            var updateDataTasks = incompleteData.Select(
+                x => new Tuple<Guid, string>(
+                    x.Id,
+                    string.Format(ApplicationSettings.CommentNumberTemplate, ++lastNumber)
+                )
+            );
+
+            foreach (var updateDataItem in updateDataTasks)
+            {
+                CommentsDataProvider.Update(
+                    updateDataItem.Item1,
+                    new Dictionary<string, object> { { nameof(Comment.Number), updateDataItem.Item2 } }
+                );
+            }
+
+            SystemVariableProvider.Set("LastCommentNumber", lastNumber);
+        }
+
         #region Not public API
 
         /// <summary>

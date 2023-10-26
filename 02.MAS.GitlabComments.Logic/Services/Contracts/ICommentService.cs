@@ -50,5 +50,13 @@
         /// </summary>
         /// <returns>Pack of comments</returns>
         public IEnumerable<IncompleteCommentData> GetIncomplete();
+
+        /// <summary>
+        /// Update incomplete comments to satisfy all rules
+        /// <para>
+        ///     - Set number for those which doesn't have one
+        /// </para>
+        /// </summary>
+        public void UpdateIncomplete();
     }
 }
