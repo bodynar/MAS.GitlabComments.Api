@@ -30,7 +30,8 @@ BEGIN
 		[CreatedOn] [datetime2](7) NOT NULL,
 		[ModifiedOn] [datetime2](7) NULL,
 
-		[Code] [nvarchar](max) NOT NULL,
+		[Code] [nvarchar](255) NOT NULL
+			CONSTRAINT [UQ_SystemVariables_Code] UNIQUE([Code]),
 		[Caption] [nvarchar](max) NULL,
 		[Type] [nvarchar](max) NOT NULL,
 		[RawValue] [nvarchar](max) NOT NULL,
