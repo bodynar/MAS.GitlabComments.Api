@@ -26,6 +26,8 @@
         /// </summary>
         protected CommentService TestedService { get; }
 
+        #region Data provider mock members
+
         /// <summary>
         /// Instance of <see cref="Comment"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Get"/> method
         /// </summary>
@@ -74,14 +76,18 @@
         protected Guid ReturnedCreatedCommentId { get; set; } = Guid.Empty;
 
         /// <summary>
+        /// Last called command of <see cref="IDataProvider{TEntity}"/> - pair of command name and arguments
+        /// </summary>
+        protected KeyValuePair<string, IEnumerable<object>>? LastCommand { get; private set; }
+
+        #endregion
+
+        #region System variable service
+
+        /// <summary>
         /// Was <see cref="ISystemVariableProvider.Set{TValue}(string, TValue)"/> called for "LastCommentNumber" variable
         /// </summary>
         protected bool IsSetNumberVariableCalled { get; private set; }
-
-        /// <summary>
-        /// Tested comment number template
-        /// </summary>
-        protected string CommentNumberTemplate { get; } = "!{0:00}";
 
         /// <summary>
         /// Value provided by mock of <see cref="ISystemVariableProvider.GetValue{TValue}(string)"/> for test case
@@ -94,35 +100,32 @@
         protected int? LastCommentNumber { get; private set; }
 
         /// <summary>
+        /// Model got from <see cref="ISystemVariableProvider.Get(string)"/>
+        /// </summary>
+        protected SysVariable ReturnedSysVariable { get; set; }
+
+        /// <summary>
+        /// Value, read from second argument in call of <see cref="ISystemVariableProvider.Set{TValue}(string, TValue)"/>
+        /// </summary>
+        protected bool IsChangeNumberUniqueValue { get; private set; }
+
+        #endregion
+
+        /// <summary>
+        /// Flag, what determine that <see cref="ITempDatabaseModifier.ApplyModifications"/> was called
+        /// </summary>
+        protected bool IsTempModifierWasCalled { get; private set; }
+
+        /// <summary>
+        /// Tested comment number template
+        /// </summary>
+        protected string CommentNumberTemplate { get; } = "!{0:00}";
+
+        /// <summary>
         /// Queue of arguments from call <see cref="IDataProvider{TEntity}.Update(Guid, IDictionary{string, object})"/>
         /// </summary>
         protected IEnumerable<KeyValuePair<Guid, IDictionary<string, object>>> UpdateDataProviderArguments { get; private set; }
             = Enumerable.Empty<KeyValuePair<Guid, IDictionary<string, object>>>();
-
-        /// <summary>
-        /// Last called command back-field
-        /// </summary>
-        private KeyValuePair<string, IEnumerable<object>>? lastCommand;
-
-        /// <summary>
-        /// Last called command of <see cref="IDataProvider{TEntity}"/> - pair of command name and arguments
-        /// </summary>
-        protected KeyValuePair<string, IEnumerable<object>>? LastCommand
-        {
-            get
-            {
-                if (!lastCommand.HasValue)
-                {
-                    return null;
-                }
-
-                var copy = new KeyValuePair<string, IEnumerable<object>>(lastCommand.Value.Key, lastCommand.Value.Value);
-
-                lastCommand = null;
-
-                return copy;
-            }
-        }
 
         /// <summary>
         /// Initializing <see cref="BaseCommentServiceTests"/> with setup'n all required environment
@@ -133,12 +136,14 @@
             var storyRecordsProvider = GetMockStoryRecordDataProvider();
             var appSettings = GetMockAppSettings();
             var sysVariableProvider = GetMockSysVariableProvider();
+            var tempModified = GetTempDatabaseModifier();
 
             TestedService = new CommentService(
                 commentsProvider,
                 storyRecordsProvider,
                 appSettings,
-                sysVariableProvider
+                sysVariableProvider,
+                tempModified
             );
 
             ReturnedTestedComment = new Comment
@@ -183,7 +188,7 @@
                 .Callback<Comment>((comment) =>
                 {
                     LastAddedComment = comment;
-                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), Array.Empty<object>());
+                    LastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), Array.Empty<object>());
                 })
                 .Returns(() => ReturnedCreatedCommentId);
 
@@ -209,7 +214,7 @@
                 .Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<IDictionary<string, object>>()))
                 .Callback<Guid, IDictionary<string, object>>((id, data) =>
                 {
-                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Update), new object[] { id, data });
+                    LastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Update), new object[] { id, data });
                     UpdateDataProviderArguments = UpdateDataProviderArguments.Union(new[] {
                         new KeyValuePair<Guid, IDictionary<string, object>>(
                             id, data
@@ -221,7 +226,7 @@
                 .Setup(x => x.Delete(It.IsAny<Guid[]>()))
                 .Callback<Guid[]>(id =>
                 {
-                    lastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Delete), new object[] { id });
+                    LastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Delete), new object[] { id });
                 });
 
             return mockDataProvider.Object;
@@ -274,11 +279,39 @@
                 .Returns(() => IntVariableValue);
 
             mock
+                .Setup(x => x.Get(It.IsAny<string>()))
+                .Returns(() => ReturnedSysVariable);
+
+            mock
                 .Setup(x => x.Set("LastCommentNumber", It.IsAny<int>()))
-                .Callback<string, int>((_, value) => {
+                .Callback<string, int>((_, value) =>
+                {
                     IsSetNumberVariableCalled = true;
                     LastCommentNumber = value;
                 });
+
+            mock
+                .Setup(x => x.Set("IsChangeNumberUnique", It.IsAny<bool>()))
+                .Callback<string, bool>((_, value) =>
+                {
+                    IsChangeNumberUniqueValue = value;
+                });
+
+            return mock.Object;
+        }
+
+        /// <summary>
+        /// Configure mock object of <see cref="ITempDatabaseModifier"/> for comment service
+        /// </summary>
+        /// <returns>Configured mock object of <see cref="ITempDatabaseModifier"/></returns>
+        private ITempDatabaseModifier GetTempDatabaseModifier()
+        {
+            var mock = new Mock<ITempDatabaseModifier>();
+
+            mock
+                .Setup(x => x.ApplyModifications())
+                .Callback(() => IsTempModifierWasCalled = true)
+            ;
 
             return mock.Object;
         }
@@ -294,11 +327,10 @@
             int expectedArgumentsCount = expectedCommandArguments.Count();
 
             serviceAction.Invoke();
-            KeyValuePair<string, IEnumerable<object>>? lastCommand = LastCommand;
 
-            Assert.NotNull(lastCommand);
+            Assert.NotNull(LastCommand);
 
-            var lastCommandAsKeyValuePair = lastCommand.Value;
+            var lastCommandAsKeyValuePair = LastCommand.Value;
 
             Assert.Equal(expectedCommandName, lastCommandAsKeyValuePair.Key);
             Assert.Equal(expectedArgumentsCount, lastCommandAsKeyValuePair.Value.Count());
