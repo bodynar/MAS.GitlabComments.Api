@@ -143,9 +143,47 @@
         }
 
         /// <summary>
+        /// Get incomplete comments data
+        /// </summary>
+        [HttpGet("getIncomplete")] // TODO: tests
+        public BaseServiceResult<IEnumerable<IncompleteCommentData>> GetIncomplete()
+        {
+            try
+            {
+                var result = CommentService.GetIncomplete();
+
+                return BaseServiceResult<IEnumerable<IncompleteCommentData>>.Success(result);
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Get incomplete comments");
+                return BaseServiceResult<IEnumerable<IncompleteCommentData>>.Error(e);
+            }
+        }
+
+        /// <summary>
+        /// Update incomplete comments
+        /// </summary>
+        [HttpPost("updateIncomplete")] // TODO: tests
+        public BaseServiceResult UpdateIncomplete()
+        {
+            try
+            {
+                CommentService.UpdateIncomplete();
+
+                return BaseServiceResult.Success();
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Updating incomplete comments failed");
+                return BaseServiceResult.Error(e);
+            }
+        }
+
+        /// <summary>
         /// Update comment table definition
         /// </summary>
-        [HttpGet("updateCommentTable")]
+        [HttpPost("updateCommentTable")] // TODO: tests
         public BaseServiceResult UpdateCommentTable()
         {
             try
@@ -158,8 +196,7 @@
             {
                 Logger?.LogError(e, "Updating comment table with unique constraint for Number column failed");
                 return BaseServiceResult.Error(e);
-            }
-            
+            } 
         }
     }
 }
