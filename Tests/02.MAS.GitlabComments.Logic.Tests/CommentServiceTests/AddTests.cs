@@ -9,7 +9,7 @@
     public sealed class AddTests : BaseCommentServiceTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenAddWithEmptyModel()
+        public void ShouldThrowArgumentNullException_WhenAddWithEmptyModel()
         {
             AddCommentModel model = null;
 
@@ -23,7 +23,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenAddWithEmptyMessage()
+        public void ShouldThrowArgumentNullException_WhenAddWithEmptyMessage()
         {
             AddCommentModel model = new() { Message = string.Empty };
 
@@ -60,7 +60,7 @@
         }
 
         [Fact]
-        public void ShouldSetSystemVariableWhenProviderDoesNotCreatedEntity()
+        public void ShouldSetSystemVariable_WhenProviderDoesNotCreatedEntity()
         {
             AddCommentModel model = new()
             {

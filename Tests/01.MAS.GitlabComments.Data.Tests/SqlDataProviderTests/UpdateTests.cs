@@ -13,7 +13,7 @@
     public sealed class UpdateTests : BaseSqlDataProviderTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenEntityIdIsDefault()
+        public void ShouldThrowArgumentNullException_WhenEntityIdIsDefault()
         {
             Guid entityId = default;
             IDictionary<string, object> newValues = new Dictionary<string, object>();
@@ -28,7 +28,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenEntityValuesIsNull()
+        public void ShouldThrowArgumentNullException_WhenEntityValuesIsNull()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = null;
@@ -43,7 +43,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenEntityValuesIsEmpty()
+        public void ShouldThrowArgumentNullException_WhenEntityValuesIsEmpty()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = new Dictionary<string, object>();
@@ -58,7 +58,7 @@
         }
 
         [Fact]
-        public void ShouldThrowQueryExecutionExceptionWhenEntityValuesContainsOnlyDefaultEntityFields()
+        public void ShouldThrowQueryExecutionException_WhenEntityValuesContainsOnlyDefaultEntityFields()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = new Dictionary<string, object>() { { "CreatedOn", DateTime.UtcNow } };
@@ -80,7 +80,7 @@
         }
 
         [Fact]
-        public void ShouldThrowQueryExecutionExceptionWhenEntityValuesContainsFieldsNotPresentedInEntity()
+        public void ShouldThrowQueryExecutionException_WhenEntityValuesContainsFieldsNotPresentedInEntity()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = new Dictionary<string, object>() { { "TestedNotExistedPropeprty", DateTime.UtcNow } };
@@ -102,7 +102,7 @@
         }
 
         [Fact]
-        public void ShouldThrowQueryExecutionExceptionWhenEntityValuesContainsOnlyPairWithNullValues()
+        public void ShouldThrowQueryExecutionException_WhenEntityValuesContainsOnlyPairWithNullValues()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = new Dictionary<string, object>() { { "IntField", null } };
@@ -124,7 +124,7 @@
         }
 
         [Fact]
-        public void ShouldThrowExceptionWhenAffectedRowsIsZero()
+        public void ShouldThrowException_WhenAffectedRowsIsZero()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = new Dictionary<string, object>() { { "IntField", 10 } };

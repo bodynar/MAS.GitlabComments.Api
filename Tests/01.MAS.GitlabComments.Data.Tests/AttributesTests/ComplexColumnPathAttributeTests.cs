@@ -9,7 +9,7 @@
     public sealed class ComplexColumnPathAttributeTests
     {
         [Fact]
-        public void ShouldThrowExceptionWhenColumnPathIsNull()
+        public void ShouldThrowException_WhenColumnPathIsNull()
         {
             Exception exception =
                 Record.Exception(
@@ -22,7 +22,7 @@
         }
 
         [Fact]
-        public void ShouldThrowExceptionWhenColumnPathIsEmpty()
+        public void ShouldThrowException_WhenColumnPathIsEmpty()
         {
             Exception exception =
                 Record.Exception(
@@ -35,7 +35,7 @@
         }
 
         [Fact]
-        public void ShouldThrowExceptionWhenColumnPathIsWhiteSpaceOnly()
+        public void ShouldThrowException_WhenColumnPathIsWhiteSpaceOnly()
         {
             string whiteSpace = new string(' ', 10);
 

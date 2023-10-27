@@ -32,7 +32,7 @@
         private class EmptyProjectedClass { }
 
         [Fact]
-        public void ShouldReturnNullWhenTableAliasIsEmpty()
+        public void ShouldReturnNull_WhenTableAliasIsEmpty()
         {
             var result = TestedService.BuildComplexColumns<EmptyProjectedClass>(string.Empty);
 
@@ -40,7 +40,7 @@
         }
 
         [Fact]
-        public void ShouldReturnNullWhenTableAliasIsNull()
+        public void ShouldReturnNull_WhenTableAliasIsNull()
         {
             var result = TestedService.BuildComplexColumns<EmptyProjectedClass>(null);
 
@@ -48,7 +48,7 @@
         }
 
         [Fact]
-        public void ShouldReturnNullWhenProjectedTypeHasNoColumns()
+        public void ShouldReturnNull_WhenProjectedTypeHasNoColumns()
         {
             var result = TestedService.BuildComplexColumns<EmptyProjectedClass>(string.Empty);
 
@@ -58,7 +58,7 @@
         #region Empty Data When Projected Model Has Empty Attributes
 
         [Fact]
-        public void ShouldReturnEmptyDataWhenProjectedModelHasEmptyAttributes()
+        public void ShouldReturnEmptyData_WhenProjectedModelHasEmptyAttributes()
         {
             var expectedColumn = $"[{SourceTableName}].[SimplePath]";
             var result = TestedService.BuildComplexColumns<ProjectedClassWithEmptyAttributes>(SourceTableName);
@@ -80,7 +80,7 @@
         #region Empty Data When Projected Type Has Column With Invalid Path Only From Joins
 
         [Fact]
-        public void ShouldReturnEmptyDataWhenProjectedTypeHasColumnWithInvalidPathOnlyFromJoins()
+        public void ShouldReturnEmptyData_WhenProjectedTypeHasColumnWithInvalidPathOnlyFromJoins()
         {
             var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>("ProjectedClassWithInvalidPathFromJoins");
 
@@ -120,7 +120,7 @@
         #region Empty Data When Projected Type Has Column With Invalid Path From Simple Column And Join
 
         [Fact]
-        public void ShouldReturnEmptyDataWhenProjectedTypeHasColumnWithInvalidPathFromSimpleColumnAndJoin()
+        public void ShouldReturnEmptyData_WhenProjectedTypeHasColumnWithInvalidPathFromSimpleColumnAndJoin()
         {
             var result = TestedService.BuildComplexColumns<ProjectedClassWithInvalidPathFromJoins>(SourceTableName);
 

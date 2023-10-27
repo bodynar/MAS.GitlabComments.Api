@@ -10,7 +10,7 @@
     public sealed class UpdateTests : BaseCommentServiceTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenUpdateWithEmptyModel()
+        public void ShouldThrowArgumentNullException_WhenUpdateWithEmptyModel()
         {
             UpdateCommentModel model = null;
 
@@ -24,7 +24,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenUpdateWithEmptyMessage()
+        public void ShouldThrowArgumentNullException_WhenUpdateWithEmptyMessage()
         {
             UpdateCommentModel model = new() { Message = string.Empty };
 
@@ -38,24 +38,24 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenCommentIdIsDefaultInUpdate()
+        public void ShouldThrowArgumentNullException_WhenCommentIdIsDefaultInUpdate()
         {
             UpdateCommentModel model = new() { Id = default, Message = string.Empty };
 
             Action testedAction = () => TestedService.Update(model);
 
-            ShouldThrowArgumentNullExceptionWhenCommentIdIsDefaultInternal(testedAction);
+            ShouldThrowArgumentNullException_WhenCommentIdIsDefaultInternal(testedAction);
         }
 
         [Fact]
-        public void ShouldThrowEntityNotFoundExceptionWhenEntityNotFoundByIdInUpdate()
+        public void ShouldThrowEntityNotFoundException_WhenEntityNotFoundByIdInUpdate()
         {
             UpdateCommentModel model = new() { Id = Guid.NewGuid(), Message = "TestedMessage" };
             string expectedErrorMessage = $"Entity \"Comment\" - \"{model.Id}\" not found.";
 
             Action testedAction = () => TestedService.Update(model);
 
-            ShouldThrowEntityNotFoundExceptionWhenEntityNotFoundByIdInternal(testedAction, expectedErrorMessage);
+            ShouldThrowEntityNotFoundException_WhenEntityNotFoundByIdInternal(testedAction, expectedErrorMessage);
         }
 
         [Fact]
@@ -72,7 +72,7 @@
         }
 
         [Fact]
-        public void ShouldUpdateCommentDescriptionWhenDescriptionIsNotEmpty()
+        public void ShouldUpdateCommentDescription_WhenDescriptionIsNotEmpty()
         {
             UpdateCommentModel model = new() { Id = Guid.NewGuid(), Message = "TestedMessage", Description = "TestedDescription" };
             string expectedCommandName = "Update";
@@ -85,7 +85,7 @@
         }
 
         [Fact]
-        public void ShouldUpdateCommentCommentWithLinkToRuleWhenItIsNotEmpty()
+        public void ShouldUpdateCommentCommentWithLinkToRule_WhenItIsNotEmpty()
         {
             UpdateCommentModel model = new() { Id = Guid.NewGuid(), Message = "TestedMessage", Description = "TestedDescription", CommentWithLinkToRule = "TestedCommentWithLinkToRule" };
             string expectedCommandName = "Update";

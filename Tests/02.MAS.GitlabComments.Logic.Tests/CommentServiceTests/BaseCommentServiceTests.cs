@@ -352,7 +352,7 @@
         /// Checks parameter validation <see cref="CommentService.GetCommentWithWithChecking"/>
         /// </summary>
         /// <param name="serviceAction">Tested service action</param>
-        protected static void ShouldThrowArgumentNullExceptionWhenCommentIdIsDefaultInternal(Action serviceAction)
+        protected static void ShouldThrowArgumentNullException_WhenCommentIdIsDefaultInternal(Action serviceAction)
         {
             var exception =
                 Record.Exception(
@@ -369,7 +369,7 @@
         /// </summary>
         /// <param name="serviceAction">Tested service action</param>
         /// <param name="expectedErrorMessage">Expected exception message</param>
-        protected void ShouldThrowEntityNotFoundExceptionWhenEntityNotFoundByIdInternal(Action serviceAction, string expectedErrorMessage)
+        protected void ShouldThrowEntityNotFoundException_WhenEntityNotFoundByIdInternal(Action serviceAction, string expectedErrorMessage)
         {
             ReturnedTestedComment = null;
 

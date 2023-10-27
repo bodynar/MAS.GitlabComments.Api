@@ -12,7 +12,7 @@
     public sealed class BuildTests : BaseMsSqlFilterBuilderTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenFilterIsNull()
+        public void ShouldThrowArgumentNullException_WhenFilterIsNull()
         {
             FilterGroup filter = null;
 
@@ -26,7 +26,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenFilterIsEmpty()
+        public void ShouldThrowArgumentNullException_WhenFilterIsEmpty()
         {
             FilterGroup filter = new()
             {
@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void ShouldNotBuildFilterWhenItemsHaveNotValidComparisonTypes()
+        public void ShouldNotBuildFilter_WhenItemsHaveNotValidComparisonTypes()
         {
             FilterGroup filter = new()
             {
@@ -69,7 +69,7 @@
         }
 
         [Fact]
-        public void ShouldNotBuildFilterWhenNestedGroupsAreEmpty()
+        public void ShouldNotBuildFilter_WhenNestedGroupsAreEmpty()
         {
             FilterGroup filter = new()
             {
@@ -105,7 +105,7 @@
         }
 
         [Fact]
-        public void ShouldNotBuildFilterWhenJoinTypeIsInvalid()
+        public void ShouldNotBuildFilter_WhenJoinTypeIsInvalid()
         {
             FilterGroup filter = new()
             {
@@ -148,7 +148,7 @@
         }
 
         [Fact]
-        public void ShouldNotBuildFilterWhenNestedGroupsContainsItemsWithInvalidComparisonTypes()
+        public void ShouldNotBuildFilter_WhenNestedGroupsContainsItemsWithInvalidComparisonTypes()
         {
             FilterGroup filter = new()
             {

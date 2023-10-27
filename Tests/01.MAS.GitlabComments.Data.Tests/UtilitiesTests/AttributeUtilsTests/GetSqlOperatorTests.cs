@@ -11,7 +11,7 @@
         private const string SqlAttributeValue = "A";
 
         [Fact]
-        public void ShouldReturnEmptyStringWhenEnumValueIsNull()
+        public void ShouldReturnEmptyString_WhenEnumValueIsNull()
         {
             string sqlOperator = AttributeUtils.GetSqlOperator(null);
 
@@ -19,7 +19,7 @@
         }
 
         [Fact]
-        public void ShouldReturnEmptyStringWhenEnumDoesNotContainSpecifiedValue()
+        public void ShouldReturnEmptyString_WhenEnumDoesNotContainSpecifiedValue()
         {
             string sqlOperator = AttributeUtils.GetSqlOperator((TestedEnum)0);
 
@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void ShouldReturnEmptyStringWhenEnumValueDoesNotContainValueWithSqlOperatorAttribute()
+        public void ShouldReturnEmptyString_WhenEnumValueDoesNotContainValueWithSqlOperatorAttribute()
         {
             string sqlOperator = AttributeUtils.GetSqlOperator(TestedEnum.ValueWithoutAttribute);
 
@@ -35,7 +35,7 @@
         }
 
         [Fact]
-        public void ShouldReturnAttributePropertyValueWhenEnumValueHaveSqlOperatorAttribute()
+        public void ShouldReturnAttributePropertyValue_WhenEnumValueHaveSqlOperatorAttribute()
         {
             string sqlOperator = AttributeUtils.GetSqlOperator(TestedEnum.ValueWithAttribute);
 

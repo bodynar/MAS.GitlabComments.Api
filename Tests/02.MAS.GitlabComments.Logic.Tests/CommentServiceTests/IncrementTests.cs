@@ -8,24 +8,24 @@
     public sealed class IncrementTests : BaseCommentServiceTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenCommentIdIsDefaultInIncrement()
+        public void ShouldThrowArgumentNullException_WhenCommentIdIsDefaultInIncrement()
         {
             Guid testedCommentId = default;
 
             Action testedAction = () => TestedService.Increment(testedCommentId);
 
-            ShouldThrowArgumentNullExceptionWhenCommentIdIsDefaultInternal(testedAction);
+            ShouldThrowArgumentNullException_WhenCommentIdIsDefaultInternal(testedAction);
         }
 
         [Fact]
-        public void ShouldThrowEntityNotFoundExceptionWhenEntityNotFoundByIdInIncrement()
+        public void ShouldThrowEntityNotFoundException_WhenEntityNotFoundByIdInIncrement()
         {
             Guid testedCommentId = Guid.NewGuid();
             string expectedErrorMessage = $"Entity \"Comment\" - \"{testedCommentId}\" not found.";
 
             Action testedAction = () => TestedService.Increment(testedCommentId);
 
-            ShouldThrowEntityNotFoundExceptionWhenEntityNotFoundByIdInternal(testedAction, expectedErrorMessage);
+            ShouldThrowEntityNotFoundException_WhenEntityNotFoundByIdInternal(testedAction, expectedErrorMessage);
         }
 
         [Fact]

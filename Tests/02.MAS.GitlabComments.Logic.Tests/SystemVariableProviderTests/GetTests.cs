@@ -25,7 +25,7 @@
         public sealed class GetByIdTests : BaseSystemVariableProviderTests
         {
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableIdIsDefault()
+            public void ShouldNotReturnAnything_WhenVariableIdIsDefault()
             {
                 Guid variableId = default;
 
@@ -35,7 +35,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableIsNotFoundInDataStore()
+            public void ShouldNotReturnAnything_WhenVariableIsNotFoundInDataStore()
             {
                 Guid variableId = Guid.NewGuid();
                 ShouldReturnEntityFromDataProvider = false;
@@ -46,7 +46,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsEmpty()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsEmpty()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = string.Empty;
@@ -57,7 +57,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsWhiteSpaceOnly()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsWhiteSpaceOnly()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "      ";
@@ -68,7 +68,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNotValid()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNotValid()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "NotValid";
@@ -79,7 +79,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNone()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNone()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "None";
@@ -191,7 +191,7 @@
         public sealed class GetByCodeTests : BaseSystemVariableProviderTests
         {
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableCodeIsDefault()
+            public void ShouldNotReturnAnything_WhenVariableCodeIsDefault()
             {
                 string variableCode = default;
 
@@ -201,7 +201,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableCodeIsEmpty()
+            public void ShouldNotReturnAnything_WhenVariableCodeIsEmpty()
             {
                 string variableCode = string.Empty;
 
@@ -211,7 +211,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableCodeIsWhiteSpaceOnly()
+            public void ShouldNotReturnAnything_WhenVariableCodeIsWhiteSpaceOnly()
             {
                 string variableCode = "     ";
 
@@ -221,7 +221,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingByFilterWhenVariableIsNotFoundInDataStore()
+            public void ShouldNotReturnAnythingByFilter_WhenVariableIsNotFoundInDataStore()
             {
                 string variableCode = "variableCode";
                 string filterName = "CodeEquality";
@@ -244,7 +244,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsEmpty()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsEmpty()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = string.Empty;
@@ -255,7 +255,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsWhiteSpaceOnly()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsWhiteSpaceOnly()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "      ";
@@ -266,7 +266,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNotValid()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNotValid()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "NotValid";
@@ -277,7 +277,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNone()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNone()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "None";

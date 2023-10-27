@@ -9,7 +9,7 @@
     public sealed class SqlOperatorAttributeTests
     {
         [Fact]
-        public void ShouldThrowExceptionWhenOperatorIsNull()
+        public void ShouldThrowException_WhenOperatorIsNull()
         {
             Exception exception =
                 Record.Exception(

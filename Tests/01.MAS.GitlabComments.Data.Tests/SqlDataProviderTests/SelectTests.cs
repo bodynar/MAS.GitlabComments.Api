@@ -16,7 +16,7 @@
         public sealed class EmptyProjectedClass { }
 
         [Fact]
-        public void ShouldThrowArgumentExceptionWhenConfigurationContainsFilterWithInvalidColumns()
+        public void ShouldThrowArgumentException_WhenConfigurationContainsFilterWithInvalidColumns()
         {
             FilterGroup filter = new()
             {
@@ -49,7 +49,7 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithoutFilterWhenFilterCannotBeBuilt()
+        public void ShouldBuildQueryWithoutFilter_WhenFilterCannotBeBuilt()
         {
             FilterGroup filter = new()
             {
@@ -79,7 +79,7 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithAllColumnsWhenProjectedModelDoesNotHasRequiredAttributes()
+        public void ShouldBuildQueryWithAllColumns_WhenProjectedModelDoesNotHasRequiredAttributes()
         {
             var expectedSql = $"SELECT * FROM [{TestedTableName}]";
 
@@ -93,7 +93,7 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithAllColumnsWhenConfigurationIsNull()
+        public void ShouldBuildQueryWithAllColumns_WhenConfigurationIsNull()
         {
             var expectedSql = $"SELECT * FROM [{TestedTableName}]";
 
@@ -105,7 +105,7 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithSpecificColumnsWhenProjectedModelHasRequiredAttributes()
+        public void ShouldBuildQueryWithSpecificColumns_WhenProjectedModelHasRequiredAttributes()
         {
             var expectedSql = $"SELECT [{TestedTableName}].[Column1], [RightTableName1].[Column2] FROM [{TestedTableName}]" +
                 $" INNER JOIN [RightTableName1] AS [Alias1] WITH(NOLOCK)" +
@@ -141,7 +141,7 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithSpecificColumnsAndFilterWhenProjectedModelHasRequiredAttributes()
+        public void ShouldBuildQueryWithSpecificColumnsAndFilter_WhenProjectedModelHasRequiredAttributes()
         {
             var expectedSql = $"SELECT [{TestedTableName}].[Column1], [RightTableName1].[Column2] FROM [{TestedTableName}]" +
                 $" INNER JOIN [RightTableName1] AS [Alias1] WITH(NOLOCK)" +
@@ -199,7 +199,7 @@
         }
 
         [Fact]
-        public void ShouldBuildQueryWithoutFilterWhenFilterBuildAnEmptyFilter()
+        public void ShouldBuildQueryWithoutFilter_WhenFilterBuildAnEmptyFilter()
         {
             var expectedSql = $"SELECT [{TestedTableName}].[Column1], [RightTableName1].[Column2] FROM [{TestedTableName}]" +
                 $" INNER JOIN [RightTableName1] AS [Alias1] WITH(NOLOCK)" +

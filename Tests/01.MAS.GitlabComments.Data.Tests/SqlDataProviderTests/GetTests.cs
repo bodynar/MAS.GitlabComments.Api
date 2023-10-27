@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenIdIsDefault()
+        public void ShouldThrowArgumentNullException_WhenIdIsDefault()
         {
             Guid entityId = default;
 

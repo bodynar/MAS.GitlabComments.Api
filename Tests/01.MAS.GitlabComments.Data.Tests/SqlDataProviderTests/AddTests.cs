@@ -15,7 +15,7 @@
     public sealed class AddTests : BaseSqlDataProviderTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenEntityIsNull()
+        public void ShouldThrowArgumentNullException_WhenEntityIsNull()
         {
             TestedDataProviderEntity entity = null;
 
@@ -56,7 +56,7 @@
         }
 
         [Fact]
-        public void ShouldThrowExceptionWhenAffectedRowsIsZero()
+        public void ShouldThrowException_WhenAffectedRowsIsZero()
         {
             string expectedErrorMessage = "Insert command performed with empty result, no record was added";
             TestedDataProviderEntity entity = new() { Id = Guid.NewGuid(), StringField = "Some test data" };
@@ -72,7 +72,7 @@
         }
 
         [Fact]
-        public void ShouldThrowQueryExecutionExceptionWithBeforeStateWhenEntityClassIsEmpty()
+        public void ShouldThrowQueryExecutionExceptionWithBeforeState_WhenEntityClassIsEmpty()
         {
             var (df, da, fb, ccqb) = GetServiceDependencies();
             var testedService = new SqlDataProvider<TestedEmptyDataProviderEntity>(df, da, fb, ccqb);
@@ -98,7 +98,7 @@
         }
 
         [Fact]
-        public void ShouldThrowQueryExecutionExceptionWithAfterStateWhenEntityNotInserted()
+        public void ShouldThrowQueryExecutionExceptionWithAfterState_WhenEntityNotInserted()
         {
             var expectedSqlQuery = $"INSERT INTO [{TestedTableName}] ([StringField], [IntField], [Id], [CreatedOn], [ModifiedOn]) VALUES (@P1, @P2, @P3, @P4, @P5)";
 

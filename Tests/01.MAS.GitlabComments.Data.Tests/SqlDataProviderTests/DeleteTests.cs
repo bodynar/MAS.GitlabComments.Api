@@ -11,7 +11,7 @@
     public sealed class DeleteTests : BaseSqlDataProviderTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenArgumentIsNull()
+        public void ShouldThrowArgumentNullException_WhenArgumentIsNull()
         {
             Guid[] entityIds = null;
 
@@ -25,7 +25,7 @@
         }
 
         [Fact]
-        public void ShouldNotExecuteCommandWhenEntityIdContainsOnlyDefaultValues()
+        public void ShouldNotExecuteCommand_WhenEntityIdContainsOnlyDefaultValues()
         {
             Guid[] entityIds = new Guid[] { default, default, default };
 

@@ -22,7 +22,7 @@
         public sealed class SetByIdTests : BaseSystemVariableProviderTests
         {
             [Fact]
-            public void ShouldDoNothingWhenVariableIdIsDefault()
+            public void ShouldDoNothing_WhenVariableIdIsDefault()
             {
                 Guid variableId = default;
                 int value = 0;
@@ -33,7 +33,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableIsNotFoundInDataStore()
+            public void ShouldDoNothing_WhenVariableIsNotFoundInDataStore()
             {
                 Guid variableId = Guid.NewGuid();
                 int value = 0;
@@ -45,7 +45,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsEmpty()
+            public void ShouldDoNothing_WhenVariableTypeIsEmpty()
             {
                 Guid variableId = Guid.NewGuid();
                 int value = 0;
@@ -57,7 +57,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsWhiteSpaceOnly()
+            public void ShouldDoNothing_WhenVariableTypeIsWhiteSpaceOnly()
             {
                 Guid variableId = Guid.NewGuid();
                 int value = 0;
@@ -69,7 +69,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsNotValid()
+            public void ShouldDoNothing_WhenVariableTypeIsNotValid()
             {
                 Guid variableId = Guid.NewGuid();
                 int value = 0;
@@ -81,7 +81,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsNone()
+            public void ShouldDoNothing_WhenVariableTypeIsNone()
             {
                 Guid variableId = Guid.NewGuid();
                 int value = 0;
@@ -130,7 +130,7 @@
         public sealed class SetByCodeTests : BaseSystemVariableProviderTests
         {
             [Fact]
-            public void ShouldDoNothingWhenVariableCodeIsDefault()
+            public void ShouldDoNothing_WhenVariableCodeIsDefault()
             {
                 string variableCode = default;
                 int value = 0;
@@ -141,7 +141,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableCodeIsEmpty()
+            public void ShouldDoNothing_WhenVariableCodeIsEmpty()
             {
                 string variableCode = string.Empty;
                 int value = 0;
@@ -152,7 +152,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableCodeIsWhiteSpaceOnly()
+            public void ShouldDoNothing_WhenVariableCodeIsWhiteSpaceOnly()
             {
                 string variableCode = "    ";
                 int value = 0;
@@ -163,7 +163,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableIsNotFoundInDataStore()
+            public void ShouldDoNothing_WhenVariableIsNotFoundInDataStore()
             {
                 string variableCode = "variableCode";
                 int value = 0;
@@ -175,7 +175,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsEmpty()
+            public void ShouldDoNothing_WhenVariableTypeIsEmpty()
             {
                 string variableCode = "variableCode";
                 int value = 0;
@@ -187,7 +187,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsWhiteSpaceOnly()
+            public void ShouldDoNothing_WhenVariableTypeIsWhiteSpaceOnly()
             {
                 string variableCode = "variableCode";
                 int value = 0;
@@ -199,7 +199,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsNotValid()
+            public void ShouldDoNothing_WhenVariableTypeIsNotValid()
             {
                 string variableCode = "variableCode";
                 int value = 0;
@@ -211,7 +211,7 @@
             }
 
             [Fact]
-            public void ShouldDoNothingWhenVariableTypeIsNone()
+            public void ShouldDoNothing_WhenVariableTypeIsNone()
             {
                 string variableCode = "variableCode";
                 int value = 0;

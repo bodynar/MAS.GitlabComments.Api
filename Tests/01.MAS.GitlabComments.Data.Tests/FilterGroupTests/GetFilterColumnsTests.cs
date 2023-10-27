@@ -12,7 +12,7 @@
     public sealed class GetFilterColumnsTests
     {
         [Fact]
-        public void ShouldReturnEmptyResultWhenFilterContainsNull()
+        public void ShouldReturnEmptyResult_WhenFilterContainsNull()
         {
             FilterGroup testedFilter = new()
             {
@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void ShouldReturnEmptyResultWhenFilterContainsEmptyProps()
+        public void ShouldReturnEmptyResult_WhenFilterContainsEmptyProps()
         {
             FilterGroup testedFilter = new()
             {

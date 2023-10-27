@@ -35,7 +35,7 @@
         public sealed class GetValueByIdTests : BaseSystemVariableProviderTests
         {
             [Fact]
-            public void ShouldNotReturnAnythingWhenTypeIsUshort()
+            public void ShouldNotReturnAnything_WhenTypeIsUshort()
             {
                 Guid variableId = default;
                 ushort expectedValue = default;
@@ -46,7 +46,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenTypeIsUint()
+            public void ShouldNotReturnAnything_WhenTypeIsUint()
             {
                 Guid variableId = default;
                 uint expectedValue = default;
@@ -57,7 +57,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenTypeIsUlong()
+            public void ShouldNotReturnAnything_WhenTypeIsUlong()
             {
                 Guid variableId = default;
                 ulong expectedValue = default;
@@ -68,7 +68,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableIdIsDefault()
+            public void ShouldNotReturnAnything_WhenVariableIdIsDefault()
             {
                 Guid variableId = default;
 
@@ -78,7 +78,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableIsNotFoundInDataStore()
+            public void ShouldNotReturnAnything_WhenVariableIsNotFoundInDataStore()
             {
                 Guid variableId = Guid.NewGuid();
                 ShouldReturnEntityFromDataProvider = false;
@@ -89,7 +89,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsEmpty()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsEmpty()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = string.Empty;
@@ -100,7 +100,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsWhiteSpaceOnly()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsWhiteSpaceOnly()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "      ";
@@ -111,7 +111,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNotValid()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNotValid()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "NotValid";
@@ -122,7 +122,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNone()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNone()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "None";
@@ -262,7 +262,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetShortValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetShortValueWithExceededRightRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "int";
@@ -280,7 +280,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetShortValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetShortValueWithExceededLeftRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "int";
@@ -298,7 +298,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetIntValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetIntValueWithExceededRightRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "int";
@@ -316,7 +316,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetIntValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetIntValueWithExceededLeftRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "int";
@@ -362,7 +362,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetDecimalValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetDecimalValueWithExceededRightRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "decimal";
@@ -380,7 +380,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetDecimalValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetDecimalValueWithExceededLeftRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "decimal";
@@ -398,7 +398,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetFloatValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetFloatValueWithExceededRightRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "decimal";
@@ -416,7 +416,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetFloatValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetFloatValueWithExceededLeftRange()
             {
                 Guid variableId = Guid.NewGuid();
                 TestedEntity.Type = "decimal";
@@ -444,7 +444,7 @@
         public sealed class GetValueByCodeTests : BaseSystemVariableProviderTests
         {
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableCodeIsDefault()
+            public void ShouldNotReturnAnything_WhenVariableCodeIsDefault()
             {
                 string variableCode = default;
 
@@ -454,7 +454,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableCodeIsEmpty()
+            public void ShouldNotReturnAnything_WhenVariableCodeIsEmpty()
             {
                 string variableCode = string.Empty;
 
@@ -464,7 +464,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableCodeIsWhiteSpaceOnly()
+            public void ShouldNotReturnAnything_WhenVariableCodeIsWhiteSpaceOnly()
             {
                 string variableCode = "     ";
 
@@ -474,7 +474,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingByFilterWhenVariableIsNotFoundInDataStore()
+            public void ShouldNotReturnAnythingByFilter_WhenVariableIsNotFoundInDataStore()
             {
                 string variableCode = "variableCode";
                 string filterName = "CodeEquality";
@@ -497,7 +497,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsEmpty()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsEmpty()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = string.Empty;
@@ -508,7 +508,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsWhiteSpaceOnly()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsWhiteSpaceOnly()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "      ";
@@ -519,7 +519,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNotValid()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNotValid()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "NotValid";
@@ -530,7 +530,7 @@
             }
 
             [Fact]
-            public void ShouldNotReturnAnythingWhenVariableTypeIsNone()
+            public void ShouldNotReturnAnything_WhenVariableTypeIsNone()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "None";
@@ -670,7 +670,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetShortValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetShortValueWithExceededRightRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "int";
@@ -688,7 +688,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetShortValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetShortValueWithExceededLeftRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "int";
@@ -706,7 +706,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetIntValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetIntValueWithExceededRightRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "int";
@@ -724,7 +724,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetIntValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetIntValueWithExceededLeftRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "int";
@@ -770,7 +770,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetDecimalValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetDecimalValueWithExceededRightRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "decimal";
@@ -788,7 +788,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetDecimalValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetDecimalValueWithExceededLeftRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "decimal";
@@ -806,7 +806,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetFloatValueWithExceededRightRange()
+            public void ShouldThrowAnException_WhenTryingToGetFloatValueWithExceededRightRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "decimal";
@@ -824,7 +824,7 @@
             }
 
             [Fact]
-            public void ShouldThrowAnExceptionWhenTryingToGetFloatValueWithExceededLeftRange()
+            public void ShouldThrowAnException_WhenTryingToGetFloatValueWithExceededLeftRange()
             {
                 string variableCode = "variableCode";
                 TestedEntity.Type = "decimal";

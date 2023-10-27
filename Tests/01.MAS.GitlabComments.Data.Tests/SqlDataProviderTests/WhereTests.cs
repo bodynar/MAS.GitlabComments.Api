@@ -12,7 +12,7 @@
     public sealed class WhereTests : BaseSqlDataProviderTests
     {
         [Fact]
-        public void ShouldReturnAllEntitiesWhenFilterIsNull()
+        public void ShouldReturnAllEntities_WhenFilterIsNull()
         {
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}]";
             FilterGroup filter = null;
@@ -26,7 +26,7 @@
         }
 
         [Fact]
-        public void ShouldReturnAllEntitiesWhenFilterIsEmpty()
+        public void ShouldReturnAllEntities_WhenFilterIsEmpty()
         {
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}]";
             FilterGroup filter = new()
@@ -44,7 +44,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentExceptionWhenFilterContainsInvalidColumns()
+        public void ShouldThrowArgumentException_WhenFilterContainsInvalidColumns()
         {
             FilterGroup filter = new()
             {
@@ -72,7 +72,7 @@
         }
 
         [Fact]
-        public void ShouldReturnAllEntitiesWhenFilterBuiltAsEmpty()
+        public void ShouldReturnAllEntities_WhenFilterBuiltAsEmpty()
         {
             FilterBuilderResult = new FilterResult();
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}]";
@@ -91,7 +91,7 @@
         }
 
         [Fact]
-        public void ShouldReturnFilteredEntitiesWhenFilterBuilt()
+        public void ShouldReturnFilteredEntities_WhenFilterBuilt()
         {
             FilterBuilderResult = new FilterResult() { Sql = "filter", };
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}] WHERE filter";
