@@ -3,7 +3,7 @@
     using MAS.GitlabComments.Logic.Services;
 
     /// <summary>
-    /// 
+    /// Web application settings
     /// </summary>
     public interface IApplicationWebSettings : IApplicationSettings
     {
