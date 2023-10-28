@@ -27,12 +27,12 @@
         /// <summary>
         /// Should exception be thrown during comment service execution
         /// </summary>
-        protected bool ShouldThrowExceptionDuringExecution { get; set; }
+        protected bool ShouldThrowExceptionDuringExecution { get; private set; }
 
         /// <summary>
         /// Exception message which will be thrown if <see cref="ShouldThrowExceptionDuringExecution"/> is true
         /// </summary>
-        protected string ExceptionDuringExecutionText { get; set; }
+        private const string ExceptionDuringExecutionText = "ExceptionTestMessage";
 
         /// <summary>
         /// Initializing <see cref="BaseCommentsApiControllerTests"/> with setup'n all required environment
@@ -85,6 +85,19 @@
                 .Setup(x => x.Delete(It.IsAny<Guid>()))
                 .Callback(commentServiceExceptionCallback);
 
+            mockCommentsService
+                .Setup(x => x.GetIncomplete())
+                .Callback(commentServiceExceptionCallback)
+                .Returns(Enumerable.Empty<IncompleteCommentData>());
+
+            mockCommentsService
+                .Setup(x => x.UpdateIncomplete())
+                .Callback(commentServiceExceptionCallback);
+
+            mockCommentsService
+                .Setup(x => x.MakeNumberColumnUnique())
+                .Callback(commentServiceExceptionCallback);
+
             return (mockLogger.Object, mockCommentsService.Object);
         }
 
@@ -98,7 +111,6 @@
         protected void AssertBaseServiceResultError<TResult>(Func<TResult> action)
             where TResult : BaseServiceResult
         {
-            ExceptionDuringExecutionText = "Tested exception message";
             ShouldThrowExceptionDuringExecution = true;
 
             TResult baseServiceResult = action.Invoke();

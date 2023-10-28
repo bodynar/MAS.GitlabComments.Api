@@ -58,7 +58,7 @@
         /// <summary>
         /// Get all system variables
         /// </summary>
-        [HttpGet("getVariables")] // TODO: tests
+        [HttpGet("getVariables")]
         public BaseServiceResult<IEnumerable<SysVariableDisplayModel>> GetVariables()
         {
             try

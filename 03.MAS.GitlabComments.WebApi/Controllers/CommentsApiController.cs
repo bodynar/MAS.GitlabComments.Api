@@ -145,7 +145,7 @@
         /// <summary>
         /// Get incomplete comments data
         /// </summary>
-        [HttpGet("getIncomplete")] // TODO: tests
+        [HttpGet("getIncomplete")]
         public BaseServiceResult<IEnumerable<IncompleteCommentData>> GetIncomplete()
         {
             try
@@ -164,7 +164,7 @@
         /// <summary>
         /// Update incomplete comments
         /// </summary>
-        [HttpPost("updateIncomplete")] // TODO: tests
+        [HttpPost("updateIncomplete")]
         public BaseServiceResult UpdateIncomplete()
         {
             try
@@ -183,7 +183,7 @@
         /// <summary>
         /// Update comment table definition
         /// </summary>
-        [HttpPost("updateCommentTable")] // TODO: tests
+        [HttpPost("updateCommentTable")]
         public BaseServiceResult UpdateCommentTable()
         {
             try
