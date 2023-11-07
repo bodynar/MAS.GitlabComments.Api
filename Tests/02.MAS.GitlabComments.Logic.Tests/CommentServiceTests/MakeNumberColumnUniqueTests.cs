@@ -10,6 +10,16 @@
     public sealed class MakeNumberColumnUniqueTests : BaseCommentServiceTests
     {
         [Fact]
+        public void ShouldDoNothing_WhenFlagVariableHasTrueValue()
+        {
+            ReturnedSysVariable = new SysVariable() { RawValue = "True", };
+
+            TestedService.MakeNumberColumnUnique();
+
+            Assert.False(IsTempModifierWasCalled);
+        }
+
+        [Fact]
         public void ShouldDoNothing_WhenDataStoreHasIncompleteComments()
         {
             UseManualIncompleteData = true;
@@ -38,23 +48,11 @@
         }
 
         [Fact]
-        public void ShouldDoNothing_WhenFlagVariableHasTrueValue()
-        {
-            UseManualIncompleteData = true;
-            ManualIncompleteData = Enumerable.Empty<IncompleteCommentData>();
-            ReturnedSysVariable = new SysVariable() { RawValue = "True", };
-
-            TestedService.MakeNumberColumnUnique();
-
-            Assert.False(IsTempModifierWasCalled);
-        }
-
-        [Fact]
         public void ShouldCallTempDataBaseModifierAndSetVariableFlag_WhenFlagNotSetAndDataStoreContainsNoIncompleteComments()
         {
+            ReturnedSysVariable = new SysVariable() { RawValue = "False", };
             UseManualIncompleteData = true;
             ManualIncompleteData = Enumerable.Empty<IncompleteCommentData>();
-            ReturnedSysVariable = new SysVariable() { RawValue = "False", };
 
             TestedService.MakeNumberColumnUnique();
 

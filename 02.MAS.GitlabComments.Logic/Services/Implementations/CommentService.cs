@@ -250,16 +250,9 @@
         /// <inheritdoc cref="ICommentService.MakeNumberColumnUnique"/>
         public void MakeNumberColumnUnique()
         {
-            var incomplete = GetIncomplete();
+            var canUpdateTable = CanMakeNumberColumnUnique();
 
-            if (incomplete.Any())
-            {
-                return;
-            }
-
-            var isChangeAppliedAlreadyVariable = SystemVariableProvider.Get("IsChangeNumberUnique");
-
-            if (isChangeAppliedAlreadyVariable == default || bool.Parse(isChangeAppliedAlreadyVariable.RawValue))
+            if (!canUpdateTable)
             {
                 return;
             }
@@ -267,6 +260,26 @@
             TempDatabaseModifier.ApplyModifications();
 
             SystemVariableProvider.Set("IsChangeNumberUnique", true);
+        }
+
+        /// <inheritdoc cref="ICommentService.CanMakeNumberColumnUnique"/>
+        public bool CanMakeNumberColumnUnique()
+        {
+            var isChangeAppliedAlreadyVariable = SystemVariableProvider.Get("IsChangeNumberUnique");
+
+            if (isChangeAppliedAlreadyVariable == default || bool.Parse(isChangeAppliedAlreadyVariable.RawValue))
+            {
+                return false;
+            }
+
+            var incomplete = GetIncomplete();
+
+            if (incomplete.Any())
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #region Not public API
