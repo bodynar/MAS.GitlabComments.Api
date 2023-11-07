@@ -17,6 +17,11 @@
         public Guid Id { get; init; }
 
         /// <summary>
+        /// Date of last update
+        /// </summary>
+        public virtual DateTime ModifiedOn { get; set; }
+
+        /// <summary>
         /// Unique code
         /// </summary>
         public string Code { get; init; }
