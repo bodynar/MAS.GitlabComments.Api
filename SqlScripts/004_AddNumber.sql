@@ -33,16 +33,16 @@ BEGIN
 		[Code] [nvarchar](255) NOT NULL
 			CONSTRAINT [UQ_SystemVariables_Code] UNIQUE([Code]),
 		[Caption] [nvarchar](max) NULL,
-		[Type] [nvarchar](max) NOT NULL,
+		[Type] [nvarchar](255) NOT NULL,
 		[RawValue] [nvarchar](max) NOT NULL,
 	)
 	;
 
 	INSERT INTO [SystemVariables]
-		([CreatedOn], [Code], [Type], [RawValue])
+		([CreatedOn], [Code], [Type], [RawValue], [Caption])
 	VALUES
-		(GETDATE(), 'LastCommentNumber', 'Int', '0'),
-		(GETDATE(), 'IsChangeNumberUnique', 'Bool', 'false')
+		(GETDATE(), 'LastCommentNumber', 'Int', '0', N'Sequence number of latest added comment'),
+		(GETDATE(), 'IsChangeNumberUnique', 'Bool', 'false', N'Is comments table modified with number column unique constraint')
 	;
 
 	INSERT INTO [ScriptLog]
