@@ -49,6 +49,43 @@
         }
 
         [Fact]
+        public void ShouldDoNotThrowArgumentException_WhenConfigurationContainsFilterWithValidColumns()
+        {
+            FilterGroup filter = new()
+            {
+                Items = new[]
+                {
+                    new FilterItem
+                    {
+                        FieldName = nameof(TestedDataProviderEntity.CreatedOn),
+                        LogicalComparisonType = ComparisonType.Equal,
+                        Name = "c",
+                        Value = true
+                    },
+                    new FilterItem
+                    {
+                        FieldName = nameof(TestedDataProviderEntity.StringField),
+                        LogicalComparisonType = ComparisonType.Equal,
+                        Name = "c",
+                        Value = true
+                    },
+                }
+            };
+
+            SelectConfiguration configuration = new SelectConfiguration
+            {
+                Filter = filter,
+            };
+
+            Exception exception =
+                Record.Exception(
+                    () => TestedService.Select<EmptyProjectedClass>(configuration)
+                );
+
+            Assert.Null(exception);
+        }
+
+        [Fact]
         public void ShouldBuildQueryWithoutFilter_WhenFilterCannotBeBuilt()
         {
             FilterGroup filter = new()

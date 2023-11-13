@@ -404,7 +404,9 @@
         {
             var filterColumns = filter.GetFilterColumns();
 
-            var notValidColumns = filterColumns.Except(EntityFields);
+            var notValidColumns = filterColumns
+                .Except(EntityFields)
+                .Except(DefaultEntityFields);
 
             if (notValidColumns.Any())
             {
