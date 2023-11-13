@@ -196,7 +196,26 @@
             {
                 Logger?.LogError(e, "Updating comment table with unique constraint for Number column failed");
                 return BaseServiceResult.Error(e);
-            } 
+            }
+        }
+
+        /// <summary>
+        /// Update comment table definition
+        /// </summary>
+        [HttpGet("canUpdateCommentTable")]
+        public BaseServiceResult<bool> CheckCanUpdateCommentTable()
+        {
+            try
+            {
+                var result = CommentService.CanMakeNumberColumnUnique();
+
+                return BaseServiceResult<bool>.Success(result);
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Checking ability of updating comment table with unique constraint for Number column failed");
+                return BaseServiceResult<bool>.Error(e);
+            }
         }
     }
 }
