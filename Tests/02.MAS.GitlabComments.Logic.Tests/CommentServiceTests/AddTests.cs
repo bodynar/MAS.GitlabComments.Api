@@ -37,6 +37,20 @@
         }
 
         [Fact]
+        public void ShouldThrowArgumentNullException_WhenAddWithEmptyLinkToRuleValue()
+        {
+            AddCommentModel model = new() { Message = "Message", CommentWithLinkToRule = string.Empty };
+
+            var exception =
+                Record.Exception(
+                    () => TestedService.Add(model)
+                );
+
+            Assert.NotNull(exception);
+            Assert.IsType<ArgumentNullException>(exception);
+        }
+
+        [Fact]
         public void ShouldAddCommentAndReturnNewId()
         {
             AddCommentModel model = new()

@@ -78,6 +78,10 @@
             {
                 throw new ArgumentNullException(nameof(AddCommentModel.Message));
             }
+            if (string.IsNullOrEmpty(addCommentModel.CommentWithLinkToRule))
+            {
+                throw new ArgumentNullException(nameof(AddCommentModel.CommentWithLinkToRule));
+            }
 
             var newNumber = SystemVariableProvider.GetValue<int>("LastCommentNumber") + 1;
             var number = string.Format(ApplicationSettings.CommentNumberTemplate, newNumber);
@@ -131,6 +135,10 @@
             if (string.IsNullOrEmpty(updateCommentModel.Message))
             {
                 throw new ArgumentNullException(nameof(UpdateCommentModel.Message));
+            }
+            if (string.IsNullOrEmpty(updateCommentModel.CommentWithLinkToRule))
+            {
+                throw new ArgumentNullException(nameof(UpdateCommentModel.CommentWithLinkToRule));
             }
 
             GetCommentWithWithChecking(updateCommentModel.Id);
