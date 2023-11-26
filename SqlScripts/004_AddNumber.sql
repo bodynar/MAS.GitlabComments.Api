@@ -8,7 +8,7 @@ BEGIN
 	----
 
 	ALTER TABLE [dbo].[Comments]
-		ADD [Number] [nvarchar](max) NOT NULL
+		ADD [Number] [nvarchar](255) NOT NULL
 			CONSTRAINT [DF_Comments_Number] DEFAULT ('')
 	;
 
