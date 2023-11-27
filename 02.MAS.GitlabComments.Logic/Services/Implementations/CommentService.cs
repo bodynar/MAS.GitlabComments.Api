@@ -66,8 +66,8 @@
         /// <param name="addCommentModel">Comment values</param>
         /// <exception cref="ArgumentNullException">Parameter addCommentModel is null</exception>
         /// <exception cref="ArgumentNullException">Message isn't specified</exception>
-        /// <returns>Identifier value of new created comment</returns>
-        public Guid Add(AddCommentModel addCommentModel)
+        /// <returns>Instance of <see cref="NewComment"/> if comment is created</returns>
+        public NewComment Add(AddCommentModel addCommentModel)
         {
             if (addCommentModel == null)
             {
@@ -102,7 +102,11 @@
                 SystemVariableProvider.Set("LastCommentNumber", newNumber);
             }
 
-            return newId;
+            return new NewComment
+            {
+                Id = newId,
+                Number = number,
+            };
         }
 
         /// <summary>

@@ -1,7 +1,5 @@
 ﻿namespace MAS.GitlabComments.WebApi.Tests.CommentsApiControllerTests
 {
-    using System;
-
     using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.WebApi.Models;
 
@@ -16,7 +14,7 @@
         {
             AddCommentModel model = null;
 
-            BaseServiceResult<Guid> result = TestedController.Add(model);
+            BaseServiceResult<NewComment> result = TestedController.Add(model);
 
             Assert.NotNull(result);
             Assert.True(result.IsSuccess);

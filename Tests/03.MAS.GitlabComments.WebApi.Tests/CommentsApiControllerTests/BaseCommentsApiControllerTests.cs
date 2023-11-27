@@ -66,7 +66,7 @@
             mockCommentsService
                 .Setup(x => x.Add(It.IsAny<AddCommentModel>()))
                 .Callback(commentServiceExceptionCallback)
-                .Returns(Guid.Empty);
+                .Returns(default(NewComment));
 
             mockCommentsService
                 .Setup(x => x.Get())

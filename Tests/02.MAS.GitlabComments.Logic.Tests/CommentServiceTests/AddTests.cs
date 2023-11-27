@@ -51,7 +51,7 @@
         }
 
         [Fact]
-        public void ShouldAddCommentAndReturnNewId()
+        public void ShouldSetSystemVariable_WhenProviderDoesNotCreatedEntity()
         {
             AddCommentModel model = new()
             {
@@ -74,7 +74,7 @@
         }
 
         [Fact]
-        public void ShouldSetSystemVariable_WhenProviderDoesNotCreatedEntity()
+        public void ShouldAddCommentAndReturnNewCommentData()
         {
             AddCommentModel model = new()
             {
@@ -84,10 +84,10 @@
             };
             string expectedCommandName = "Add";
             string expectedCommentNumber = string.Format(CommentNumberTemplate, IntVariableValue + 1);
-            Action testedAction = () => TestedService.Add(model);
+            Func<NewComment> testedAction = () => TestedService.Add(model);
             ReturnedCreatedCommentId = Guid.NewGuid();
 
-            ShouldExecuteCommand(testedAction, expectedCommandName, new object[] { });
+            var createdComment = ShouldExecuteCommand(testedAction, expectedCommandName, new object[] { });
 
             Assert.NotNull(LastAddedComment);
             Assert.Equal(expectedCommentNumber, LastAddedComment.Number);
@@ -95,6 +95,9 @@
             Assert.Equal(model.CommentWithLinkToRule, LastAddedComment.CommentWithLinkToRule);
             Assert.Equal(model.Description, LastAddedComment.Description);
             Assert.True(IsSetNumberVariableCalled);
+            Assert.NotNull(createdComment);
+            Assert.Equal(expectedCommentNumber, createdComment.Number);
+            Assert.Equal(ReturnedCreatedCommentId, createdComment.Id);
         }
     }
 }

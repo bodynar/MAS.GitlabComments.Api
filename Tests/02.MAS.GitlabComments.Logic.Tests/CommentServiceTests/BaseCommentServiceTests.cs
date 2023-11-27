@@ -345,6 +345,37 @@
             }
         }
 
+        /// <summary>
+        /// Assert for last <see cref="IDataProvider{TEntity}"/> called command
+        /// </summary>
+        /// <param name="serviceAction">Tested service action</param>
+        /// <param name="expectedCommandName">Expected called command name</param>
+        /// <param name="expectedCommandArguments">Expected arguments of called command</param>
+        protected TResult ShouldExecuteCommand<TResult>(Func<TResult> serviceAction, string expectedCommandName, IEnumerable<object> expectedCommandArguments)
+        {
+            int expectedArgumentsCount = expectedCommandArguments.Count();
+
+            var result = serviceAction.Invoke();
+
+            Assert.NotNull(LastCommand);
+
+            var lastCommandAsKeyValuePair = LastCommand.Value;
+
+            Assert.Equal(expectedCommandName, lastCommandAsKeyValuePair.Key);
+            Assert.Equal(expectedArgumentsCount, lastCommandAsKeyValuePair.Value.Count());
+
+            for (int i = 0; i < expectedArgumentsCount; i++)
+            {
+                var expectedArgument = expectedCommandArguments.ElementAt(i);
+                var actualArgument = lastCommandAsKeyValuePair.Value.ElementAt(i);
+
+                Assert.NotNull(actualArgument);
+                Assert.Equal(actualArgument, expectedArgument);
+            }
+
+            return result;
+        }
+
         #region Common tests
 
         /// <summary>
