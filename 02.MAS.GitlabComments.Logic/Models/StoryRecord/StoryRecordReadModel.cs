@@ -22,5 +22,11 @@
         /// </summary>
         [ComplexColumnPath("[Comments:Id:CommentId].Message")]
         public string CommentText { get; set; }
+
+        /// <summary>
+        /// Unique number
+        /// </summary>
+        [ComplexColumnPath("[Comments:Id:CommentId].Number")]
+        public string Number { get; set; }
     }
 }

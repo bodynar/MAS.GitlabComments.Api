@@ -21,5 +21,10 @@
         /// Amount of increment during selected period
         /// </summary>
         public int Count { get; set; }
+
+        /// <summary>
+        /// Unique number
+        /// </summary>
+        public string Number { get; set; }
     }
 }

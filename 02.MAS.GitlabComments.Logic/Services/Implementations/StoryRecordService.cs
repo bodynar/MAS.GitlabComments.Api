@@ -40,12 +40,14 @@
             var dataItems = DataProvider
                 .Select<StoryRecordReadModel>(new SelectConfiguration { Filter = filter })
                 .ToList()
-                .GroupBy(x => x.CommentId, x => x.CommentText)
+                .GroupBy(x => x.CommentId)
                 .Select(x => new StoryRecordViewModel()
                 {
                     CommentId = x.Key,
                     Count = x.Count(),
-                    CommentText = x.First()
+                    CommentText = x.First().CommentText,
+                    Number = x.First().Number,
+
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList();
