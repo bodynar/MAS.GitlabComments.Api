@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Data;
     using MAS.GitlabComments.Logic.Models;
-    using MAS.GitlabComments.Data.Models;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>
@@ -15,28 +15,14 @@
         /// Add comment by specified values
         /// </summary>
         /// <param name="addCommentModel">Comment values</param>
-        /// <returns>Identifier value of new created comment</returns>
-        public Guid Add(AddCommentModel addCommentModel);
+        /// <returns>Created comment data</returns>
+        public NewComment Add(AddCommentModel addCommentModel);
 
         /// <summary>
         /// Get all comments
         /// </summary>
         /// <returns>All comments</returns>
         public IEnumerable<CommentModel> Get();
-
-        /// <summary>
-        /// Get comment item by specifying it's identifier
-        /// </summary>
-        /// <param name="commentId">Comment identifier value</param>
-        /// <returns>Comment model</returns>
-        public ExtendedCommentModel Get(Guid commentId);
-
-        /// <summary>
-        /// Get description of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
-        /// <returns>Description if specified; otherwise <see cref="string.Empty"/></returns>
-        public string GetDescription(Guid commentId);
 
         /// <summary>
         /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
@@ -55,5 +41,35 @@
         /// </summary>
         /// <param name="commentIds">Array of comment identifiers</param>
         public void Delete(params Guid[] commentIds);
+
+        /// <summary>
+        /// Get all comments that incomplete
+        /// <para>
+        ///     - Does not have a number
+        /// </para>
+        /// </summary>
+        /// <returns>Pack of comments</returns>
+        public IEnumerable<IncompleteCommentData> GetIncomplete();
+
+        /// <summary>
+        /// Update incomplete comments to satisfy all rules
+        /// <para>
+        ///     - Set number for those which doesn't have one
+        /// </para>
+        /// </summary>
+        public void UpdateIncomplete();
+
+        /// <summary>
+        /// Add unique constraint for Number column for comment in database
+        /// </summary>
+        [Obsolete("v1.4 | Will be removed in v1.5")]
+        public void MakeNumberColumnUnique();
+
+        /// <summary>
+        /// Check possibility of executing <see cref="MakeNumberColumnUnique"/>
+        /// </summary>
+        /// <returns><see langword="true"/>, if table number column can be updated; otherwise - <see langword="false"/></returns>
+        [Obsolete("v1.4 | Will be removed in v1.5")]
+        public bool CanMakeNumberColumnUnique();
     }
 }

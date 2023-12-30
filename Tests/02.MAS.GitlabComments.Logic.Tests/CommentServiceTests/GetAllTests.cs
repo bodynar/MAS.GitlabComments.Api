@@ -17,7 +17,10 @@
             {
                 Id = ReturnedTestedComment.Id,
                 AppearanceCount = ReturnedTestedComment.AppearanceCount,
-                Message = ReturnedTestedComment.Message
+                Message = ReturnedTestedComment.Message,
+                CommentWithLinkToRule = ReturnedTestedComment.CommentWithLinkToRule,
+                Description = ReturnedTestedComment.Description,
+                Number = ReturnedTestedComment.Number,
             };
 
             IEnumerable<CommentModel> result = TestedService.Get();
@@ -30,6 +33,9 @@
             Assert.Equal(expectedCommentModel.Id, firstItem.Id);
             Assert.Equal(expectedCommentModel.AppearanceCount, firstItem.AppearanceCount);
             Assert.Equal(expectedCommentModel.Message, firstItem.Message);
+            Assert.Equal(expectedCommentModel.CommentWithLinkToRule, firstItem.CommentWithLinkToRule);
+            Assert.Equal(expectedCommentModel.Description, firstItem.Description);
+            Assert.Equal(expectedCommentModel.Number, firstItem.Number);
         }
     }
 }

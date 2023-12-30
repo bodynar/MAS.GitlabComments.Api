@@ -1,57 +1,52 @@
-
----------
---- Add StoryRecords table to track actions
----------
-CREATE TABLE [dbo].[StoryRecords]
-(
-	[Id] [uniqueidentifier] NOT NULL,
-	[CreatedOn] [datetime2](7) NOT NULL,
-	[CommentId] [uniqueidentifier] NOT NULL,
-	[IsIncrementAction] [bit] NOT NULL,
+IF NOT EXISTS (
+	SELECT * FROM [ScriptLog]
+	WHERE [ScriptName] = '002_AddStoryRecord'
 )
-GO
+BEGIN
+	---------
+	--- Add StoryRecords table to track actions
+	---------
+	CREATE TABLE [dbo].[StoryRecords]
+	(
+		[Id] [uniqueidentifier] NOT NULL
+			CONSTRAINT [DF_StoryRecords_Id]
+				DEFAULT (NEWID())
+			CONSTRAINT [PK_StoryRecords]
+			PRIMARY KEY CLUSTERED ([Id] ASC)
+		,
+		[CreatedOn] [datetime2](7) NOT NULL,
+		[CommentId] [uniqueidentifier] NOT NULL
+			CONSTRAINT [FK_StoryRecords_Comments] 
+				FOREIGN KEY([CommentId])
+					REFERENCES [dbo].[Comments] ([Id])
+		,
+		[IsIncrementAction] [bit] NOT NULL,
+	)
+	;	
+	
+	---------
+	--- Add trigger for cascade delete comment and its story records
+	---------
+	EXEC(
+		'CREATE TRIGGER [dbo].[Comments_Delete]
+			ON [dbo].[Comments]
+			INSTEAD OF DELETE
+		AS
+			DELETE FROM [dbo].[StoryRecords]
+			WHERE [CommentId] in (select id from deleted)
 
-ALTER TABLE [dbo].[StoryRecords]
-	ADD CONSTRAINT [PK_StoryRecords]
-	PRIMARY KEY CLUSTERED ([Id] ASC)
-;
-GO
+			DELETE FROM [dbo].[Comments]
+			WHERE [Id] in (select id from deleted)
+		;'
+	)
+	
+	ALTER TABLE [dbo].[Comments]
+		ENABLE TRIGGER [Comments_Delete]
+	
 
-ALTER TABLE [dbo].[StoryRecords]
-	ADD CONSTRAINT [DF_StoryRecords_Id]
-	DEFAULT (NEWID()) FOR [Id]
-GO
-
-ALTER TABLE [dbo].[StoryRecords]
-	WITH CHECK
-	ADD CONSTRAINT [FK_StoryRecords_Comments]
-	FOREIGN KEY([CommentId])
-		REFERENCES [dbo].[Comments] ([Id])
-GO
-
----------
---- Add trigger for cascade delete comment and its story records
----------
-CREATE TRIGGER [dbo].[Comments_Delete]
-    ON [dbo].[Comments]
-    INSTEAD OF DELETE
-AS
-    DELETE FROM [dbo].[StoryRecords]
-    WHERE [CommentId] in (select id from deleted)
-
-	DELETE FROM [dbo].[Comments]
-	WHERE [Id] in (select id from deleted)
-;
-GO
-
-ALTER TABLE [dbo].[Comments]
-ENABLE TRIGGER [Comments_Delete]
-;
-GO
-
-INSERT INTO [ScriptLog]
-	([CreatedOn], [ScriptName])
-VALUES
-	(GETDATE(), '002_AddStoryRecord')
-;
-GO
+	INSERT INTO [ScriptLog]
+		([CreatedOn], [ScriptName])
+	VALUES
+		(GETDATE(), '002_AddStoryRecord')
+	
+END

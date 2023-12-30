@@ -1,8 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Select
+﻿namespace MAS.GitlabComments.DataAccess.Select
 {
     using System;
 
-    using MAS.GitlabComments.Data.Utilities;
+    using MAS.GitlabComments.DataAccess.Utilities;
 
     /// <summary>
     /// Information about table join

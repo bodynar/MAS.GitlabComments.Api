@@ -1,10 +1,11 @@
 namespace MAS.GitlabComments.WebApi
 {
-    using MAS.GitlabComments.WebApi.Attributes;
-    using MAS.GitlabComments.Data.Services;
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Services;
+    using MAS.GitlabComments.DataAccess.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Services.Implementations.DataProvider;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
+    using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -38,11 +39,14 @@ namespace MAS.GitlabComments.WebApi
 
             var settings = Configuration.GetSection("GlobalSettings");
             bool isReadOnlyMode = default;
+            var commentNumberTemplate = string.Empty;
 
             if (settings != default)
             {
                 isReadOnlyMode = settings.GetValue<bool>("ReadOnlyMode");
+                commentNumberTemplate = settings.GetValue<string>("CommentNumberTemplate");
             }
+            var appSettings = new AppSettings(isReadOnlyMode, commentNumberTemplate);
 
             var maxQueryCount = settings.GetValue<int>("MaxQueryRows");
 
@@ -50,7 +54,6 @@ namespace MAS.GitlabComments.WebApi
             {
                 MaxRowCount = maxQueryCount
             };
-
 
             services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
 
@@ -61,15 +64,20 @@ namespace MAS.GitlabComments.WebApi
                 .AddTransient<IDbAdapter, DapperDbAdapter>()
                 .AddTransient<IFilterBuilder, MsSqlFilterBuilder>()
                 .AddTransient<IComplexColumnQueryBuilder, ComplexColumnMssqlBuilder>()
+
+                .AddSingleton<ITempDatabaseModifier, TempDatabaseModifier>()
                 // /data registrations
 
                 // logic registrations
+                .AddSingleton<IApplicationSettings>(appSettings)
+
                 .AddTransient<ICommentService, CommentService>()
                 .AddTransient<ICommentStoryRecordService, CommentStoryRecordService>()
+                .AddTransient<ISystemVariableProvider, SystemVariableProvider>()
                 // /logic registrations
 
                 // web registrations
-                .AddSingleton(new AppSettings(isReadOnlyMode))
+                .AddSingleton<IApplicationWebSettings>(appSettings)
                 // /web registrations
 
                 .AddControllers(opts => { opts.Filters.Add<UseReadOnlyModeAttribute>(); })

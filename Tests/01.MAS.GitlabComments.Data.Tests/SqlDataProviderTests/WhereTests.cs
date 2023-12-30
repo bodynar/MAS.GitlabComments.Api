@@ -1,10 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
-    using System.Collections.Generic;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Filter;
 
     using Xunit;
 
@@ -14,7 +12,7 @@
     public sealed class WhereTests : BaseSqlDataProviderTests
     {
         [Fact]
-        public void ShouldReturnAllEntitiesWhenFilterIsNull()
+        public void ShouldReturnAllEntities_WhenFilterIsNull()
         {
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}]";
             FilterGroup filter = null;
@@ -28,7 +26,7 @@
         }
 
         [Fact]
-        public void ShouldReturnAllEntitiesWhenFilterIsEmpty()
+        public void ShouldReturnAllEntities_WhenFilterIsEmpty()
         {
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}]";
             FilterGroup filter = new()
@@ -46,7 +44,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentExceptionWhenFilterContainsInvalidColumns()
+        public void ShouldThrowArgumentException_WhenFilterContainsInvalidColumns()
         {
             FilterGroup filter = new()
             {
@@ -61,6 +59,7 @@
                     }
                 }
             };
+            string expectedExceptionMessage = $"Filter contains columns not presented in entity: __SomeNotExistedFieldName__";
 
             Exception exception =
                 Record.Exception(
@@ -69,12 +68,13 @@
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentException>(exception);
+            Assert.Equal(expectedExceptionMessage, exception.Message);
         }
 
         [Fact]
-        public void ShouldReturnAllEntitiesWhenFilterBuiltAsEmpty()
+        public void ShouldReturnAllEntities_WhenFilterBuiltAsEmpty()
         {
-            FilterBuilderResult = new Tuple<string, IReadOnlyDictionary<string, object>>(string.Empty, null);
+            FilterBuilderResult = new FilterResult();
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}]";
             FilterGroup filter = new()
             {
@@ -91,9 +91,9 @@
         }
 
         [Fact]
-        public void ShouldReturnFilteredEntitiesWhenFilterBuilt()
+        public void ShouldReturnFilteredEntities_WhenFilterBuilt()
         {
-            FilterBuilderResult = new Tuple<string, IReadOnlyDictionary<string, object>>("filter", null);
+            FilterBuilderResult = new FilterResult() { Sql = "filter", };
             string expectedSqlQuery = $"SELECT * FROM [{TestedTableName}] WHERE filter";
             FilterGroup filter = new()
             {
@@ -116,7 +116,7 @@
 
             Assert.NotNull(lastQuery);
             Assert.Equal(expectedSqlQuery, lastQuery.Value.Key);
-            Assert.Null(lastQuery.Value.Value);
+            Assert.Empty(lastQuery.Value.Value);
         }
     }
 }

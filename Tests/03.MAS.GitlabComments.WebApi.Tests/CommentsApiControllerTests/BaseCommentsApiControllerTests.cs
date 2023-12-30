@@ -27,12 +27,12 @@
         /// <summary>
         /// Should exception be thrown during comment service execution
         /// </summary>
-        protected bool ShouldThrowExceptionDuringExection { get; set; }
+        protected bool ShouldThrowExceptionDuringExecution { get; private set; }
 
         /// <summary>
-        /// Exception message which will be thrown if <see cref="ShouldThrowExceptionDuringExection"/> is true
+        /// Exception message which will be thrown if <see cref="ShouldThrowExceptionDuringExecution"/> is true
         /// </summary>
-        protected string ExceptionDuringExectionText { get; set; }
+        private const string ExceptionDuringExecutionText = "ExceptionTestMessage";
 
         /// <summary>
         /// Initializing <see cref="BaseCommentsApiControllerTests"/> with setup'n all required environment
@@ -57,26 +57,21 @@
 
             Action commentServiceExceptionCallback = () =>
             {
-                if (ShouldThrowExceptionDuringExection)
+                if (ShouldThrowExceptionDuringExecution)
                 {
-                    throw new Exception(ExceptionDuringExectionText);
+                    throw new Exception(ExceptionDuringExecutionText);
                 }
             };
 
             mockCommentsService
                 .Setup(x => x.Add(It.IsAny<AddCommentModel>()))
                 .Callback(commentServiceExceptionCallback)
-                .Returns(Guid.Empty);
+                .Returns(default(NewComment));
 
             mockCommentsService
                 .Setup(x => x.Get())
                 .Callback(commentServiceExceptionCallback)
                 .Returns(Enumerable.Empty<CommentModel>());
-
-            mockCommentsService
-                .Setup(x => x.GetDescription(It.IsAny<Guid>()))
-                .Callback(commentServiceExceptionCallback)
-                .Returns(string.Empty);
 
             mockCommentsService
                 .Setup(x => x.Increment(It.IsAny<Guid>()))
@@ -88,6 +83,19 @@
 
             mockCommentsService
                 .Setup(x => x.Delete(It.IsAny<Guid>()))
+                .Callback(commentServiceExceptionCallback);
+
+            mockCommentsService
+                .Setup(x => x.GetIncomplete())
+                .Callback(commentServiceExceptionCallback)
+                .Returns(Enumerable.Empty<IncompleteCommentData>());
+
+            mockCommentsService
+                .Setup(x => x.UpdateIncomplete())
+                .Callback(commentServiceExceptionCallback);
+
+            mockCommentsService
+                .Setup(x => x.MakeNumberColumnUnique())
                 .Callback(commentServiceExceptionCallback);
 
             return (mockLogger.Object, mockCommentsService.Object);
@@ -103,14 +111,13 @@
         protected void AssertBaseServiceResultError<TResult>(Func<TResult> action)
             where TResult : BaseServiceResult
         {
-            ExceptionDuringExectionText = "Tested exception message";
-            ShouldThrowExceptionDuringExection = true;
+            ShouldThrowExceptionDuringExecution = true;
 
             TResult baseServiceResult = action.Invoke();
 
             Assert.NotNull(baseServiceResult);
             Assert.False(baseServiceResult.IsSuccess);
-            Assert.Equal(ExceptionDuringExectionText, baseServiceResult.ErrorMessage);
+            Assert.Equal(ExceptionDuringExecutionText, baseServiceResult.ErrorMessage);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Services.Implementations
+﻿namespace MAS.GitlabComments.DataAccess.Services.Implementations
 {
     using System;
     using System.Collections.Generic;
@@ -21,7 +21,7 @@
         /// <exception cref="ArgumentNullException">Parameter connection is null</exception>
         /// <exception cref="ArgumentNullException">Parameter sqlQuery is null</exception>
         /// <returns>Enumeration of selected rows mapped to specified class</returns>
-        public IEnumerable<TEntity> Query<TEntity>(IDbConnection connection, string sqlQuery, object arguments = null)
+        public IEnumerable<TEntity> Query<TEntity>(IDbConnection connection, string sqlQuery, IReadOnlyDictionary<string, object> arguments = null)
         {
             if (connection == null)
             {
@@ -52,7 +52,7 @@
         /// <exception cref="ArgumentNullException">Parameter sqlQuery is null</exception>
         /// <exception cref="ArgumentNullException">Parameter arguments is null</exception>
         /// <returns>Affected rows count if sql query provided; otherwise 0</returns>
-        public int Execute(IDbConnection connection, string sqlQuery, object arguments)
+        public int Execute(IDbConnection connection, string sqlQuery, IReadOnlyDictionary<string, object> arguments)
         {
             if (connection == null)
             {

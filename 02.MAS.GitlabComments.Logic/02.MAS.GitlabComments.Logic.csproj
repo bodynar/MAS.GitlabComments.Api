@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.Data.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

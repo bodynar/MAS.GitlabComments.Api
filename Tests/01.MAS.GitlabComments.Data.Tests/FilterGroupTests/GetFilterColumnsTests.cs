@@ -1,8 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Tests.FilterGroupTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.FilterGroupTests
 {
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Filter;
+    using MAS.GitlabComments.DataAccess.Filter;
 
     using Xunit;
 
@@ -12,7 +12,7 @@
     public sealed class GetFilterColumnsTests
     {
         [Fact]
-        public void ShouldReturnEmptyResultWhenFilterContainsNull()
+        public void ShouldReturnEmptyResult_WhenFilterContainsNull()
         {
             FilterGroup testedFilter = new()
             {
@@ -27,7 +27,7 @@
         }
 
         [Fact]
-        public void ShouldReturnEmptyResultWhenFilterContainsEmptyProps()
+        public void ShouldReturnEmptyResult_WhenFilterContainsEmptyProps()
         {
             FilterGroup testedFilter = new()
             {
@@ -207,7 +207,7 @@
         }
 
         [Fact]
-        public void ShouldReturnDistinctedColumnNames()
+        public void ShouldReturnDistinctColumnNames()
         {
             var expectedColumnNames = new[] { "Column" };
             FilterGroup testedFilter = new()

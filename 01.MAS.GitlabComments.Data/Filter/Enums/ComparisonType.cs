@@ -1,6 +1,6 @@
-﻿namespace MAS.GitlabComments.Data.Filter
+﻿namespace MAS.GitlabComments.DataAccess.Filter
 {
-    using MAS.GitlabComments.Data.Attributes;
+    using MAS.GitlabComments.DataAccess.Attributes;
 
     /// <summary>
     /// Types of value comparison

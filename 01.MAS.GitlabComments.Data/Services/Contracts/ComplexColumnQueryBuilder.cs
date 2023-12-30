@@ -1,6 +1,6 @@
-﻿namespace MAS.GitlabComments.Data.Services
+﻿namespace MAS.GitlabComments.DataAccess.Services
 {
-    using MAS.GitlabComments.Data.Select;
+    using MAS.GitlabComments.DataAccess.Select;
 
     /// <summary>
     /// Builder of complex query columns

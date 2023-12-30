@@ -8,7 +8,7 @@
     public sealed class DeleteTests : BaseCommentServiceTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenParameterIsNull()
+        public void ShouldThrowArgumentNullException_WhenParameterIsNull()
         {
             Guid[] commentIds = null;
 
@@ -33,7 +33,7 @@
         }
 
         [Fact]
-        public void ShouldNotDeleteCommentsWhenCommentIdsContainsOnlyGuidEmptyValues()
+        public void ShouldNotDeleteComments_WhenCommentIdsContainsOnlyGuidEmptyValues()
         {
             Guid[] commentIds = new[] { Guid.Empty };
             TestedService.Delete(commentIds);

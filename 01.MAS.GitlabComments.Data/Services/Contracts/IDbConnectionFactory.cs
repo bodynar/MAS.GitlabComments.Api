@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Services
+﻿namespace MAS.GitlabComments.DataAccess.Services
 {
     using System.Data;
 

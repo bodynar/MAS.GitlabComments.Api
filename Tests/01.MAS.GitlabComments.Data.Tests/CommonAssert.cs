@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Tests
+﻿namespace MAS.GitlabComments.DataAccess.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -51,7 +51,7 @@
         /// <param name="expectedCollection">Expected items</param>
         /// <param name="actualCollection">Actual items</param>
         /// <param name="assertFunction">Assert function</param>
-        public static void Collections<TExpected, TActiual>(IEnumerable<TExpected> expectedCollection, IEnumerable<TActiual> actualCollection, Action<TExpected, TActiual> assertFunction)
+        public static void Collections<TExpected, TActual>(IEnumerable<TExpected> expectedCollection, IEnumerable<TActual> actualCollection, Action<TExpected, TActual> assertFunction)
         {
             if (expectedCollection == null)
             {

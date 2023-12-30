@@ -46,18 +46,18 @@
         /// </summary>
         /// <param name="addCommentModel">Comment values</param>
         [HttpPost("add")]
-        public BaseServiceResult<Guid> Add([FromBody] AddCommentModel addCommentModel)
+        public BaseServiceResult<NewComment> Add([FromBody] AddCommentModel addCommentModel)
         {
             try
             {
-                var newId = CommentService.Add(addCommentModel);
+                var newComment = CommentService.Add(addCommentModel);
 
-                return BaseServiceResult<Guid>.Success(newId);
+                return BaseServiceResult<NewComment>.Success(newComment);
             }
             catch (Exception e)
             {
                 Logger?.LogError(e, "Trying to: add comment.");
-                return BaseServiceResult<Guid>.Error(e);
+                return BaseServiceResult<NewComment>.Error(e);
             }
         }
 
@@ -79,49 +79,6 @@
             {
                 Logger?.LogError(e, "Trying to: Get all comments");
                 return BaseServiceResult<IEnumerable<CommentModel>>.Error(e);
-            }
-        }
-
-        /// <summary>
-        /// Get comment item by specifying it's identifier
-        /// </summary>
-        /// <param name="commentId">Comment identifier value</param>
-        /// <returns>Comment model</returns>
-        [HttpGet("get")]
-        public BaseServiceResult<ExtendedCommentModel> Get([FromQuery] Guid commentId)
-        {
-            try
-            {
-                var result = CommentService.Get(commentId);
-
-                return BaseServiceResult<ExtendedCommentModel>.Success(result);
-            }
-            catch (Exception e)
-            {
-                Logger?.LogError(e, $"Trying to: Get comment \"{commentId}\".");
-                return BaseServiceResult<ExtendedCommentModel>.Error(e);
-            }
-        }
-
-        /// <summary>
-        /// Get description of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
-        /// <returns>Service perform operation result</returns>
-        [AllowInReadOnly]
-        [HttpGet("description")]
-        public BaseServiceResult<string> GetDescription([FromQuery] Guid commentId)
-        {
-            try
-            {
-                var result = CommentService.GetDescription(commentId);
-
-                return BaseServiceResult<string>.Success(result);
-            }
-            catch (Exception e)
-            {
-                Logger?.LogError(e, $"Trying to: Get description of comment \"{commentId}\".");
-                return BaseServiceResult<string>.Error(e);
             }
         }
 
@@ -182,6 +139,82 @@
             {
                 Logger?.LogError(e, $"Trying to: Delete comment \"{commentId}\".");
                 return BaseServiceResult.Error(e);
+            }
+        }
+
+        /// <summary>
+        /// Get incomplete comments data
+        /// </summary>
+        [HttpGet("getIncomplete")]
+        public BaseServiceResult<IEnumerable<IncompleteCommentData>> GetIncomplete()
+        {
+            try
+            {
+                var result = CommentService.GetIncomplete();
+
+                return BaseServiceResult<IEnumerable<IncompleteCommentData>>.Success(result);
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Get incomplete comments");
+                return BaseServiceResult<IEnumerable<IncompleteCommentData>>.Error(e);
+            }
+        }
+
+        /// <summary>
+        /// Update incomplete comments
+        /// </summary>
+        [HttpPost("updateIncomplete")]
+        public BaseServiceResult UpdateIncomplete()
+        {
+            try
+            {
+                CommentService.UpdateIncomplete();
+
+                return BaseServiceResult.Success();
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Updating incomplete comments failed");
+                return BaseServiceResult.Error(e);
+            }
+        }
+
+        /// <summary>
+        /// Update comment table definition
+        /// </summary>
+        [HttpPost("updateCommentTable")]
+        public BaseServiceResult UpdateCommentTable()
+        {
+            try
+            {
+                CommentService.MakeNumberColumnUnique();
+
+                return BaseServiceResult.Success();
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Updating comment table with unique constraint for Number column failed");
+                return BaseServiceResult.Error(e);
+            }
+        }
+
+        /// <summary>
+        /// Update comment table definition
+        /// </summary>
+        [HttpGet("canUpdateCommentTable")]
+        public BaseServiceResult<bool> CheckCanUpdateCommentTable()
+        {
+            try
+            {
+                var result = CommentService.CanMakeNumberColumnUnique();
+
+                return BaseServiceResult<bool>.Success(result);
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, "Checking ability of updating comment table with unique constraint for Number column failed");
+                return BaseServiceResult<bool>.Error(e);
             }
         }
     }

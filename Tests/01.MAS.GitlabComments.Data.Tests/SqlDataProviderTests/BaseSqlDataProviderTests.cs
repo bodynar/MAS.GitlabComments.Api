@@ -1,16 +1,15 @@
-﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Dynamic;
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Select;
-    using MAS.GitlabComments.Data.Services;
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
+    using MAS.GitlabComments.DataAccess.Services;
+    using MAS.GitlabComments.DataAccess.Services.Implementations.DataProvider;
 
     using Moq;
 
@@ -45,18 +44,18 @@
         /// <summary>
         /// Name of table for tests
         /// </summary>
-        protected string TestedTableName
+        protected static string TestedTableName
             => $"{nameof(TestedDataProviderEntity)}s";
 
         /// <summary>
         /// Last called command back-field
         /// </summary>
-        private KeyValuePair<string, object>? lastCommand;
+        private KeyValuePair<string, IReadOnlyDictionary<string, object>>? lastCommand;
 
         /// <summary>
         /// Last called command of <see cref="IDbAdapter"/> - pair of sql command and arguments
         /// </summary>
-        protected KeyValuePair<string, object>? LastCommand
+        protected KeyValuePair<string, IReadOnlyDictionary<string, object>>? LastCommand
         {
             get
             {
@@ -65,7 +64,7 @@
                     return null;
                 }
 
-                var copy = new KeyValuePair<string, object>(lastCommand.Value.Key, lastCommand.Value.Value);
+                var copy = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(lastCommand.Value.Key, lastCommand.Value.Value);
 
                 lastCommand = null;
 
@@ -76,12 +75,12 @@
         /// <summary>
         /// Last called query back-field
         /// </summary>
-        private KeyValuePair<string, object>? lastQuery;
+        private KeyValuePair<string, IReadOnlyDictionary<string, object>>? lastQuery;
 
         /// <summary>
         /// Last called query of <see cref="IDbAdapter"/> - pair of sql query and arguments
         /// </summary>
-        protected KeyValuePair<string, object>? LastQuery
+        protected KeyValuePair<string, IReadOnlyDictionary<string, object>>? LastQuery
         {
             get
             {
@@ -90,7 +89,7 @@
                     return null;
                 }
 
-                var copy = new KeyValuePair<string, object>(lastQuery.Value.Key, lastQuery.Value.Value);
+                var copy = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(lastQuery.Value.Key, lastQuery.Value.Value);
 
                 lastQuery = null;
 
@@ -106,18 +105,12 @@
         /// <summary>
         /// Mock for result of filter builder call
         /// </summary>
-        protected Tuple<string, IReadOnlyDictionary<string, object>> FilterBuilderResult;
+        protected FilterResult FilterBuilderResult;
 
         /// <summary>
         /// Mock for result of complex column query builder call
         /// </summary>
         protected ComplexColumnData ComplexColumnQueryBuilderResult;
-
-        /// <summary>
-        /// Name of default columns which shouldn't be checked
-        /// </summary>
-        private IEnumerable<string> ParamNamesToExcludeFromCheck
-            => new[] { "Id", "CreatedOn", "ModifiedOn" };
 
         /// <summary>
         /// Initializing <see cref="BaseSqlDataProviderTests"/> with setup'n all required environment
@@ -128,15 +121,13 @@
             TestedService = new SqlDataProvider<TestedDataProviderEntity>(df, da, fb, ccqb);
         }
 
-        #region Private methods
-
         /// <summary>
         /// Get all required dependencies for <see cref="SqlDataProvider{TEntity}"/> presented as mocks
         /// </summary>
         /// <exception cref="Exception">Last query has value before test execution</exception>
         /// <exception cref="Exception">Last command has value before test execution</exception>
         /// <returns>Mocked dependecies: <see cref="IDbConnectionFactory"/>, <see cref="IDbAdapter"/>, <see cref="IFilterBuilder"/></returns>
-        private (IDbConnectionFactory, IDbAdapter, IFilterBuilder, IComplexColumnQueryBuilder) GetServiceDependencies()
+        protected (IDbConnectionFactory, IDbAdapter, IFilterBuilder, IComplexColumnQueryBuilder) GetServiceDependencies()
         {
             var mockConnectionFactory = new Mock<IDbConnectionFactory>();
 
@@ -147,41 +138,41 @@
             var mockDbAdapter = new Mock<IDbAdapter>();
 
             mockDbAdapter
-                .Setup(x => x.Query<TestedDataProviderEntity>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
-                .Callback<IDbConnection, string, object>((_, sql, args) =>
+                .Setup(x => x.Query<TestedDataProviderEntity>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyDictionary<string, object>>()))
+                .Callback<IDbConnection, string, IReadOnlyDictionary<string, object>>((_, sql, args) =>
                 {
                     if (lastQuery.HasValue)
                     {
                         throw new Exception($"{nameof(LastQuery)} is not empty");
                     }
 
-                    lastQuery = new KeyValuePair<string, object>(sql, args);
+                    lastQuery = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(sql, args);
                 })
                 .Returns(Enumerable.Empty<TestedDataProviderEntity>());
 
             mockDbAdapter
-                .Setup(x => x.Query<SelectTests.EmptyProjectedClass>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
-                .Callback<IDbConnection, string, object>((_, sql, args) =>
+                .Setup(x => x.Query<SelectTests.EmptyProjectedClass>(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyDictionary<string, object>>()))
+                .Callback<IDbConnection, string, IReadOnlyDictionary<string, object>>((_, sql, args) =>
                 {
                     if (lastQuery.HasValue)
                     {
                         throw new Exception($"{nameof(LastQuery)} is not empty");
                     }
 
-                    lastQuery = new KeyValuePair<string, object>(sql, args);
+                    lastQuery = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(sql, args);
                 })
                 .Returns(Enumerable.Empty<SelectTests.EmptyProjectedClass>());
 
             mockDbAdapter
-                .Setup(x => x.Execute(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<object>()))
-                .Callback<IDbConnection, string, object>((_, sql, args) =>
+                .Setup(x => x.Execute(It.IsAny<IDbConnection>(), It.IsAny<string>(), It.IsAny<IReadOnlyDictionary<string, object>>()))
+                .Callback<IDbConnection, string, IReadOnlyDictionary<string, object>>((_, sql, args) =>
                 {
                     if (lastCommand.HasValue)
                     {
                         throw new Exception($"{nameof(LastCommand)} is not empty");
                     }
 
-                    lastCommand = new KeyValuePair<string, object>(sql, args);
+                    lastCommand = new KeyValuePair<string, IReadOnlyDictionary<string, object>>(sql, args);
                 })
                 .Returns(() => TestedAffectedRowsCount);
 
@@ -189,15 +180,7 @@
 
             mockFilterBuilder
                 .Setup(x => x.Build(It.IsAny<FilterGroup>()))
-                .Returns(() =>
-                {
-                    if (FilterBuilderResult == null)
-                    {
-                        throw new Exception($"{nameof(FilterBuilderResult)} is empty");
-                    }
-
-                    return (FilterBuilderResult.Item1, FilterBuilderResult.Item2);
-                });
+                .Returns(() => FilterBuilderResult);
 
             var mockComplexQueryBuilder = new Mock<IComplexColumnQueryBuilder>();
 
@@ -208,40 +191,40 @@
             return (mockConnectionFactory.Object, mockDbAdapter.Object, mockFilterBuilder.Object, mockComplexQueryBuilder.Object);
         }
 
-        #endregion
-
         /// <summary>
         /// Assert sql configuration arguments.
         /// Asserts equality of argument keys and values sequently
         /// </summary>
         /// <param name="expected">Expected arguments</param>
         /// <param name="actual">Actual arguments</param>
-        protected void AssertArguments(IEnumerable<KeyValuePair<string, object>> expected, object actual)
+        protected static void AssertArguments(IEnumerable<KeyValuePair<string, object>> expected, IReadOnlyDictionary<string, object> actual, IEnumerable<string> skipParams = null)
         {
-            if (actual is ExpandoObject actualAsExpando)
+            skipParams ??= Enumerable.Empty<string>();
+
+            var objectKeyNames = actual.Select(x => x.Key);
+            var hasNotPresentedKeys = expected.Any(pair => !objectKeyNames.Contains(pair.Key));
+
+            Assert.False(hasNotPresentedKeys);
+
+            foreach (var pair in actual)
             {
-                var actualArguments = actualAsExpando.Where(x => !ParamNamesToExcludeFromCheck.Contains(x.Key));
-                var objectKeyNames = actualArguments.Select(x => x.Key);
-
-                var hasNotPresentedKeys = expected.Any(pair => !objectKeyNames.Contains(pair.Key));
-
-                Assert.False(hasNotPresentedKeys);
-
-                foreach (var pair in actualArguments)
+                if (skipParams.Contains(pair.Key))
                 {
-                    var expectedValue = expected.First(x => x.Key == pair.Key).Value;
-                    var type = expectedValue.GetType();
+                    continue;
+                }
 
-                    if (type.Name == nameof(DateTime))
-                    {
-                        var timeSpan = (expectedValue as DateTime?).Value - (pair.Value as DateTime?).Value;
+                var expectedValue = expected.First(x => x.Key == pair.Key).Value;
+                var type = expectedValue.GetType();
 
-                        Assert.True(timeSpan.TotalMinutes < 5);
-                    }
-                    else
-                    {
-                        Assert.Equal(expectedValue, pair.Value);
-                    }
+                if (type.Name == nameof(DateTime))
+                {
+                    var timeSpan = (expectedValue as DateTime?).Value - (pair.Value as DateTime?).Value;
+
+                    Assert.True(timeSpan.TotalSeconds < 5);
+                }
+                else
+                {
+                    Assert.Equal(expectedValue, pair.Value);
                 }
             }
         }

@@ -1,9 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Tests.MsSqlFilterBuilderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.MsSqlFilterBuilderTests
 {
     using System;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.DataAccess.Filter;
 
     using Xunit;
 
@@ -13,7 +12,7 @@
     public sealed class BuildTests : BaseMsSqlFilterBuilderTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenFilterIsNull()
+        public void ShouldThrowArgumentNullException_WhenFilterIsNull()
         {
             FilterGroup filter = null;
 
@@ -27,7 +26,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenFilterIsEmpty()
+        public void ShouldThrowArgumentNullException_WhenFilterIsEmpty()
         {
             FilterGroup filter = new()
             {
@@ -45,7 +44,7 @@
         }
 
         [Fact]
-        public void ShouldNotBuildFilterWhenItemsHaveNotValidComparisonTypes()
+        public void ShouldNotBuildFilter_WhenItemsHaveNotValidComparisonTypes()
         {
             FilterGroup filter = new()
             {
@@ -62,14 +61,15 @@
                 }
             };
 
-            var (sql, _) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.Equal(0, sql.Length);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.Equal(0, result.Sql.Length);
         }
 
         [Fact]
-        public void ShouldNotBuildFilterWhenNestedGroupsAreEmpty()
+        public void ShouldNotBuildFilter_WhenNestedGroupsAreEmpty()
         {
             FilterGroup filter = new()
             {
@@ -97,14 +97,15 @@
                 }
             };
 
-            var (sql, _) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.Equal(0, sql.Length);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.Equal(0, result.Sql.Length);
         }
 
         [Fact]
-        public void ShouldNotBuildFulterWhenJoinTypeIsInvalid()
+        public void ShouldNotBuildFilter_WhenJoinTypeIsInvalid()
         {
             FilterGroup filter = new()
             {
@@ -139,14 +140,15 @@
                 }
             };
 
-            var (sql, _) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.Equal(0, sql.Length);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.Equal(0, result.Sql.Length);
         }
 
         [Fact]
-        public void ShouldNotBuildFilterWhenNestedGroupsContainsItemsWithInvalidComparisonTypes()
+        public void ShouldNotBuildFilter_WhenNestedGroupsContainsItemsWithInvalidComparisonTypes()
         {
             FilterGroup filter = new()
             {
@@ -180,34 +182,11 @@
                 }
             };
 
-            var (sql, _) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.Equal(0, sql.Length);
-        }
-
-        [Fact]
-        public void ShouldNotBuildFilterWhenJoinOperatorIsInvalid()
-        {
-            FilterGroup filter = new()
-            {
-                Name = "EmptyFilter",
-                Items = new[]
-                {
-                    new FilterItem
-                    {
-                        FieldName = "TestFieldName",
-                        Name = "TestFilter",
-                        Value = "TestValue",
-                        LogicalComparisonType = ComparisonType.Equal
-                    }
-                }
-            }; ;
-
-            var (sql, _) = TestedService.Build(filter);
-
-            Assert.NotNull(sql);
-            Assert.Equal(0, sql.Length);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.Equal(0, result.Sql.Length);
         }
 
         #region Proper filter build
@@ -218,7 +197,6 @@
         public void ShouldBuildFilterWithEqualComparison()
         {
             var expectedSql = "[TestFieldName] = @FilterValue0";
-            var expectedParamsCount = 1;
             var expectedParamNames = new[] { "FilterValue0" };
             var expectedParamValues = new[] { true };
             FilterGroup filter = new()
@@ -237,24 +215,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamsCount, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterWithNotEqualComparison()
         {
             var expectedSql = "[TestFieldName] != @FilterValue0";
-            var expectedParamsCount = 1;
             var expectedParamNames = new[] { "FilterValue0" };
             var expectedParamValues = new[] { true };
             FilterGroup filter = new()
@@ -273,24 +251,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamsCount, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterWithLessComparison()
         {
             var expectedSql = "[TestFieldName] < @FilterValue0";
-            var expectedParamsCount = 1;
             var expectedParamNames = new[] { "FilterValue0" };
             var expectedParamValues = new[] { true };
             FilterGroup filter = new()
@@ -309,24 +287,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamsCount, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterWithLessOrEqualComparison()
         {
             var expectedSql = "[TestFieldName] <= @FilterValue0";
-            var expectedParamsCount = 1;
             var expectedParamNames = new[] { "FilterValue0" };
             var expectedParamValues = new[] { true };
             FilterGroup filter = new()
@@ -345,24 +323,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamsCount, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterWithGreaterComparison()
         {
             var expectedSql = "[TestFieldName] > @FilterValue0";
-            var expectedParamsCount = 1;
             var expectedParamNames = new[] { "FilterValue0" };
             var expectedParamValues = new[] { true };
             FilterGroup filter = new()
@@ -381,24 +359,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamsCount, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterWithGreaterOrEqualComparison()
         {
             var expectedSql = "[TestFieldName] >= @FilterValue0";
-            var expectedParamsCount = 1;
             var expectedParamNames = new[] { "FilterValue0" };
             var expectedParamValues = new[] { true };
             FilterGroup filter = new()
@@ -417,17 +395,18 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamsCount, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         #endregion
@@ -437,7 +416,7 @@
         [Fact]
         public void ShouldBuildAndJoinType()
         {
-            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1";
+            var expectedSql = "[TestFieldName1] = @FilterValue0 AND [TestFieldName2] = @FilterValue1";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new[] { true, true };
             FilterGroup filter = new()
@@ -463,23 +442,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamNames.Length, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildOrJoinType()
         {
-            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "OR [TestFieldName2] = @FilterValue1";
+            var expectedSql = "[TestFieldName1] = @FilterValue0 OR [TestFieldName2] = @FilterValue1";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new[] { true, true };
             FilterGroup filter = new()
@@ -505,17 +485,18 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamNames.Length, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         #endregion
@@ -525,7 +506,7 @@
         [Fact]
         public void ShouldBuildFilterFromFlatModelWithSeveralComparisons()
         {
-            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1";
+            var expectedSql = "[TestFieldName1] = @FilterValue0 AND [TestFieldName2] = @FilterValue1";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new object[] { true, true };
             FilterGroup filter = new()
@@ -551,23 +532,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamNames.Length, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterFromFewGroupsWithFlatFilters()
         {
-            var expectedSql = "([TestFieldName1] = @FilterValue0)" + nl + "AND ([TestFieldName2] = @FilterValue1)";
+            var expectedSql = "([TestFieldName1] = @FilterValue0) AND ([TestFieldName2] = @FilterValue1)";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1" };
             var expectedParamValues = new object[] { true, true };
             FilterGroup filter = new()
@@ -609,24 +591,25 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamNames.Length, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterFromFewGroupsWithSeveralComparisons()
         {
-            var expectedSql = "([TestFieldName1] = @FilterValue0" + nl + "OR [TestFieldName2] = @FilterValue1)"
-                + nl + "AND ([TestFieldName3] = @FilterValue2" + nl + "AND [TestFieldName4] = @FilterValue3)";
+            var expectedSql = "([TestFieldName1] = @FilterValue0 OR [TestFieldName2] = @FilterValue1)"
+                + " AND ([TestFieldName3] = @FilterValue2 AND [TestFieldName4] = @FilterValue3)";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1", "FilterValue2", "FilterValue3" };
             var expectedParamValues = new object[] { true, true, true, true };
             FilterGroup filter = new()
@@ -682,23 +665,24 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamNames.Length, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterFromSingleDeepFilterWithSeveralComparisons()
         {
-            var expectedSql = "[TestFieldName1] = @FilterValue0" + nl + "OR [TestFieldName2] = @FilterValue1" + nl + "OR [TestFieldName3] = @FilterValue2" + nl + "OR [TestFieldName4] = @FilterValue3";
+            var expectedSql = "[TestFieldName1] = @FilterValue0 OR [TestFieldName2] = @FilterValue1 OR [TestFieldName3] = @FilterValue2 OR [TestFieldName4] = @FilterValue3";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1", "FilterValue2", "FilterValue3" };
             var expectedParamValues = new object[] { true, true, true, true };
             FilterGroup filter = new()
@@ -778,23 +762,25 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamNames.Length, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
+
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         [Fact]
         public void ShouldBuildFilterFromGroupsInDifferentLevels()
         {
-            var expectedSql = "([TestFieldName1] = @FilterValue0" + nl + "AND [TestFieldName2] = @FilterValue1)" + nl + "OR ([TestFieldName3] = @FilterValue2" + nl + "OR [TestFieldName4] = @FilterValue3)";
+            var expectedSql = "([TestFieldName1] = @FilterValue0 AND [TestFieldName2] = @FilterValue1) OR ([TestFieldName3] = @FilterValue2 OR [TestFieldName4] = @FilterValue3)";
             var expectedParamNames = new[] { "FilterValue0", "FilterValue1", "FilterValue2", "FilterValue3" };
             var expectedParamValues = new object[] { true, true, true, true };
             FilterGroup filter = new()
@@ -882,17 +868,18 @@
                 }
             };
 
-            var (sql, args) = TestedService.Build(filter);
+            var result = TestedService.Build(filter);
 
-            Assert.NotNull(sql);
-            Assert.NotEqual(0, sql.Length);
-            Assert.Equal(expectedSql, sql);
+            Assert.NotNull(result);
+            Assert.NotNull(result.Sql);
+            Assert.NotEqual(0, result.Sql.Length);
+            Assert.Equal(expectedSql, result.Sql);
 
-            Assert.NotNull(args);
-            Assert.NotEmpty(args);
-            Assert.Equal(expectedParamNames.Length, args.Count);
-            CommonAssert.CollectionsWithSameType(expectedParamNames, args.Keys, (e, a) => Assert.Equal(e, a));
-            CommonAssert.Collections(expectedParamValues, args.Values, (e, a) => Assert.Equal(e, a));
+            Assert.NotNull(result.Values);
+            Assert.NotEmpty(result.Values);
+            Assert.Equal(expectedParamNames.Length, result.Values.Count);
+            CommonAssert.CollectionsWithSameType(expectedParamNames, result.Values.Keys, (e, a) => Assert.Equal(e, a));
+            CommonAssert.Collections(expectedParamValues, result.Values.Values, (e, a) => Assert.Equal(e, a));
         }
 
         #endregion

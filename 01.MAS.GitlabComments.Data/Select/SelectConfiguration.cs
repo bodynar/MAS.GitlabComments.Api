@@ -1,6 +1,6 @@
-﻿namespace MAS.GitlabComments.Data.Select
+﻿namespace MAS.GitlabComments.DataAccess.Select
 {
-    using MAS.GitlabComments.Data.Filter;
+    using MAS.GitlabComments.DataAccess.Filter;
 
     /// <summary>
     /// Configuration for select call

@@ -4,10 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Select;
-    using MAS.GitlabComments.Data.Services;
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
+    using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.Logic.Models;
 
     /// <summary>
@@ -40,12 +40,14 @@
             var dataItems = DataProvider
                 .Select<StoryRecordReadModel>(new SelectConfiguration { Filter = filter })
                 .ToList()
-                .GroupBy(x => x.CommentId, x => x.CommentText)
+                .GroupBy(x => x.CommentId)
                 .Select(x => new StoryRecordViewModel()
                 {
                     CommentId = x.Key,
                     Count = x.Count(),
-                    CommentText = x.First()
+                    CommentText = x.First().CommentText,
+                    Number = x.First().Number,
+
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList();
@@ -53,7 +55,7 @@
             return dataItems;
         }
 
-        private FilterGroup BuildFilter(DateTime? start, DateTime? endDate, Guid? commentId)
+        private static FilterGroup BuildFilter(DateTime? start, DateTime? endDate, Guid? commentId)
         {
             var filterItems = new List<FilterItem>();
 

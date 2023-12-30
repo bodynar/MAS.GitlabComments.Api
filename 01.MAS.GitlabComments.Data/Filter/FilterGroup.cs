@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Filter
+﻿namespace MAS.GitlabComments.DataAccess.Filter
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -14,8 +14,13 @@
         /// </summary>
         public string Name { get; set; }
 
-        /// <inheritdoc cref="FilterJoinType"/>
-        public FilterJoinType LogicalJoinType { get; set; }
+        /// <summary>
+        ///     Filters join type
+        /// </summary>
+        /// <remarks>
+        /// Default value is <see cref="FilterJoinType.And"/>
+        /// </remarks>
+        public FilterJoinType LogicalJoinType { get; set; } = FilterJoinType.And;
 
         /// <summary>
         /// Alias for root table

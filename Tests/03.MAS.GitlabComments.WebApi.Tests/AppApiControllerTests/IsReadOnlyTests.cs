@@ -5,7 +5,7 @@
     public sealed class IsReadOnlyTests : BaseAppApiControllerTests
     {
         [Fact]
-        public void ShouldReturnFalseWhenReadOnlyModeIsFalse()
+        public void ShouldReturnFalse_WhenReadOnlyModeIsFalse()
         {
             SettingReadOnlyMode = false;
 
@@ -16,7 +16,7 @@
         }
 
         [Fact]
-        public void ShouldReturnFalseWhenReadOnlyModeIsTrue()
+        public void ShouldReturnFalse_WhenReadOnlyModeIsTrue()
         {
             SettingReadOnlyMode = true;
 

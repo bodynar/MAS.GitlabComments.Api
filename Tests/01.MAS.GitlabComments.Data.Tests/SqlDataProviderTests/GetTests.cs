@@ -1,9 +1,7 @@
-﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
     using System.Collections.Generic;
-
-    using MAS.GitlabComments.Data.Services.Implementations;
 
     using Xunit;
 
@@ -26,6 +24,20 @@
             Assert.Equal(expectedSqlQuery, lastQuery.Value.Key);
             Assert.NotNull(lastQuery.Value.Value);
             AssertArguments(expectedArguments, lastQuery.Value.Value);
+        }
+
+        [Fact]
+        public void ShouldThrowArgumentNullException_WhenIdIsDefault()
+        {
+            Guid entityId = default;
+
+            Exception exception =
+                Record.Exception(
+                    () => TestedService.Get(entityId)
+                );
+
+            Assert.NotNull(exception);
+            Assert.IsType<ArgumentNullException>(exception);
         }
     }
 }

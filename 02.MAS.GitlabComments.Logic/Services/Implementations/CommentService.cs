@@ -2,37 +2,62 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.Linq;
 
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Exceptions;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
+    using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.Logic.Models;
-    using MAS.GitlabComments.Data.Exceptions;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Services;
 
     /// <summary>
     /// Service for managing <see cref="Comment"/>
     /// </summary>
     public class CommentService : ICommentService
     {
+        /// <summary>
+        /// Data provider of <see cref="Comment"/> entities
+        /// </summary>
         private IDataProvider<Comment> CommentsDataProvider { get; }
 
+        /// <summary>
+        /// Data provider of <see cref="StoryRecord"/> entities
+        /// </summary>
         private IDataProvider<StoryRecord> StoryRecordsDataProvider { get; }
+
+        /// <inheritdoc cref="IApplicationSettings"/>
+        private IApplicationSettings ApplicationSettings { get; }
+
+        /// <inheritdoc cref="ISystemVariableProvider"/>
+        private ISystemVariableProvider SystemVariableProvider { get; }
+
+        /// <inheritdoc cref="ITempDatabaseModifier"/>
+        private ITempDatabaseModifier TempDatabaseModifier { get; }
 
         /// <summary>
         /// Initializing <see cref="CommentService"/>
         /// </summary>
         /// <param name="commentsDataProvider">Comments data provider</param>
         /// <param name="storyRecordsDataProvider">Story records data provider</param>
+        /// <param name="applicationSettings">Application settings</param>
+        /// <param name="systemVariableProvider">System variable data provider</param>
         /// <exception cref="ArgumentNullException">Parameter commentsDataProvider is null</exception>
         /// <exception cref="ArgumentNullException">Parameter storyRecordsDataProvider is null</exception>
         public CommentService(
             IDataProvider<Comment> commentsDataProvider,
-            IDataProvider<StoryRecord> storyRecordsDataProvider
+            IDataProvider<StoryRecord> storyRecordsDataProvider,
+            IApplicationSettings applicationSettings,
+            ISystemVariableProvider systemVariableProvider,
+
+            ITempDatabaseModifier tempDatabaseModifier
         )
         {
             CommentsDataProvider = commentsDataProvider ?? throw new ArgumentNullException(nameof(commentsDataProvider));
             StoryRecordsDataProvider = storyRecordsDataProvider ?? throw new ArgumentNullException(nameof(storyRecordsDataProvider));
+            ApplicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+            SystemVariableProvider = systemVariableProvider ?? throw new ArgumentNullException(nameof(systemVariableProvider));
+            TempDatabaseModifier = tempDatabaseModifier ?? throw new ArgumentNullException(nameof(tempDatabaseModifier));
         }
 
         /// <summary>
@@ -41,8 +66,8 @@
         /// <param name="addCommentModel">Comment values</param>
         /// <exception cref="ArgumentNullException">Parameter addCommentModel is null</exception>
         /// <exception cref="ArgumentNullException">Message isn't specified</exception>
-        /// <returns>Identifier value of new created comment</returns>
-        public Guid Add(AddCommentModel addCommentModel)
+        /// <returns>Instance of <see cref="NewComment"/> if comment is created</returns>
+        public NewComment Add(AddCommentModel addCommentModel)
         {
             if (addCommentModel == null)
             {
@@ -51,21 +76,37 @@
 
             if (string.IsNullOrEmpty(addCommentModel.Message))
             {
-                throw new ArgumentNullException(nameof(addCommentModel.Message));
+                throw new ArgumentNullException(nameof(AddCommentModel.Message));
+            }
+            if (string.IsNullOrEmpty(addCommentModel.CommentWithLinkToRule))
+            {
+                throw new ArgumentNullException(nameof(AddCommentModel.CommentWithLinkToRule));
             }
 
-            var newId = Guid.NewGuid();
+            var newNumber = SystemVariableProvider.GetValue<int>("LastCommentNumber") + 1;
+            var number = string.Format(ApplicationSettings.CommentNumberTemplate, newNumber);
 
-            CommentsDataProvider.Add(new Comment
+            var newId = CommentsDataProvider.Add(
+                new Comment
+                {
+                    AppearanceCount = 1,
+                    Message = addCommentModel.Message,
+                    CommentWithLinkToRule = addCommentModel.CommentWithLinkToRule,
+                    Description = addCommentModel.Description,
+                    Number = number,
+                }
+            );
+
+            if (newId != default)
+            {
+                SystemVariableProvider.Set("LastCommentNumber", newNumber);
+            }
+
+            return new NewComment
             {
                 Id = newId,
-                AppearanceCount = 1,
-                CreatedOn = DateTime.UtcNow,
-                Message = addCommentModel.Message,
-                Description = addCommentModel.Description
-            });
-
-            return newId;
+                Number = number,
+            };
         }
 
         /// <summary>
@@ -76,47 +117,9 @@
         {
             return
                 CommentsDataProvider
-                    .Get()
+                    .Select<CommentModel>()
                     .OrderByDescending(x => x.AppearanceCount)
-                    .Select(x => new CommentModel
-                    {
-                        Id = x.Id,
-                        Message = x.Message,
-                        AppearanceCount = x.AppearanceCount
-                    });
-        }
-
-        /// <summary>
-        /// Get comment item by specifying it's identifier
-        /// </summary>
-        /// <param name="commentId">Comment identifier value</param>
-        /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
-        /// <exception cref="EntityNotFoundException">Comment not found</exception>
-        /// <returns>Comment model</returns>
-        public ExtendedCommentModel Get(Guid commentId)
-        {
-            var entity = GetCommentWithWithChecking(commentId);
-
-            return new ExtendedCommentModel
-            {
-                Id = entity.Id,
-                Message = entity.Message,
-                Description = entity.Description,
-            };
-        }
-
-        /// <summary>
-        /// Get description of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
-        /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
-        /// <exception cref="EntityNotFoundException">Comment not found</exception>
-        /// <returns>Description if specified; otherwise <see cref="string.Empty"/></returns>
-        public string GetDescription(Guid commentId)
-        {
-            var comment = GetCommentWithWithChecking(commentId);
-
-            return comment.Description ?? string.Empty;
+                    .ToList();
         }
 
         /// <summary>
@@ -135,18 +138,27 @@
             }
             if (string.IsNullOrEmpty(updateCommentModel.Message))
             {
-                throw new ArgumentNullException(nameof(updateCommentModel.Message));
+                throw new ArgumentNullException(nameof(UpdateCommentModel.Message));
+            }
+            if (string.IsNullOrEmpty(updateCommentModel.CommentWithLinkToRule))
+            {
+                throw new ArgumentNullException(nameof(UpdateCommentModel.CommentWithLinkToRule));
             }
 
             GetCommentWithWithChecking(updateCommentModel.Id);
 
-            var newValues = new ExpandoObject();
-
-            newValues.TryAdd(nameof(Comment.Message), updateCommentModel.Message);
+            var newValues = new Dictionary<string, object>
+            {
+                { nameof(Comment.Message), updateCommentModel.Message }
+            };
 
             if (!string.IsNullOrEmpty(updateCommentModel.Description))
             {
-                newValues.TryAdd(nameof(Comment.Description), updateCommentModel.Description);
+                newValues.Add(nameof(Comment.Description), updateCommentModel.Description);
+            }
+            if (!string.IsNullOrEmpty(updateCommentModel.CommentWithLinkToRule))
+            {
+                newValues.Add(nameof(Comment.CommentWithLinkToRule), updateCommentModel.CommentWithLinkToRule);
             }
 
             CommentsDataProvider.Update(updateCommentModel.Id, newValues);
@@ -162,9 +174,10 @@
         {
             var entity = GetCommentWithWithChecking(commentId);
 
-            var newValues = new ExpandoObject();
-
-            newValues.TryAdd(nameof(Comment.AppearanceCount), entity.AppearanceCount + 1);
+            var newValues = new Dictionary<string, object>
+            {
+                {  nameof(Comment.AppearanceCount), entity.AppearanceCount + 1 },
+            };
 
             CommentsDataProvider.Update(commentId, newValues);
 
@@ -189,6 +202,96 @@
             {
                 CommentsDataProvider.Delete(commentIds);
             }
+        }
+
+        /// <inheritdoc cref="ICommentService.GetIncomplete"/>
+        public IEnumerable<IncompleteCommentData> GetIncomplete()
+        {
+            return
+                CommentsDataProvider
+                    .Select<IncompleteCommentData>(
+                        new SelectConfiguration()
+                        {
+                            Filter = new FilterGroup()
+                            {
+                                Items = new[]
+                                {
+                                    new FilterItem()
+                                    {
+                                        Name = "EmptyNumberFilter",
+                                        FieldName = nameof(Comment.Number),
+                                        LogicalComparisonType = ComparisonType.Equal,
+                                        Value = string.Empty
+                                    }
+                                }
+                            }
+                        }
+                    )
+                    .ToList();
+        }
+
+        /// <inheritdoc cref="ICommentService.UpdateIncomplete"/>
+        public void UpdateIncomplete()
+        {
+            var incompleteData = GetIncomplete();
+
+            if (!incompleteData.Any())
+            {
+                return;
+            }
+
+            var lastNumber = SystemVariableProvider.GetValue<int>("LastCommentNumber");
+            var updateDataTasks = incompleteData.Select(
+                x => new Tuple<Guid, string>(
+                    x.Id,
+                    string.Format(ApplicationSettings.CommentNumberTemplate, ++lastNumber)
+                )
+            );
+
+            foreach (var updateDataItem in updateDataTasks)
+            {
+                CommentsDataProvider.Update(
+                    updateDataItem.Item1,
+                    new Dictionary<string, object> { { nameof(Comment.Number), updateDataItem.Item2 } }
+                );
+            }
+
+            SystemVariableProvider.Set("LastCommentNumber", lastNumber);
+        }
+
+        /// <inheritdoc cref="ICommentService.MakeNumberColumnUnique"/>
+        public void MakeNumberColumnUnique()
+        {
+            var canUpdateTable = CanMakeNumberColumnUnique();
+
+            if (!canUpdateTable)
+            {
+                return;
+            }
+
+            TempDatabaseModifier.ApplyModifications();
+
+            SystemVariableProvider.Set("IsChangeNumberUnique", true);
+        }
+
+        /// <inheritdoc cref="ICommentService.CanMakeNumberColumnUnique"/>
+        public bool CanMakeNumberColumnUnique()
+        {
+            var isChangeAppliedAlreadyVariable = SystemVariableProvider.Get("IsChangeNumberUnique");
+
+            if (isChangeAppliedAlreadyVariable == default || bool.Parse(isChangeAppliedAlreadyVariable.RawValue))
+            {
+                return false;
+            }
+
+            var incomplete = GetIncomplete();
+
+            if (incomplete.Any())
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #region Not public API

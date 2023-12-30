@@ -1,4 +1,4 @@
-﻿namespace MAS.GitlabComments.Data.Filter
+﻿namespace MAS.GitlabComments.DataAccess.Filter
 {
     /// <summary>
     /// Filter.

@@ -1,9 +1,9 @@
-﻿namespace MAS.GitlabComments.Data.Tests.SqlDataProviderTests
+﻿namespace MAS.GitlabComments.DataAccess.Tests.SqlDataProviderTests
 {
     using System;
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.Data.Services.Implementations;
+    using MAS.GitlabComments.DataAccess.Exceptions;
 
     using Xunit;
 
@@ -13,7 +13,7 @@
     public sealed class UpdateTests : BaseSqlDataProviderTests
     {
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenEntityIdIsDefault()
+        public void ShouldThrowArgumentNullException_WhenEntityIdIsDefault()
         {
             Guid entityId = default;
             IDictionary<string, object> newValues = new Dictionary<string, object>();
@@ -28,7 +28,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenEntityValuesIsNull()
+        public void ShouldThrowArgumentNullException_WhenEntityValuesIsNull()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = null;
@@ -43,7 +43,7 @@
         }
 
         [Fact]
-        public void ShouldThrowArgumentNullExceptionWhenEntityValuesIsEmpty()
+        public void ShouldThrowArgumentNullException_WhenEntityValuesIsEmpty()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = new Dictionary<string, object>();
@@ -58,48 +58,12 @@
         }
 
         [Fact]
-        public void ShouldNotExecuteSqlCommandWhenEntityValuesContainsOnlyDefaultEntityFields()
+        public void ShouldThrowQueryExecutionException_WhenEntityValuesContainsOnlyDefaultEntityFields()
         {
             Guid entityId = Guid.NewGuid();
             IDictionary<string, object> newValues = new Dictionary<string, object>() { { "CreatedOn", DateTime.UtcNow } };
-
-            TestedService.Update(entityId, newValues);
-            var lastCommand = LastCommand;
-
-            Assert.Null(lastCommand);
-        }
-
-        [Fact]
-        public void ShouldNotExecuteSqlCommandWhenEntityValuesContainsFieldsNotPresentedInEntity()
-        {
-            Guid entityId = Guid.NewGuid();
-            IDictionary<string, object> newValues = new Dictionary<string, object>() { { "TestedNotExistedPropeprty", DateTime.UtcNow } };
-
-            TestedService.Update(entityId, newValues);
-            var lastCommand = LastCommand;
-
-            Assert.Null(lastCommand);
-        }
-
-        [Fact]
-        public void ShouldNotExecuteSqlCommandWhenEntityValuesContainsDefaultValues()
-        {
-            Guid entityId = Guid.NewGuid();
-            IDictionary<string, object> newValues = new Dictionary<string, object>() { { "IntField", 0 } };
-
-            TestedService.Update(entityId, newValues);
-            var lastCommand = LastCommand;
-
-            Assert.Null(lastCommand);
-        }
-
-        [Fact]
-        public void ShouldThrowExceptionWhenAffectedRowsIsZero()
-        {
-            string expectedExceptionMessage = "Update command performed with empty result, no record was updated.";
-            Guid entityId = Guid.NewGuid();
-            IDictionary<string, object> newValues = new Dictionary<string, object>() { { "IntField", 10 } };
-            TestedAffectedRowsCount = 0;
+            string expectedExceptionMessage = "Operation cannot be performed due to empty entity values dictionary";
+            QueryExecutionExceptionState executionExceptionState = QueryExecutionExceptionState.Before;
 
             Exception exception =
                 Record.Exception(
@@ -107,7 +71,83 @@
                 );
 
             Assert.NotNull(exception);
-            Assert.Equal(expectedExceptionMessage, exception.Message);
+            Assert.IsType<QueryExecutionException>(exception);
+
+            QueryExecutionException castedException = exception as QueryExecutionException;
+            Assert.NotNull(castedException);
+            Assert.Equal(expectedExceptionMessage, castedException.Message);
+            Assert.Equal(executionExceptionState, castedException.State);
+        }
+
+        [Fact]
+        public void ShouldThrowQueryExecutionException_WhenEntityValuesContainsFieldsNotPresentedInEntity()
+        {
+            Guid entityId = Guid.NewGuid();
+            IDictionary<string, object> newValues = new Dictionary<string, object>() { { "TestedNotExistedPropeprty", DateTime.UtcNow } };
+            string expectedExceptionMessage = "Operation cannot be performed due to empty entity values dictionary";
+            QueryExecutionExceptionState executionExceptionState = QueryExecutionExceptionState.Before;
+
+            Exception exception =
+                Record.Exception(
+                    () => TestedService.Update(entityId, newValues)
+                );
+
+            Assert.NotNull(exception);
+            Assert.IsType<QueryExecutionException>(exception);
+
+            QueryExecutionException castedException = exception as QueryExecutionException;
+            Assert.NotNull(castedException);
+            Assert.Equal(expectedExceptionMessage, castedException.Message);
+            Assert.Equal(executionExceptionState, castedException.State);
+        }
+
+        [Fact]
+        public void ShouldThrowQueryExecutionException_WhenEntityValuesContainsOnlyPairWithNullValues()
+        {
+            Guid entityId = Guid.NewGuid();
+            IDictionary<string, object> newValues = new Dictionary<string, object>() { { "IntField", null } };
+            string expectedExceptionMessage = "Operation cannot be performed due to empty entity values dictionary";
+            QueryExecutionExceptionState executionExceptionState = QueryExecutionExceptionState.Before;
+
+            Exception exception =
+                Record.Exception(
+                    () => TestedService.Update(entityId, newValues)
+                );
+
+            Assert.NotNull(exception);
+            Assert.IsType<QueryExecutionException>(exception);
+
+            QueryExecutionException castedException = exception as QueryExecutionException;
+            Assert.NotNull(castedException);
+            Assert.Equal(expectedExceptionMessage, castedException.Message);
+            Assert.Equal(executionExceptionState, castedException.State);
+        }
+
+        [Fact]
+        public void ShouldThrowException_WhenAffectedRowsIsZero()
+        {
+            Guid entityId = Guid.NewGuid();
+            IDictionary<string, object> newValues = new Dictionary<string, object>() { { "IntField", 10 } };
+            TestedAffectedRowsCount = 0;
+
+            var expectedMessage = "Update command performed with empty result, no record was updates";
+            var expectedState = QueryExecutionExceptionState.After;
+
+
+            Exception exception =
+                Record.Exception(
+                    () => TestedService.Update(entityId, newValues)
+                );
+
+
+            Assert.NotNull(exception);
+            Assert.IsType<QueryExecutionException>(exception);
+
+            QueryExecutionException castedException = exception as QueryExecutionException;
+            Assert.NotNull(castedException);
+
+            Assert.Equal(expectedState, castedException.State);
+            Assert.Equal(expectedMessage, castedException.Message);
         }
 
         [Fact]

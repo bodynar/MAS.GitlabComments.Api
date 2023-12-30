@@ -1,9 +1,8 @@
-﻿namespace MAS.GitlabComments.Data.Utilities
+﻿namespace MAS.GitlabComments.DataAccess.Utilities
 {
     using System;
-    using System.Reflection;
 
-    using MAS.GitlabComments.Data.Attributes;
+    using MAS.GitlabComments.DataAccess.Attributes;
 
     /// <summary>
     /// Attribute utilities
@@ -17,6 +16,11 @@
         /// <returns>Sql operator from attribute if enumeration value has specified attribute; otherwise <see cref="string.Empty"/></returns>
         public static string GetSqlOperator(this Enum value)
         {
+            if (value == null)
+            {
+                return string.Empty;
+            }
+
             var field = value.GetType().GetField(value.ToString());
 
             if (field == null)

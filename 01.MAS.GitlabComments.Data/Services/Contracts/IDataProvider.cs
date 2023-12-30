@@ -1,11 +1,11 @@
-﻿namespace MAS.GitlabComments.Data.Services
+﻿namespace MAS.GitlabComments.DataAccess.Services
 {
     using System;
     using System.Collections.Generic;
 
-    using MAS.GitlabComments.Data.Filter;
-    using MAS.GitlabComments.Data.Models;
-    using MAS.GitlabComments.Data.Select;
+    using MAS.GitlabComments.Data;
+    using MAS.GitlabComments.DataAccess.Filter;
+    using MAS.GitlabComments.DataAccess.Select;
 
     /// <summary>
     /// Provider of data for specified entity type
@@ -18,7 +18,8 @@
         /// Add entity
         /// </summary>
         /// <param name="entity">Entity</param>
-        void Add(TEntity entity);
+        /// <returns>Identifier column value of new entity</returns>
+        Guid Add(TEntity entity);
 
         /// <summary>
         /// Get all entities
@@ -59,6 +60,6 @@
         /// <typeparam name="TProjection">Projection model type</typeparam>
         /// <param name="configuration">Select configuration</param>
         /// <returns>Entities mapped to specified model</returns>
-        IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration);
+        IEnumerable<TProjection> Select<TProjection>(SelectConfiguration configuration = null);
     }
 }
