@@ -62,14 +62,14 @@
         /// <summary>
         /// Add unique constraint for Number column for comment in database
         /// </summary>
-        [Obsolete("v1.3 | Will be removed in v1.4")]
+        [Obsolete("v1.4 | Will be removed in v1.5")]
         public void MakeNumberColumnUnique();
 
         /// <summary>
         /// Check possibility of executing <see cref="MakeNumberColumnUnique"/>
         /// </summary>
         /// <returns><see langword="true"/>, if table number column can be updated; otherwise - <see langword="false"/></returns>
-        [Obsolete("v1.3 | Will be removed in v1.4")]
+        [Obsolete("v1.4 | Will be removed in v1.5")]
         public bool CanMakeNumberColumnUnique();
     }
 }
