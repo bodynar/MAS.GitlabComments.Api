@@ -14,7 +14,7 @@ BEGIN
 	-- Add new columns into Comments
 	----
 	ALTER TABLE [dbo].[Comments]
-		ADD [CommentWithLinkToRule] [nvarchar](255) NOT NULL
+		ADD [CommentWithLinkToRule] [nvarchar](1024) NOT NULL
 			CONSTRAINT [DF_Comments_Link] DEFAULT ('')
 	;
 
