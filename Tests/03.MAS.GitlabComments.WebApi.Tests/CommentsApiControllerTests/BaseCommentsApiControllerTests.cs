@@ -13,6 +13,7 @@
 
     using Xunit;
     using MAS.GitlabComments.Logic.Models;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Base class for <see cref="CommentsApiController"/> tests
@@ -46,7 +47,7 @@
         #region Private members
 
         /// <summary>
-        /// Configure mock object of data provider for comment service
+        /// Configure mock objects of required dependencies for tested class
         /// </summary>
         /// <returns>Pair of configured mock object of <see cref="ILogger{TCategoryName}"/> and <see cref="ICommentService"/></returns>
         private (ILogger<CommentsApiController>, ICommentService) GetDependencies()
@@ -96,6 +97,10 @@
 
             mockCommentsService
                 .Setup(x => x.MakeNumberColumnUnique())
+                .Callback(commentServiceExceptionCallback);
+
+            mockCommentsService
+                .Setup(x => x.Merge(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<MergeCommentUpdateModel>()))
                 .Callback(commentServiceExceptionCallback);
 
             return (mockLogger.Object, mockCommentsService.Object);

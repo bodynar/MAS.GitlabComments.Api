@@ -3,10 +3,10 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Logic.Models;
+    using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.WebApi.Models;
-    using MAS.GitlabComments.Logic.Services;
-    using MAS.GitlabComments.Logic.Models;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -31,13 +31,13 @@
         /// </summary>
         /// <param name="logger">Logger to store error information</param>
         /// <param name="commentService">Service for comments managing</param>
-        /// <exception cref="ArgumentNullException">Parameter commentService is null</exception>
+        /// <exception cref="ArgumentNullException">Some parameters is null</exception>
         public CommentsApiController(
             ILogger<CommentsApiController> logger,
             ICommentService commentService
         )
         {
-            Logger = logger;
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             CommentService = commentService ?? throw new ArgumentNullException(nameof(commentService));
         }
 
@@ -87,18 +87,18 @@
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
         [HttpPost("increment")]
-        public BaseServiceResult Increment([FromBody] Guid commentId)
+        public BaseServiceResult<Guid> Increment([FromBody] Guid commentId)
         {
             try
             {
-                CommentService.Increment(commentId);
+                var tokenId = CommentService.Increment(commentId);
 
-                return BaseServiceResult.Success();
+                return BaseServiceResult<Guid>.Success(tokenId);
             }
             catch (Exception e)
             {
                 Logger?.LogError(e, $"Trying to: Incrementing \"{commentId}\".");
-                return BaseServiceResult.Error(e);
+                return BaseServiceResult<Guid>.Error(e);
             }
         }
 
@@ -215,6 +215,29 @@
             {
                 Logger?.LogError(e, "Checking ability of updating comment table with unique constraint for Number column failed");
                 return BaseServiceResult<bool>.Error(e);
+            }
+        }
+
+        /// <inheritdoc cref="ICommentService.Merge(Guid, Guid, IReadOnlyDictionary{string, object})"/>
+        /// <param name="mergeCommentModel">Information about merge operation</param>
+        /// <returns>Result of operation, represented by <see cref="BaseServiceResult"/></returns>
+        [HttpPost("merge")]
+        public BaseServiceResult Merge([FromBody]MergeCommentModel mergeCommentModel)
+        {
+            try
+            {
+                CommentService.Merge(
+                    mergeCommentModel.SourceCommentId,
+                    mergeCommentModel.TargetCommentId,
+                    mergeCommentModel.NewTargetValues?.ToMergeModel()
+                );
+
+                return BaseServiceResult.Success();
+            }
+            catch (Exception e)
+            {
+                Logger?.LogError(e, $"Merging comment \"{mergeCommentModel.SourceCommentId}\" into \"{mergeCommentModel.TargetCommentId}\"");
+                return BaseServiceResult.Error(e);
             }
         }
     }

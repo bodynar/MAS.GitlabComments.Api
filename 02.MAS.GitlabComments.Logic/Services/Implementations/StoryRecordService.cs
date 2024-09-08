@@ -30,12 +30,10 @@
             DataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
         }
 
-        /// <inheritdoc cref="ICommentStoryRecordService.Get(DateTime?, DateTime?, Guid?, int?)"/>
-        public IEnumerable<StoryRecordViewModel> Get(DateTime? startDate, DateTime? endDate, Guid? commentId, int? count)
+        /// <inheritdoc cref="ICommentStoryRecordService.Get(DateTime?, DateTime?, int?)"/>
+        public IEnumerable<StoryRecordViewModel> Get(DateTime? startDate, DateTime? endDate, int? count)
         {
-            var filtersDefined = startDate.HasValue || endDate.HasValue || commentId.HasValue;
-
-            var filter = filtersDefined ? BuildFilter(startDate, endDate, commentId) : null;
+            var filter = BuildFilter(startDate, endDate);
 
             var dataItems = DataProvider
                 .Select<StoryRecordReadModel>(new SelectConfiguration { Filter = filter })
@@ -47,7 +45,6 @@
                     Count = x.Count(),
                     CommentText = x.First().CommentText,
                     Number = x.First().Number,
-
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList();
@@ -55,9 +52,24 @@
             return dataItems;
         }
 
-        private static FilterGroup BuildFilter(DateTime? start, DateTime? endDate, Guid? commentId)
+        /// <summary>
+        /// Get user custom filter
+        /// </summary>
+        /// <param name="start">Specified start date</param>
+        /// <param name="endDate">Specified end date</param>
+        /// <returns>Built filter, instance of <see cref="FilterGroup"/></returns>
+        private static FilterGroup BuildFilter(DateTime? start, DateTime? endDate)
         {
-            var filterItems = new List<FilterItem>();
+            var filterItems = new List<FilterItem>()
+            {
+                new FilterItem()
+                {
+                    Name = "Active",
+                    FieldName = nameof(StoryRecord.IsRetracted),
+                    LogicalComparisonType = ComparisonType.NotEqual,
+                    Value = true,
+                },
+            };
 
             if (start.HasValue)
             {
@@ -81,19 +93,6 @@
                         FieldName = nameof(StoryRecord.CreatedOn),
                         LogicalComparisonType = ComparisonType.LessOrEqual,
                         Value = endDate.Value.AddDays(1) // TODO: temporary, till implement converting to DATE
-                    }
-                );
-            }
-
-            if (commentId.HasValue)
-            {
-                filterItems.Add(
-                    new FilterItem()
-                    {
-                        Name = "CommentIdEquality",
-                        FieldName = nameof(StoryRecord.CommentId),
-                        LogicalComparisonType = ComparisonType.Equal,
-                        Value = commentId.Value
                     }
                 );
             }

@@ -52,7 +52,7 @@
         #region Private members
 
         /// <summary>
-        /// Configure mock object of data provider for comment service
+        /// Configure mock objects of required dependencies for tested class
         /// </summary>
         /// <returns>Pair of configured mock object of <see cref="ILogger{TCategoryName}"/> and <see cref="ICommentService"/></returns>
         private (ILogger<StatsApiController>, ICommentStoryRecordService) GetDependencies()
@@ -70,7 +70,7 @@
             };
 
             mockService
-                .Setup(x => x.Get(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null))
+                .Setup(x => x.Get(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null))
                 .Callback(commentServiceExceptionCallback)
                 .Returns(Enumerable.Empty<StoryRecordViewModel>());
 

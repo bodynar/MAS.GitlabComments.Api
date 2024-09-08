@@ -40,8 +40,7 @@
 
             ShouldExecuteCommand(testedAction, expectedCommandName, new object[] { testedCommentId, secondExpectedArgument });
 
-            Assert.NotNull(LastAddedStoryRecord);
-            Assert.Equal(LastAddedStoryRecord.CommentId, testedCommentId);
+            Assert.True(IsRetractTokenCreated);
         }
     }
 }

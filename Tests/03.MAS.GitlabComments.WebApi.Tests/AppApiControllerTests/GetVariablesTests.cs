@@ -11,6 +11,17 @@
     public sealed class GetVariablesTests : BaseAppApiControllerTests
     {
         [Fact]
+        public void ShouldReturnBaseServiceError_WhenExceptionOccurs()
+        {
+            ShouldThrowAnException = true;
+            var result = TestedController.GetVariables();
+
+            Assert.NotNull(result);
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ExceptionTestMessage, result.ErrorMessage);
+        }
+
+        [Fact]
         public void ShouldReturnErrorResult_WhenExceptionOccurs()
         {
             ShouldThrowAnException = true;

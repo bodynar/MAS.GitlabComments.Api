@@ -35,6 +35,9 @@
         /// <inheritdoc cref="ITempDatabaseModifier"/>
         private ITempDatabaseModifier TempDatabaseModifier { get; }
 
+        /// <inheritdoc cref="IRetractionTokenManager"/>
+        private IRetractionTokenManager RetractionTokenManager { get; }
+
         /// <summary>
         /// Initializing <see cref="CommentService"/>
         /// </summary>
@@ -42,14 +45,13 @@
         /// <param name="storyRecordsDataProvider">Story records data provider</param>
         /// <param name="applicationSettings">Application settings</param>
         /// <param name="systemVariableProvider">System variable data provider</param>
-        /// <exception cref="ArgumentNullException">Parameter commentsDataProvider is null</exception>
-        /// <exception cref="ArgumentNullException">Parameter storyRecordsDataProvider is null</exception>
+        /// <exception cref="ArgumentNullException">Some parameters are null</exception>
         public CommentService(
             IDataProvider<Comment> commentsDataProvider,
             IDataProvider<StoryRecord> storyRecordsDataProvider,
             IApplicationSettings applicationSettings,
             ISystemVariableProvider systemVariableProvider,
-
+            IRetractionTokenManager retractionTokenManager,
             ITempDatabaseModifier tempDatabaseModifier
         )
         {
@@ -58,14 +60,11 @@
             ApplicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
             SystemVariableProvider = systemVariableProvider ?? throw new ArgumentNullException(nameof(systemVariableProvider));
             TempDatabaseModifier = tempDatabaseModifier ?? throw new ArgumentNullException(nameof(tempDatabaseModifier));
+            RetractionTokenManager = retractionTokenManager ?? throw new ArgumentNullException(nameof(retractionTokenManager));
         }
 
-        /// <summary>
-        /// Add comment by specified values
-        /// </summary>
-        /// <param name="addCommentModel">Comment values</param>
-        /// <exception cref="ArgumentNullException">Parameter addCommentModel is null</exception>
-        /// <exception cref="ArgumentNullException">Message isn't specified</exception>
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">Some parameters are null</exception>
         /// <returns>Instance of <see cref="NewComment"/> if comment is created</returns>
         public NewComment Add(AddCommentModel addCommentModel)
         {
@@ -78,6 +77,7 @@
             {
                 throw new ArgumentNullException(nameof(AddCommentModel.Message));
             }
+
             if (string.IsNullOrEmpty(addCommentModel.CommentWithLinkToRule))
             {
                 throw new ArgumentNullException(nameof(AddCommentModel.CommentWithLinkToRule));
@@ -109,10 +109,7 @@
             };
         }
 
-        /// <summary>
-        /// Get all comments
-        /// </summary>
-        /// <returns>All comments</returns>
+        /// <inheritdoc />
         public IEnumerable<CommentModel> Get()
         {
             return
@@ -122,13 +119,8 @@
                     .ToList();
         }
 
-        /// <summary>
-        /// Update specified comment by values
-        /// </summary>
-        /// <param name="updateCommentModel">Comment new values</param>
-        /// <exception cref="ArgumentNullException">Parameter updateCommentModel is null</exception>
-        /// <exception cref="ArgumentNullException">Message isn't specified</exception>
-        /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">Some parameters are null</exception>
         /// <exception cref="EntityNotFoundException">Comment not found</exception>
         public void Update(UpdateCommentModel updateCommentModel)
         {
@@ -164,30 +156,26 @@
             CommentsDataProvider.Update(updateCommentModel.Id, newValues);
         }
 
-        /// <summary>
-        /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
-        /// </summary>
-        /// <param name="commentId">Comment identifier</param>
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">Parameter commentId is default</exception>
         /// <exception cref="EntityNotFoundException">Comment not found</exception>
-        public void Increment(Guid commentId)
+        public Guid Increment(Guid commentId)
         {
             var entity = GetCommentWithWithChecking(commentId);
 
             var newValues = new Dictionary<string, object>
             {
-                {  nameof(Comment.AppearanceCount), entity.AppearanceCount + 1 },
+                { nameof(Comment.AppearanceCount), entity.AppearanceCount + 1 },
             };
 
             CommentsDataProvider.Update(commentId, newValues);
 
-            StoryRecordsDataProvider.Add(new StoryRecord { IsIncrementAction = true, CommentId = commentId });
+            var tokenId = RetractionTokenManager.Create(commentId);
+
+            return tokenId;
         }
 
-        /// <summary>
-        /// Delete comments by specifying their identifiers
-        /// </summary>
-        /// <param name="commentIds">Array of comment identifiers</param>
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException">Parameter commentIds is null</exception>
         public void Delete(params Guid[] commentIds)
         {
@@ -292,6 +280,75 @@
             }
 
             return true;
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentNullException">One of parameters [<paramref name="sourceCommentId"/>, <paramref name="targetCommentId"/>] have default value</exception>
+        /// <exception cref="EntityNotFoundException">Specified comments weren't found</exception>
+        public void Merge(Guid sourceCommentId, Guid targetCommentId, MergeCommentUpdateModel newTargetValues)
+        {
+            if (sourceCommentId == default)
+            {
+                throw new ArgumentNullException(nameof(sourceCommentId));
+            }
+
+            if (targetCommentId == default)
+            {
+                throw new ArgumentNullException(nameof(targetCommentId));
+            }
+
+            var source = GetCommentWithWithChecking(sourceCommentId);
+            var target = GetCommentWithWithChecking(targetCommentId);
+
+            var newValues = new Dictionary<string, object>
+            {
+                { nameof(Comment.AppearanceCount), source.AppearanceCount + target.AppearanceCount }
+            };
+
+            if (newTargetValues != default)
+            {
+                if (!string.IsNullOrEmpty(newTargetValues.Message))
+                {
+                    newValues.Add(nameof(Comment.Message), newTargetValues.Message);
+                }
+
+                if (!string.IsNullOrEmpty(newTargetValues.Description))
+                {
+                    newValues.Add(nameof(Comment.Description), newTargetValues.Description);
+                }
+
+                if (!string.IsNullOrEmpty(newTargetValues.CommentWithLinkToRule))
+                {
+                    newValues.Add(nameof(Comment.CommentWithLinkToRule), newTargetValues.CommentWithLinkToRule);
+                }
+            }
+
+            CommentsDataProvider.Update(target.Id, newValues);
+            CommentsDataProvider.Delete(sourceCommentId);
+        }
+
+        /// <inheritdoc />
+        public void RecalculateLastNumber()
+        {
+            var lastNumberFromVariable = SystemVariableProvider.GetValue<int>("LastCommentNumber");
+            var maxNumberFromEntities =
+                CommentsDataProvider
+                    .Select<NumberOfComment>()
+                    .Select(x =>
+                        int.Parse(
+                            string.Concat(
+                                x.Number.ToCharArray().Where(x => char.IsDigit(x)).ToArray()    
+                            )
+                        )
+                    )
+                    .Max();
+
+            if (maxNumberFromEntities <= lastNumberFromVariable)
+            {
+                return;
+            }
+
+            SystemVariableProvider.Set("LastCommentNumber", maxNumberFromEntities);
         }
 
         #region Not public API

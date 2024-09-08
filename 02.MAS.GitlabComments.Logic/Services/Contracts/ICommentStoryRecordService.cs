@@ -15,9 +15,8 @@
         /// </summary>
         /// <param name="startDate">Min date to filter records</param>
         /// <param name="endDate">Max date to filter records</param>
-        /// <param name="commentId">Comment identifier</param>
         /// <param name="count">Comments count</param>
         /// <returns>Collection of comments modification actions</returns>
-        IEnumerable<StoryRecordViewModel> Get(DateTime? startDate, DateTime? endDate, Guid? commentId = null, int? count = null);
+        IEnumerable<StoryRecordViewModel> Get(DateTime? startDate, DateTime? endDate, int? count = null);
     }
 }
