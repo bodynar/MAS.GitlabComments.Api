@@ -5,7 +5,7 @@
     <UserSecretsId>e9af2a7f-bca8-45ac-bcff-57d115079c7d</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
     <RootNamespace>MAS.GitlabComments.WebApi</RootNamespace>
   </PropertyGroup>
 
@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.DataAccess.csproj" />
+    <ProjectReference Include="..\01.MAS.GitlabComments.DataAccess\01.MAS.GitlabComments.DataAccess.csproj" />
     <ProjectReference Include="..\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj" />
   </ItemGroup>
 

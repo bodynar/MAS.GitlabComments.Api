@@ -22,8 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\01.MAS.GitlabComments.Data\01.MAS.GitlabComments.DataAccess.csproj" />
+    <ProjectReference Include="..\..\01.MAS.GitlabComments.DataAccess\01.MAS.GitlabComments.DataAccess.csproj" />
     <ProjectReference Include="..\..\02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj" />
+    <ProjectReference Include="..\01.MAS.GitlabComments.Data.Tests\01.MAS.GitlabComments.DataAccess.Tests.csproj" />
   </ItemGroup>
 
 </Project>

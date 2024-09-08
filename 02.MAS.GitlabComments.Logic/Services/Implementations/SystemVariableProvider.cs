@@ -214,6 +214,7 @@
                 Type = variable.Type,
                 RawValue = variable.RawValue,
                 UnderlyingType = underlyingType,
+                ActionCaption = variable.ActionCaption,
             };
         }
 
@@ -273,14 +274,14 @@
             }
 
             var requiredType = typeof(TValue);
-            
+
             if (requiredType == variable.UnderlyingType)
             {
                 return (TValue)Convert.ChangeType(variable.RawValue, requiredType);
             }
 
             Enum.TryParse<SysVariableType>(variable.Type, true, out var enumType);
-            
+
             if (enumType == SysVariableType.Json)
             {
                 return JsonConvert.DeserializeObject<TValue>(variable.RawValue);

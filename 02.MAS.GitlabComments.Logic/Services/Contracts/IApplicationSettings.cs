@@ -10,5 +10,10 @@
         /// Comment number template
         /// </summary>
         string CommentNumberTemplate { get; }
+
+        /// <summary>
+        /// Life span of retraction token (in hours)
+        /// </summary>
+        int RetractionTokenLifeSpanHours { get; }
     }
 }

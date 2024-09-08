@@ -28,7 +28,8 @@
         /// Increment <see cref="Comment.AppearanceCount"/> property of specified comment
         /// </summary>
         /// <param name="commentId">Comment identifier</param>
-        public void Increment(Guid commentId);
+        /// <returns>Identifier of retraction token to perform an retraction operation</returns>
+        public Guid Increment(Guid commentId);
 
         /// <summary>
         /// Update specified comment by values
@@ -71,5 +72,21 @@
         /// <returns><see langword="true"/>, if table number column can be updated; otherwise - <see langword="false"/></returns>
         [Obsolete("v1.4 | Will be removed in v1.5")]
         public bool CanMakeNumberColumnUnique();
+
+        /// <summary>
+        /// Merge two comments
+        /// <para>
+        ///     Source comment will be removed, target comment will be updated
+        /// </para>
+        /// </summary>
+        /// <param name="sourceCommentId">Source comment identifier</param>
+        /// <param name="targetCommentId">Target comment identifier</param>
+        /// <param name="newTargetValues">Target comment updated values</param>
+        public void Merge(Guid sourceCommentId, Guid targetCommentId, MergeCommentUpdateModel newTargetValues);
+
+        /// <summary>
+        /// Re-calculate last comment number system variable
+        /// </summary>
+        public void RecalculateLastNumber();
     }
 }

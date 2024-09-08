@@ -6,6 +6,7 @@ namespace MAS.GitlabComments.WebApi
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
     using MAS.GitlabComments.WebApi.Attributes;
+    using MAS.GitlabComments.WebApi.HostedServices;
     using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -40,13 +41,16 @@ namespace MAS.GitlabComments.WebApi
             var settings = Configuration.GetSection("GlobalSettings");
             bool isReadOnlyMode = default;
             var commentNumberTemplate = string.Empty;
+            var retractionTokenLifeSpanHours = 0;
 
             if (settings != default)
             {
                 isReadOnlyMode = settings.GetValue<bool>("ReadOnlyMode");
                 commentNumberTemplate = settings.GetValue<string>("CommentNumberTemplate");
+                retractionTokenLifeSpanHours = settings.GetValue<int>("RetractionTokenLiveTimeHours");
             }
-            var appSettings = new AppSettings(isReadOnlyMode, commentNumberTemplate);
+
+            var appSettings = new AppSettings(isReadOnlyMode, commentNumberTemplate, retractionTokenLifeSpanHours);
 
             var maxQueryCount = settings.GetValue<int>("MaxQueryRows");
 
@@ -71,14 +75,18 @@ namespace MAS.GitlabComments.WebApi
                 // logic registrations
                 .AddSingleton<IApplicationSettings>(appSettings)
 
+                .AddTransient<IRetractionTokenManager, RetractionTokenManager>()
                 .AddTransient<ICommentService, CommentService>()
                 .AddTransient<ICommentStoryRecordService, CommentStoryRecordService>()
                 .AddTransient<ISystemVariableProvider, SystemVariableProvider>()
+                .AddTransient<ISystemVariableActionExecutor, SystemVariableActionExecutor>()
                 // /logic registrations
 
                 // web registrations
                 .AddSingleton<IApplicationWebSettings>(appSettings)
                 // /web registrations
+
+                .AddHostedService<ClearExpiredTokensService>()
 
                 .AddControllers(opts => { opts.Filters.Add<UseReadOnlyModeAttribute>(); })
                 .AddNewtonsoftJson()

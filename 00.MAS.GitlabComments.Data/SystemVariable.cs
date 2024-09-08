@@ -24,5 +24,10 @@
         /// Raw value
         /// </summary>
         public string RawValue { get; set; }
+
+        /// <summary>
+        /// Caption for action, which can be executed for variable
+        /// </summary>
+        public string ActionCaption { get; set; }
     }
 }

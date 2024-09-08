@@ -5,6 +5,17 @@
     public sealed class IsReadOnlyTests : BaseAppApiControllerTests
     {
         [Fact]
+        public void ShouldReturnBaseServiceError_WhenExceptionOccurs()
+        {
+            ShouldThrowAnException = true;
+            var result = TestedController.IsReadOnly();
+
+            Assert.NotNull(result);
+            Assert.False(result.IsSuccess);
+            Assert.Equal(ExceptionTestMessage, result.ErrorMessage);
+        }
+
+        [Fact]
         public void ShouldReturnFalse_WhenReadOnlyModeIsFalse()
         {
             SettingReadOnlyMode = false;

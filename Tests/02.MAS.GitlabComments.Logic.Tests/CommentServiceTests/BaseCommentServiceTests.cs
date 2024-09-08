@@ -46,6 +46,12 @@
         protected IncompleteCommentData ProjectedIncompleteTestComment { get; private set; }
 
         /// <summary>
+        /// Instance of <see cref="NumberOfComment"/> which will be returned by <see cref="IDataProvider{TEntity}"/> in <see cref="IDataProvider{TEntity}.Select{TProjection}(SelectConfiguration)"/> method
+        /// for getting comments with numbers for recalculating sys variable
+        /// </summary>
+        protected NumberOfComment ProjectedNumberOfCommentTestComment { get; private set; }
+
+        /// <summary>
         /// Result of <see cref="ICommentService.GetIncomplete"/> for manual mocking
         /// </summary>
         protected IEnumerable<IncompleteCommentData> ManualIncompleteData { get; set; }
@@ -78,7 +84,20 @@
         /// <summary>
         /// Last called command of <see cref="IDataProvider{TEntity}"/> - pair of command name and arguments
         /// </summary>
-        protected KeyValuePair<string, IEnumerable<object>>? LastCommand { get; private set; }
+        protected KeyValuePair<string, IEnumerable<object>>? LastCommand
+            => Commands.Any() ? Commands.Last() : null;
+
+        /// <summary>
+        /// Executed commands
+        /// </summary>
+        protected IEnumerable<KeyValuePair<string, IEnumerable<object>>> Commands { get; private set; }
+            = new Queue<KeyValuePair<string, IEnumerable<object>>>();
+
+        /// <summary>
+        /// Custom provider for <see cref="IDataProvider{TEntity}.Get(Guid)"/>.
+        /// If not set - <see cref="ReturnedTestedComment"/> will be returned
+        /// </summary>
+        protected Func<Guid, Comment> DataProviderGetReplacer { get; set; }
 
         #endregion
 
@@ -117,15 +136,25 @@
         protected bool IsTempModifierWasCalled { get; private set; }
 
         /// <summary>
+        /// Flag, what determine that <see cref="IRetractionTokenManager.Create(Guid)"/> was called
+        /// </summary>
+        protected bool IsRetractTokenCreated { get; private set; }
+
+        /// <summary>
         /// Tested comment number template
         /// </summary>
         protected string CommentNumberTemplate { get; } = "!{0:00}";
 
         /// <summary>
+        /// Token identifier returned from <see cref="IRetractionTokenManager.Create(Guid)"/>
+        /// </summary>
+        protected Guid RetractTokenId { get; } = Guid.NewGuid();
+
+        /// <summary>
         /// Queue of arguments from call <see cref="IDataProvider{TEntity}.Update(Guid, IDictionary{string, object})"/>
         /// </summary>
         protected IEnumerable<KeyValuePair<Guid, IDictionary<string, object>>> UpdateDataProviderArguments { get; private set; }
-            = Enumerable.Empty<KeyValuePair<Guid, IDictionary<string, object>>>();
+            = Enumerable.Empty<KeyValuePair<Guid, IDictionary<string, object>>>(); // TODO: check this
 
         /// <summary>
         /// Initializing <see cref="BaseCommentServiceTests"/> with setup'n all required environment
@@ -137,12 +166,14 @@
             var appSettings = GetMockAppSettings();
             var sysVariableProvider = GetMockSysVariableProvider();
             var tempModified = GetTempDatabaseModifier();
+            var tokenManager = GetRetractionTokenManager();
 
             TestedService = new CommentService(
                 commentsProvider,
                 storyRecordsProvider,
                 appSettings,
                 sysVariableProvider,
+                tokenManager,
                 tempModified
             );
 
@@ -173,6 +204,11 @@
                 Id = Guid.Empty,
                 AppearanceCount = 10,
             };
+
+            ProjectedNumberOfCommentTestComment = new NumberOfComment
+            {
+                Number = "TEST_10",
+            };
         }
 
         /// <summary>
@@ -188,7 +224,7 @@
                 .Callback<Comment>((comment) =>
                 {
                     LastAddedComment = comment;
-                    LastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Add), Array.Empty<object>());
+                    LogCommand(nameof(mockDataProvider.Object.Add), Array.Empty<object>());
                 })
                 .Returns(() => ReturnedCreatedCommentId);
 
@@ -202,19 +238,27 @@
                 .Callback<SelectConfiguration>(config => LastSelectConfig = config)
                 .Returns(() => UseManualIncompleteData ? ManualIncompleteData : new[] { ProjectedIncompleteTestComment });
 
+            mockDataProvider // custom case
+                .Setup(x => x.Select<NumberOfComment>(It.IsAny<SelectConfiguration>()))
+                .Callback<SelectConfiguration>(config => LastSelectConfig = config)
+                .Returns(() => new[] { ProjectedNumberOfCommentTestComment  });
+
             mockDataProvider
                 .Setup(x => x.Get())
                 .Returns(() => new[] { ReturnedTestedComment });
 
             mockDataProvider
                 .Setup(x => x.Get(It.IsAny<Guid>()))
-                .Returns(() => ReturnedTestedComment);
+                .Returns<Guid>(x => DataProviderGetReplacer == null 
+                    ? ReturnedTestedComment
+                    : DataProviderGetReplacer.Invoke(x)
+                );
 
             mockDataProvider
                 .Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<IDictionary<string, object>>()))
                 .Callback<Guid, IDictionary<string, object>>((id, data) =>
                 {
-                    LastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Update), new object[] { id, data });
+                    LogCommand(nameof(mockDataProvider.Object.Update), new object[] { id, data });
                     UpdateDataProviderArguments = UpdateDataProviderArguments.Union(new[] {
                         new KeyValuePair<Guid, IDictionary<string, object>>(
                             id, data
@@ -226,10 +270,28 @@
                 .Setup(x => x.Delete(It.IsAny<Guid[]>()))
                 .Callback<Guid[]>(id =>
                 {
-                    LastCommand = new KeyValuePair<string, IEnumerable<object>>(nameof(mockDataProvider.Object.Delete), new object[] { id });
+                    LogCommand(nameof(mockDataProvider.Object.Delete), new object[] { id });
                 });
 
             return mockDataProvider.Object;
+        }
+        
+        /// <summary>
+        /// Save executed command
+        /// </summary>
+        /// <param name="commandName">Command name (name of a method from <see cref="IDataProvider{TEntity}"/>)</param>
+        /// <param name="args">Command args</param>
+        private void LogCommand(string commandName, IEnumerable<object> args)
+        {
+            var queue = (Queue<KeyValuePair<string, IEnumerable<object>>>)Commands;
+
+            queue.Enqueue(
+                new KeyValuePair<string, IEnumerable<object>>(
+                    commandName, args    
+                )
+            );
+
+            Commands = queue;
         }
 
         /// <summary>
@@ -311,6 +373,23 @@
             mock
                 .Setup(x => x.ApplyModifications())
                 .Callback(() => IsTempModifierWasCalled = true)
+            ;
+
+            return mock.Object;
+        }
+
+        /// <summary>
+        /// Configure mock object of <see cref="IRetractionTokenManager"/> for comment service
+        /// </summary>
+        /// <returns>Configured mock object of <see cref="IRetractionTokenManager"/></returns>
+        private IRetractionTokenManager GetRetractionTokenManager()
+        {
+            var mock = new Mock<IRetractionTokenManager>();
+
+            mock
+                .Setup(x => x.Create(It.IsAny<Guid>()))
+                .Callback(() => IsRetractTokenCreated = true)
+                .Returns(RetractTokenId);
             ;
 
             return mock.Object;

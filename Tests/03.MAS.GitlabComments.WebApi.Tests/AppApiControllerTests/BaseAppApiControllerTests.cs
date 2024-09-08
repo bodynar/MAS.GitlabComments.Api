@@ -49,37 +49,45 @@
         protected BaseAppApiControllerTests()
         {
             var dependencies = GetDependencies();
-            TestedController = new AppApiController(dependencies.Item1, dependencies.Item2, dependencies.Item3);
+            TestedController = new AppApiController(dependencies.Item1, dependencies.Item2, dependencies.Item3, dependencies.Item4);
         }
 
         #region Private members
 
         /// <summary>
-        /// Configure mock object of data provider for comment service
+        /// Configure mock objects of required dependencies for tested class
         /// </summary>
-        /// <returns>Mock object of <see cref="AppSettings"/></returns>
-        private (IApplicationWebSettings, ILogger<AppApiController>, ISystemVariableProvider) GetDependencies()
+        /// <returns>Mock objects, required in ctor <see cref="AppApiController"/></returns>
+        private (IApplicationWebSettings, ILogger<AppApiController>, ISystemVariableProvider, ISystemVariableActionExecutor) GetDependencies()
         {
             var mockSettings = new Mock<IApplicationWebSettings>();
             var mockLogger = new Mock<ILogger<AppApiController>>();
             var variableMock = new Mock<ISystemVariableProvider>();
+            var variableExecutorMock = new Mock<ISystemVariableActionExecutor>();
+
+            Action commentServiceExceptionCallback = () =>
+            {
+                if (ShouldThrowAnException)
+                {
+                    throw new Exception(ExceptionTestMessage);
+                }
+            };
 
             mockSettings
                 .SetupGet(x => x.ReadOnlyMode)
+                .Callback(commentServiceExceptionCallback)
                 .Returns(() => SettingReadOnlyMode);
 
             variableMock
                 .Setup(x => x.GetAllVariables())
-                .Callback(() =>
-                {
-                    if (ShouldThrowAnException)
-                    {
-                        throw new Exception(ExceptionTestMessage);
-                    }
-                })
+                .Callback(commentServiceExceptionCallback)
                 .Returns(AllVariables);
 
-            return (mockSettings.Object, mockLogger.Object, variableMock.Object);
+            variableExecutorMock
+                .Setup(x => x.ExecuteAction(It.IsAny<string>()))
+                .Callback(commentServiceExceptionCallback);
+
+            return (mockSettings.Object, mockLogger.Object, variableMock.Object, variableExecutorMock.Object);
         }
 
         #endregion

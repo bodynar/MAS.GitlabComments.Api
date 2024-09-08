@@ -221,7 +221,7 @@
             }
 
             var parameters = newValues
-                .Where(x => EntityFields.Contains(x.Key) && x.Value != null)
+                .Where(x => EntityFields.Contains(x.Key) && x.Value != null) // TODO: How about setting null to value?
                 .Select((x, i) => 
                     new QueryParameter
                     {
