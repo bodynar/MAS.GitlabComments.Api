@@ -7,10 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Npgsql" Version="8.0.4" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\00.MAS.GitlabComments.Base\00.MAS.GitlabComments.Base.csproj" />
     <ProjectReference Include="..\00.MAS.GitlabComments.Data\00.MAS.GitlabComments.Data.csproj" />
   </ItemGroup>
 

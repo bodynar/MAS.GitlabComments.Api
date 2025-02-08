@@ -13,12 +13,6 @@
         public virtual Guid CommentId { get; set; }
 
         /// <summary>
-        /// Flag representing sign of action
-        /// <para><see langword="true"/> if it is increment action, otherwise <see langword="false"/></para>
-        /// </summary>
-        public virtual bool IsIncrementAction { get; set; } // TODO: Check this prop
-
-        /// <summary>
         /// Flag representing state: is increment action retracted
         /// </summary>
         public virtual bool IsRetracted { get; set; }

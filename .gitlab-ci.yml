@@ -1,0 +1,56 @@
+stages:
+  - build
+  - test
+  - publish
+
+variables:
+  SOLUTION_PATH: 'MAS.GitlabComments.sln'
+  PUBLISH_SRC: '03.MAS.GitlabComments.WebApi'
+  PUBLISH_PRJ: '03.MAS.GitlabComments.WebApi.csproj'
+  ARTIFACTS_DIR: 'publish_res'
+
+build:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  stage: build
+  script:
+    - dotnet restore $SOLUTION_PATH
+    - dotnet build $SOLUTION_PATH -c Release --no-restore
+  tags:
+    - docker
+  only:
+    - merge_requests
+  artifacts:
+    paths:
+      - TestResults.xml
+  allow_failure: false
+
+run tests:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  stage: test
+  script:
+    - dotnet test --no-restore --logger "trx;LogFileName=TestResults.xml"
+  tags:
+    - docker
+  only:
+    - merge_requests
+  artifacts:
+    paths:
+      - TestResults.xml
+  allow_failure: false
+
+publish:
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  stage: publish
+  script:
+    - cd $PUBLISH_SRC
+    - dotnet publish $PUBLISH_PRJ -c Release -o "../$ARTIFACTS_DIR"
+  tags:
+    - docker
+  artifacts:
+    paths:
+      - $ARTIFACTS_DIR/
+  only:
+    - master
+  dependencies:
+    - build
+    - run tests

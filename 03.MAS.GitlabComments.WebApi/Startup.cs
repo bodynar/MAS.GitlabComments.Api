@@ -1,12 +1,18 @@
 namespace MAS.GitlabComments.WebApi
 {
+    using System;
+
+    using MAS.GitlabComments.Base;
+    using MAS.GitlabComments.DataAccess;
     using MAS.GitlabComments.DataAccess.Services;
     using MAS.GitlabComments.DataAccess.Services.Implementations;
-    using MAS.GitlabComments.DataAccess.Services.Implementations.DataProvider;
+    using MAS.GitlabComments.DataAccess.Services.Implementations.DbDependant.MS;
+    using MAS.GitlabComments.DataAccess.Services.Implementations.DbDependant.PG;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.Logic.Services.Implementations;
     using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.WebApi.HostedServices;
+    using MAS.GitlabComments.WebApi.Logger;
     using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -35,22 +41,22 @@ namespace MAS.GitlabComments.WebApi
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new System.Exception("Connection string with name \"DefaultConnection\" is empty.");
+                throw new ApplicationException("Connection string with name \"DefaultConnection\" is empty.");
             }
 
             var settings = Configuration.GetSection("GlobalSettings");
-            bool isReadOnlyMode = default;
-            var commentNumberTemplate = string.Empty;
-            var retractionTokenLifeSpanHours = 0;
 
-            if (settings != default)
+            if (settings == default)
             {
-                isReadOnlyMode = settings.GetValue<bool>("ReadOnlyMode");
-                commentNumberTemplate = settings.GetValue<string>("CommentNumberTemplate");
-                retractionTokenLifeSpanHours = settings.GetValue<int>("RetractionTokenLiveTimeHours");
+                throw new ApplicationException("\"GlobalSettings\" section not found in \"appsettings.json\" file");
             }
 
-            var appSettings = new AppSettings(isReadOnlyMode, commentNumberTemplate, retractionTokenLifeSpanHours);
+            var isReadOnlyMode = settings.GetValue<bool>("ReadOnlyMode");
+            var commentNumberTemplate = settings.GetValue<string>("CommentNumberTemplate");
+            var retractionTokenLifeSpanHours = settings.GetValue<int>("RetractionTokenLiveTimeHours");
+            var dbType = settings.GetValue<DatabaseType>("DatabaseType");
+
+            var appSettings = new AppSettings(isReadOnlyMode, commentNumberTemplate, retractionTokenLifeSpanHours, dbType);
 
             var maxQueryCount = settings.GetValue<int>("MaxQueryRows");
 
@@ -61,25 +67,29 @@ namespace MAS.GitlabComments.WebApi
 
             services.AddSpaStaticFiles(options => options.RootPath = "ClientApp");
 
-            services
-                // data registrations
-                .AddTransient(typeof(IDataProvider<>), typeof(SqlDataProvider<>))
-                .AddTransient<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString, queryOptions))
-                .AddTransient<IDbAdapter, DapperDbAdapter>()
-                .AddTransient<IFilterBuilder, MsSqlFilterBuilder>()
-                .AddTransient<IComplexColumnQueryBuilder, ComplexColumnMssqlBuilder>()
+            AddDbDependantServices(services, dbType);
 
+            services
+                .AddSingleton<IAppSettings>(appSettings)
+                .AddSingleton<ILogger, Logger4Net>()
+                // data registrations
+                .AddSingleton<IDbConnectionFactory, DbConnectionFactory>(x => new DbConnectionFactory(connectionString, queryOptions, dbType))
+                .AddSingleton<IDbAdapter, DapperDbAdapter>()
+
+                .AddSingleton<IComplexColumnQueryBuilder, ComplexColumnQueryBuilder>()
                 .AddSingleton<ITempDatabaseModifier, TempDatabaseModifier>()
+                .AddSingleton<IDataAccessSettings>(appSettings)
                 // /data registrations
 
                 // logic registrations
-                .AddSingleton<IApplicationSettings>(appSettings)
+                .AddSingleton<IBusinessLogicSettings>(appSettings)
 
                 .AddTransient<IRetractionTokenManager, RetractionTokenManager>()
                 .AddTransient<ICommentService, CommentService>()
                 .AddTransient<ICommentStoryRecordService, CommentStoryRecordService>()
                 .AddTransient<ISystemVariableProvider, SystemVariableProvider>()
                 .AddTransient<ISystemVariableActionExecutor, SystemVariableActionExecutor>()
+                .AddTransient<IDataImporter, DataImporter>()
                 // /logic registrations
 
                 // web registrations
@@ -107,6 +117,32 @@ namespace MAS.GitlabComments.WebApi
                 .UseEndpoints(endpoints => endpoints.MapControllers())
                 .UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; })
             ;
+        }
+
+        /// <summary>
+        /// Add database type dependent services
+        /// </summary>
+        /// <param name="services">Instance of <see cref="IServiceCollection"/></param>
+        /// <param name="dbType">Type of db server</param>
+        private static void AddDbDependantServices(IServiceCollection services, DatabaseType dbType)
+        {
+            switch (dbType)
+            {
+                case DatabaseType.MSSQL:
+                    services
+                        .AddTransient(typeof(IDataProvider<>), typeof(MsSqlDataProvider<>))
+                        .AddTransient<IFilterBuilder, MsSqlFilterBuilder>();
+                    break;
+
+                case DatabaseType.PGSQL:
+                    services
+                        .AddTransient(typeof(IDataProvider<>), typeof(PgSqlDataProvider<>))
+                        .AddTransient<IFilterBuilder, PgSqlFilterBuilder>();
+                    break;
+                
+                default:
+                    throw new NotImplementedException($"Handler for DB type \"{dbType}\" not implemented yet.");
+            }
         }
     }
 }

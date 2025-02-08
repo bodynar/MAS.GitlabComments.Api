@@ -15,6 +15,11 @@
         where TEntity : BaseEntity
     {
         /// <summary>
+        /// Supported database
+        /// </summary>
+        DatabaseType DbType { get; }
+
+        /// <summary>
         /// Add entity
         /// </summary>
         /// <param name="entity">Entity</param>

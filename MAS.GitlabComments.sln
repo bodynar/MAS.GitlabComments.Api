@@ -11,23 +11,39 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "03.MAS.GitlabComments.WebAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.DataAccess", "01.MAS.GitlabComments.DataAccess\01.MAS.GitlabComments.DataAccess.csproj", "{05FCC330-C531-4337-8F41-3232D115F429}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.DataAccess.Tests", "Tests\01.MAS.GitlabComments.Data.Tests\01.MAS.GitlabComments.DataAccess.Tests.csproj", "{A6442276-FA23-4B43-91DB-050426CACAAA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", "{D5DB2FBE-0ECE-408B-8BCE-A8DEE74F49CD}"
-	ProjectSection(SolutionItems) = preProject
-		SqlScripts\001_Init.sql = SqlScripts\001_Init.sql
-		SqlScripts\002_AddStoryRecord.sql = SqlScripts\002_AddStoryRecord.sql
-		SqlScripts\003_UpdateEntities.sql = SqlScripts\003_UpdateEntities.sql
-		SqlScripts\004_AddNumber.sql = SqlScripts\004_AddNumber.sql
-		SqlScripts\005_AddRetraction.sql = SqlScripts\005_AddRetraction.sql
-		SqlScripts\006_AddActionToSysVariable.sql = SqlScripts\006_AddActionToSysVariable.sql
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.Logic", "02.MAS.GitlabComments.Logic\02.MAS.GitlabComments.Logic.csproj", "{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02.MAS.GitlabComments.Logic.Tests", "Tests\02.MAS.GitlabComments.Logic.Tests\02.MAS.GitlabComments.Logic.Tests.csproj", "{75E81C79-344C-466E-A951-019FFEA54222}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "00.MAS.GitlabComments.Data", "00.MAS.GitlabComments.Data\00.MAS.GitlabComments.Data.csproj", "{0FC84E57-C110-49B0-BBC9-99EA41189674}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MS", "MS", "{9B22B806-2145-416C-AB17-DEBCDFEB9A35}"
+	ProjectSection(SolutionItems) = preProject
+		SqlScripts\MS\001_Init_MS.sql = SqlScripts\MS\001_Init_MS.sql
+		SqlScripts\MS\002_AddStoryRecord_MS.sql = SqlScripts\MS\002_AddStoryRecord_MS.sql
+		SqlScripts\MS\003_UpdateEntities_MS.sql = SqlScripts\MS\003_UpdateEntities_MS.sql
+		SqlScripts\MS\004_AddNumber_MS.sql = SqlScripts\MS\004_AddNumber_MS.sql
+		SqlScripts\MS\005_AddRetraction_MS.sql = SqlScripts\MS\005_AddRetraction_MS.sql
+		SqlScripts\MS\006_AddActionToSysVariable_MS.sql = SqlScripts\MS\006_AddActionToSysVariable_MS.sql
+		SqlScripts\MS\007_RemoveStoryRecordColumn.sql = SqlScripts\MS\007_RemoveStoryRecordColumn.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PG", "PG", "{82B1BC75-9DFD-410C-9B04-17D52E75C86C}"
+	ProjectSection(SolutionItems) = preProject
+		SqlScripts\PG\001_Init_PG.sql = SqlScripts\PG\001_Init_PG.sql
+		SqlScripts\PG\002_AddStoryRecord.sql = SqlScripts\PG\002_AddStoryRecord.sql
+		SqlScripts\PG\003_UpdateEntities.sql = SqlScripts\PG\003_UpdateEntities.sql
+		SqlScripts\PG\004_AddNumber.sql = SqlScripts\PG\004_AddNumber.sql
+		SqlScripts\PG\005_AddRetraction.sql = SqlScripts\PG\005_AddRetraction.sql
+		SqlScripts\PG\006_AddActionToSysVariable.sql = SqlScripts\PG\006_AddActionToSysVariable.sql
+		SqlScripts\PG\007_RemoveStoryRecordColumn.sql = SqlScripts\PG\007_RemoveStoryRecordColumn.sql
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "00.MAS.GitlabComments.Base", "00.MAS.GitlabComments.Base\00.MAS.GitlabComments.Base.csproj", "{2C573984-5277-4D8D-BEA5-B74F9C6FAE92}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "01.MAS.GitlabComments.DataAccess.Tests", "Tests\01.MAS.GitlabComments.DataAccess.Tests\01.MAS.GitlabComments.DataAccess.Tests.csproj", "{6ECB1267-373D-48D3-9010-798D7411E5DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +63,6 @@ Global
 		{05FCC330-C531-4337-8F41-3232D115F429}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05FCC330-C531-4337-8F41-3232D115F429}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05FCC330-C531-4337-8F41-3232D115F429}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6442276-FA23-4B43-91DB-050426CACAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6442276-FA23-4B43-91DB-050426CACAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6442276-FA23-4B43-91DB-050426CACAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6442276-FA23-4B43-91DB-050426CACAAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DF6B2A4-9BB1-473A-8FBB-062D1DD1F3AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,14 +75,24 @@ Global
 		{0FC84E57-C110-49B0-BBC9-99EA41189674}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FC84E57-C110-49B0-BBC9-99EA41189674}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FC84E57-C110-49B0-BBC9-99EA41189674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C573984-5277-4D8D-BEA5-B74F9C6FAE92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C573984-5277-4D8D-BEA5-B74F9C6FAE92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C573984-5277-4D8D-BEA5-B74F9C6FAE92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C573984-5277-4D8D-BEA5-B74F9C6FAE92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ECB1267-373D-48D3-9010-798D7411E5DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ECB1267-373D-48D3-9010-798D7411E5DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ECB1267-373D-48D3-9010-798D7411E5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ECB1267-373D-48D3-9010-798D7411E5DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5E0CCD20-7528-49EA-A3F8-F6EE73187A93} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
-		{A6442276-FA23-4B43-91DB-050426CACAAA} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
 		{75E81C79-344C-466E-A951-019FFEA54222} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
+		{9B22B806-2145-416C-AB17-DEBCDFEB9A35} = {D5DB2FBE-0ECE-408B-8BCE-A8DEE74F49CD}
+		{82B1BC75-9DFD-410C-9B04-17D52E75C86C} = {D5DB2FBE-0ECE-408B-8BCE-A8DEE74F49CD}
+		{6ECB1267-373D-48D3-9010-798D7411E5DB} = {902D9031-AA0F-490F-AF37-41E983FFE22C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A158B714-8CC2-4181-804D-F0D16AC6FB37}

@@ -13,12 +13,11 @@
     using MAS.GitlabComments.WebApi.Models;
     using MAS.GitlabComments.Logic.Services;
 
-    using Microsoft.Extensions.Logging;
-
     using Moq;
 
     using Xunit;
     using MAS.GitlabComments.Logic.Models;
+    using MAS.GitlabComments.Base;
 
     /// <summary>
     /// Base class for <see cref="CommentsApiController"/> tests
@@ -55,9 +54,9 @@
         /// Configure mock objects of required dependencies for tested class
         /// </summary>
         /// <returns>Pair of configured mock object of <see cref="ILogger{TCategoryName}"/> and <see cref="ICommentService"/></returns>
-        private (ILogger<StatsApiController>, ICommentStoryRecordService) GetDependencies()
+        private (ILogger, ICommentStoryRecordService) GetDependencies()
         {
-            var mockLogger = new Mock<ILogger<StatsApiController>>();
+            var mockLogger = new Mock<ILogger>();
 
             var mockService = new Mock<ICommentStoryRecordService>();
 

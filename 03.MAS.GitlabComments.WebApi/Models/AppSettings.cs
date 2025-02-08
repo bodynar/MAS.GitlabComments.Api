@@ -2,16 +2,13 @@
 {
     using System;
 
+    using MAS.GitlabComments.DataAccess;
+
     /// <summary>
     /// Global application settings
     /// </summary>
     public class AppSettings : IApplicationWebSettings
     {
-        /// <summary>
-        /// Default value for template for comment number
-        /// </summary>
-        public const string CommentDefaultNumberTemplate = "{0:00}";
-
         /// <inheritdoc />
         public bool ReadOnlyMode { get; } // virtual required for unit-tests with Moq
 
@@ -21,30 +18,39 @@
         /// <inheritdoc />
         public int RetractionTokenLifeSpanHours { get; }
 
+        /// <inheritdoc />
+        public DatabaseType DatabaseType { get; init; }
+
         /// <summary>
         /// Initializing <see cref="AppSettings"/>
         /// </summary>
         /// <param name="readOnlyMode">Is application in read only mode</param>
         /// <param name="commentNumberTemplate">Comment number template</param>
         /// <param name="retractionTokenLifeSpanHours">Life span of retraction token in hours</param>
+        /// <param name="dbType">Type of database server</param>
         /// <exception cref="ArgumentException">Parameter 'retractionTokenLifeSpanHours' is less or equal to zero</exception>
+        /// <exception cref="ArgumentException">Parameter 'commentNumberTemplate' is null or whitespace</exception>
         public AppSettings(
             bool readOnlyMode,
             string commentNumberTemplate,
-            int retractionTokenLifeSpanHours
+            int retractionTokenLifeSpanHours,
+            DatabaseType dbType
         )
         {
-            ReadOnlyMode = readOnlyMode;
-            RetractionTokenLifeSpanHours = retractionTokenLifeSpanHours;
-
             if (retractionTokenLifeSpanHours <= 0)
             {
                 throw new ArgumentException("Parameter 'retractionTokenLiveTimeHours' must be greater than 0");
             }
 
-            CommentNumberTemplate = string.IsNullOrWhiteSpace(commentNumberTemplate)
-                    ? CommentDefaultNumberTemplate
-                    : commentNumberTemplate;
+            if (string.IsNullOrWhiteSpace(commentNumberTemplate))
+            {
+                throw new ArgumentException("Parameter 'commentNumberTemplate' must be set");
+            }
+
+            ReadOnlyMode = readOnlyMode;
+            CommentNumberTemplate = commentNumberTemplate;
+            RetractionTokenLifeSpanHours = retractionTokenLifeSpanHours;
+            DatabaseType = dbType;
         }
     }
 }

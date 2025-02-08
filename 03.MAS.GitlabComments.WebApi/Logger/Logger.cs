@@ -1,59 +1,40 @@
 ﻿namespace MAS.GitlabComments.WebApi.Logger
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
 
-    using Microsoft.Extensions.Logging;
+    using log4net;
 
-    // todo: use log4net
-    public class Logger : ILogger
+    using MAS.GitlabComments.Base;
+
+    /// <summary>
+    /// Implementation of <see cref="ILogger"/> with log4net
+    /// </summary>
+    public class Logger4Net : ILogger
     {
-        protected LoggerProvider LoggerFileProvider { get; }
+        /// <summary>
+        /// Log4net logger
+        /// </summary>
+        private static readonly ILog log = LogManager.GetLogger("MAS.GitlabComments");
 
-        public Logger([NotNull] LoggerProvider loggerProvider)
-        {
-            LoggerFileProvider = loggerProvider ?? throw new ArgumentNullException(nameof(loggerProvider));
-        }
+        /// <summary>
+        /// Debug Log4net logger
+        /// </summary>
+        private static readonly ILog debugLog = LogManager.GetLogger("MAS.GitlabComments.Debug");
 
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            return null;
-        }
+        /// <inheritdoc />
+        public void Debug(string message)
+            => debugLog.Debug(message);
 
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return logLevel != LogLevel.None;
-        }
+        /// <inheritdoc />
+        public void Error(string message)
+            => log.Error(message);
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-        {
-            if (!IsEnabled(logLevel))
-            {
-                return;
-            }
+        /// <inheritdoc />
+        public void Error(Exception exception, string message = null)
+            => log.Error(message, exception);
 
-            var fileName = LoggerFileProvider.Options.FilePath.Replace("{date}", DateTimeOffset.UtcNow.ToString("yyyy-MM-dd"));
-            var filePath = $"{LoggerFileProvider.Options.FolderPath}/{fileName}";
-
-            var formattedMessage = formatter.Invoke(state, exception);
-
-            if (exception != null && !formattedMessage.ToLower().Contains(exception.Message.ToLower()))
-            {
-                formattedMessage += $" =>> {exception.Message}";
-            }
-            
-            var record = $"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss+00:00}]" +
-                $" | {logLevel}: {formattedMessage}"
-                + (exception == null 
-                    ? ""
-                    : $"{Environment.NewLine}{(exception?.StackTrace ?? "")}"
-                );
-
-            using (var streamWriter = new StreamWriter(filePath, true))
-            {
-                streamWriter.WriteLine(record);
-            }
-        }
+        /// <inheritdoc />
+        public void Warning(string message)
+            => log.Error(message);
     }
 }

@@ -316,10 +316,10 @@
         /// <summary>
         /// Configure mock object of Application settings container for comment service
         /// </summary>
-        /// <returns>Configured mock object of <see cref="IApplicationSettings"/></returns>
-        private IApplicationSettings GetMockAppSettings()
+        /// <returns>Configured mock object of <see cref="IBusinessLogicSettings"/></returns>
+        private IBusinessLogicSettings GetMockAppSettings()
         {
-            var mock = new Mock<IApplicationSettings>();
+            var mock = new Mock<IBusinessLogicSettings>();
 
             mock
                 .SetupGet(x => x.CommentNumberTemplate)

@@ -26,8 +26,8 @@
         /// </summary>
         private IDataProvider<StoryRecord> StoryRecordsDataProvider { get; }
 
-        /// <inheritdoc cref="IApplicationSettings"/>
-        private IApplicationSettings ApplicationSettings { get; }
+        /// <inheritdoc cref="IBusinessLogicSettings"/>
+        private IBusinessLogicSettings ApplicationSettings { get; }
 
         /// <inheritdoc cref="ISystemVariableProvider"/>
         private ISystemVariableProvider SystemVariableProvider { get; }
@@ -49,7 +49,7 @@
         public CommentService(
             IDataProvider<Comment> commentsDataProvider,
             IDataProvider<StoryRecord> storyRecordsDataProvider,
-            IApplicationSettings applicationSettings,
+            IBusinessLogicSettings applicationSettings,
             ISystemVariableProvider systemVariableProvider,
             IRetractionTokenManager retractionTokenManager,
             ITempDatabaseModifier tempDatabaseModifier
@@ -73,23 +73,28 @@
                 throw new ArgumentNullException(nameof(addCommentModel));
             }
 
-            if (string.IsNullOrEmpty(addCommentModel.Message))
+            if (!addCommentModel.IsImportAction)
             {
-                throw new ArgumentNullException(nameof(AddCommentModel.Message));
-            }
+                if (string.IsNullOrEmpty(addCommentModel.Message))
+                {
+                    throw new ArgumentNullException(nameof(AddCommentModel.Message));
+                }
 
-            if (string.IsNullOrEmpty(addCommentModel.CommentWithLinkToRule))
-            {
-                throw new ArgumentNullException(nameof(AddCommentModel.CommentWithLinkToRule));
+                if (string.IsNullOrEmpty(addCommentModel.CommentWithLinkToRule))
+                {
+                    throw new ArgumentNullException(nameof(AddCommentModel.CommentWithLinkToRule));
+                }
             }
 
             var newNumber = SystemVariableProvider.GetValue<int>("LastCommentNumber") + 1;
             var number = string.Format(ApplicationSettings.CommentNumberTemplate, newNumber);
 
+            var count = addCommentModel.AppearanceCount <= 0 ? 1 : addCommentModel.AppearanceCount;
+
             var newId = CommentsDataProvider.Add(
                 new Comment
                 {
-                    AppearanceCount = 1,
+                    AppearanceCount = count,
                     Message = addCommentModel.Message,
                     CommentWithLinkToRule = addCommentModel.CommentWithLinkToRule,
                     Description = addCommentModel.Description,
@@ -245,41 +250,6 @@
             }
 
             SystemVariableProvider.Set("LastCommentNumber", lastNumber);
-        }
-
-        /// <inheritdoc cref="ICommentService.MakeNumberColumnUnique"/>
-        public void MakeNumberColumnUnique()
-        {
-            var canUpdateTable = CanMakeNumberColumnUnique();
-
-            if (!canUpdateTable)
-            {
-                return;
-            }
-
-            TempDatabaseModifier.ApplyModifications();
-
-            SystemVariableProvider.Set("IsChangeNumberUnique", true);
-        }
-
-        /// <inheritdoc cref="ICommentService.CanMakeNumberColumnUnique"/>
-        public bool CanMakeNumberColumnUnique()
-        {
-            var isChangeAppliedAlreadyVariable = SystemVariableProvider.Get("IsChangeNumberUnique");
-
-            if (isChangeAppliedAlreadyVariable == default || bool.Parse(isChangeAppliedAlreadyVariable.RawValue))
-            {
-                return false;
-            }
-
-            var incomplete = GetIncomplete();
-
-            if (incomplete.Any())
-            {
-                return false;
-            }
-
-            return true;
         }
 
         /// <inheritdoc />

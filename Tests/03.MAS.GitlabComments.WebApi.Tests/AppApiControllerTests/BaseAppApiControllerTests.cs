@@ -2,13 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
+    using MAS.GitlabComments.Base;
     using MAS.GitlabComments.Logic.Models;
+    using MAS.GitlabComments.Logic.Models.Import;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.WebApi.Controllers;
     using MAS.GitlabComments.WebApi.Models;
-
-    using Microsoft.Extensions.Logging;
 
     using Moq;
 
@@ -49,7 +50,7 @@
         protected BaseAppApiControllerTests()
         {
             var dependencies = GetDependencies();
-            TestedController = new AppApiController(dependencies.Item1, dependencies.Item2, dependencies.Item3, dependencies.Item4);
+            TestedController = new AppApiController(dependencies.Item1, dependencies.Item2, dependencies.Item3, dependencies.Item4, dependencies.Item5);
         }
 
         #region Private members
@@ -58,12 +59,13 @@
         /// Configure mock objects of required dependencies for tested class
         /// </summary>
         /// <returns>Mock objects, required in ctor <see cref="AppApiController"/></returns>
-        private (IApplicationWebSettings, ILogger<AppApiController>, ISystemVariableProvider, ISystemVariableActionExecutor) GetDependencies()
+        private (IApplicationWebSettings, ILogger, ISystemVariableProvider, ISystemVariableActionExecutor, IDataImporter) GetDependencies()
         {
             var mockSettings = new Mock<IApplicationWebSettings>();
-            var mockLogger = new Mock<ILogger<AppApiController>>();
+            var mockLogger = new Mock<ILogger>();
             var variableMock = new Mock<ISystemVariableProvider>();
             var variableExecutorMock = new Mock<ISystemVariableActionExecutor>();
+            var dataImporterMock = new Mock<IDataImporter>();
 
             Action commentServiceExceptionCallback = () =>
             {
@@ -87,7 +89,22 @@
                 .Setup(x => x.ExecuteAction(It.IsAny<string>()))
                 .Callback(commentServiceExceptionCallback);
 
-            return (mockSettings.Object, mockLogger.Object, variableMock.Object, variableExecutorMock.Object);
+            dataImporterMock
+                .Setup(x => x.ExportAppData())
+                .Callback(commentServiceExceptionCallback)
+                .Returns(() => Enumerable.Empty<CommentExportModel>());
+
+            dataImporterMock
+                .Setup(x => x.ImportAppData(It.IsAny<IEnumerable<CommentExportModel>>()))
+                .Callback(commentServiceExceptionCallback);
+
+            return (
+                mockSettings.Object,
+                mockLogger.Object,
+                variableMock.Object,
+                variableExecutorMock.Object,
+                dataImporterMock.Object
+            );
         }
 
         #endregion

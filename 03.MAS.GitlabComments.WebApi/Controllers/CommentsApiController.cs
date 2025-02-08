@@ -3,13 +3,13 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Base;
     using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
 
     [ApiController]
     [UseReadOnlyMode]
@@ -19,7 +19,7 @@
         /// <summary>
         /// Logger to store error information
         /// </summary>
-        private ILogger<CommentsApiController> Logger { get; }
+        private ILogger Logger { get; }
 
         /// <summary>
         /// Service for comments managing
@@ -33,7 +33,7 @@
         /// <param name="commentService">Service for comments managing</param>
         /// <exception cref="ArgumentNullException">Some parameters is null</exception>
         public CommentsApiController(
-            ILogger<CommentsApiController> logger,
+            ILogger logger,
             ICommentService commentService
         )
         {
@@ -46,17 +46,22 @@
         /// </summary>
         /// <param name="addCommentModel">Comment values</param>
         [HttpPost("add")]
-        public BaseServiceResult<NewComment> Add([FromBody] AddCommentModel addCommentModel)
+        public BaseServiceResult<NewComment> Add([FromBody] AddCommentApiModel addCommentModel)
         {
             try
             {
-                var newComment = CommentService.Add(addCommentModel);
+                var newComment = CommentService.Add(new AddCommentModel
+                {
+                    Message = addCommentModel.Message,
+                    CommentWithLinkToRule = addCommentModel.CommentWithLinkToRule,
+                    Description = addCommentModel.Description,
+                });
 
                 return BaseServiceResult<NewComment>.Success(newComment);
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, "Trying to: add comment.");
+                Logger.Error(e, "Trying to: add comment.");
                 return BaseServiceResult<NewComment>.Error(e);
             }
         }
@@ -77,7 +82,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, "Trying to: Get all comments");
+                Logger.Error(e, "Trying to: Get all comments");
                 return BaseServiceResult<IEnumerable<CommentModel>>.Error(e);
             }
         }
@@ -97,7 +102,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, $"Trying to: Incrementing \"{commentId}\".");
+                Logger.Error(e, $"Trying to: Incrementing \"{commentId}\".");
                 return BaseServiceResult<Guid>.Error(e);
             }
         }
@@ -117,7 +122,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, $"Trying to: Update comment \"{updateCommentModel?.Id}\".");
+                Logger.Error(e, $"Trying to: Update comment \"{updateCommentModel?.Id}\".");
                 return BaseServiceResult.Error(e);
             }
         }
@@ -137,7 +142,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, $"Trying to: Delete comment \"{commentId}\".");
+                Logger.Error(e, $"Trying to: Delete comment \"{commentId}\".");
                 return BaseServiceResult.Error(e);
             }
         }
@@ -156,7 +161,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, "Get incomplete comments");
+                Logger.Error(e, "Get incomplete comments");
                 return BaseServiceResult<IEnumerable<IncompleteCommentData>>.Error(e);
             }
         }
@@ -175,46 +180,8 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, "Updating incomplete comments failed");
+                Logger.Error(e, "Updating incomplete comments failed");
                 return BaseServiceResult.Error(e);
-            }
-        }
-
-        /// <summary>
-        /// Update comment table definition
-        /// </summary>
-        [HttpPost("updateCommentTable")]
-        public BaseServiceResult UpdateCommentTable()
-        {
-            try
-            {
-                CommentService.MakeNumberColumnUnique();
-
-                return BaseServiceResult.Success();
-            }
-            catch (Exception e)
-            {
-                Logger?.LogError(e, "Updating comment table with unique constraint for Number column failed");
-                return BaseServiceResult.Error(e);
-            }
-        }
-
-        /// <summary>
-        /// Update comment table definition
-        /// </summary>
-        [HttpGet("canUpdateCommentTable")]
-        public BaseServiceResult<bool> CheckCanUpdateCommentTable()
-        {
-            try
-            {
-                var result = CommentService.CanMakeNumberColumnUnique();
-
-                return BaseServiceResult<bool>.Success(result);
-            }
-            catch (Exception e)
-            {
-                Logger?.LogError(e, "Checking ability of updating comment table with unique constraint for Number column failed");
-                return BaseServiceResult<bool>.Error(e);
             }
         }
 
@@ -236,7 +203,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, $"Merging comment \"{mergeCommentModel.SourceCommentId}\" into \"{mergeCommentModel.TargetCommentId}\"");
+                Logger.Error(e, $"Merging comment \"{mergeCommentModel.SourceCommentId}\" into \"{mergeCommentModel.TargetCommentId}\"");
                 return BaseServiceResult.Error(e);
             }
         }

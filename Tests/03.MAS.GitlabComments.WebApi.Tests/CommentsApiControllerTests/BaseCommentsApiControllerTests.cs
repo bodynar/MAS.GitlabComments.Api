@@ -3,17 +3,15 @@
     using System;
     using System.Linq;
 
+    using MAS.GitlabComments.Base;
+    using MAS.GitlabComments.Logic.Models;
+    using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.WebApi.Controllers;
     using MAS.GitlabComments.WebApi.Models;
-    using MAS.GitlabComments.Logic.Services;
-
-    using Microsoft.Extensions.Logging;
 
     using Moq;
 
     using Xunit;
-    using MAS.GitlabComments.Logic.Models;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Base class for <see cref="CommentsApiController"/> tests
@@ -50,9 +48,9 @@
         /// Configure mock objects of required dependencies for tested class
         /// </summary>
         /// <returns>Pair of configured mock object of <see cref="ILogger{TCategoryName}"/> and <see cref="ICommentService"/></returns>
-        private (ILogger<CommentsApiController>, ICommentService) GetDependencies()
+        private (ILogger, ICommentService) GetDependencies()
         {
-            var mockLogger = new Mock<ILogger<CommentsApiController>>();
+            var mockLogger = new Mock<ILogger>();
 
             var mockCommentsService = new Mock<ICommentService>();
 
@@ -93,10 +91,6 @@
 
             mockCommentsService
                 .Setup(x => x.UpdateIncomplete())
-                .Callback(commentServiceExceptionCallback);
-
-            mockCommentsService
-                .Setup(x => x.MakeNumberColumnUnique())
                 .Callback(commentServiceExceptionCallback);
 
             mockCommentsService

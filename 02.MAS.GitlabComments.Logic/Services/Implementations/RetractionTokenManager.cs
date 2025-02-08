@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using MAS.GitlabComments.Base;
     using MAS.GitlabComments.Data;
     using MAS.GitlabComments.DataAccess.Exceptions;
     using MAS.GitlabComments.DataAccess.Filter;
@@ -14,7 +15,7 @@
     /// <summary>
     /// Manager of retraction tokens, implementation of <see cref="IRetractionTokenManager"/>
     /// </summary>
-    public class RetractionTokenManager : IRetractionTokenManager
+    public class RetractionTokenManager : IRetractionTokenManager // TODO: add tests
     {
         /// <summary>
         /// Data provider of <see cref="Comment"/> entities
@@ -31,8 +32,11 @@
         /// </summary>
         private IDataProvider<RetractionToken> TokensDataProvider { get; }
 
-        /// <inheritdoc cref="IApplicationSettings"/>
-        private IApplicationSettings ApplicationSettings { get; }
+        /// <inheritdoc cref="IBusinessLogicSettings"/>
+        private IBusinessLogicSettings ApplicationSettings { get; }
+
+        /// <inheritdoc cref="ILogger"/>
+        private ILogger Logger { get; }
 
         /// <summary>
         /// Initializing <see cref="RetractionTokenManager"/>
@@ -46,18 +50,15 @@
             IDataProvider<Comment> commentsDataProvider,
             IDataProvider<StoryRecord> storyRecordsDataProvider,
             IDataProvider<RetractionToken> retractionTokensDataProvider,
-            IApplicationSettings applicationSettings
+            IBusinessLogicSettings applicationSettings,
+            ILogger logger
         )
         {
-            if (applicationSettings is null)
-            {
-                throw new ArgumentNullException(nameof(applicationSettings));
-            }
-
             CommentsDataProvider = commentsDataProvider ?? throw new ArgumentNullException(nameof(commentsDataProvider));
             StoryRecordsDataProvider = storyRecordsDataProvider ?? throw new ArgumentNullException(nameof(storyRecordsDataProvider));
             TokensDataProvider = retractionTokensDataProvider ?? throw new ArgumentNullException(nameof(retractionTokensDataProvider));
             ApplicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <inheritdoc />
@@ -70,7 +71,7 @@
             }
 
             var storyRecordId = StoryRecordsDataProvider.Add(
-                new StoryRecord { IsIncrementAction = true, CommentId = commentId }
+                new StoryRecord { CommentId = commentId }
             );
 
             var tokenId = TokensDataProvider.Add(new RetractionToken()
@@ -239,7 +240,6 @@
                 }
                 catch (Exception e)
                 {
-                    // TODO: #3 - add logger
                     errors.Add(
                         new RetractOperationResult
                         {
@@ -302,6 +302,13 @@
                 {
                     { nameof(StoryRecord.IsRetracted), true },
                 });
+            }
+
+            if (errors.Any())
+            {
+                Logger.Error(
+                    $"Errors during batch retractions:\n{string.Join("\n- ", errors.Select(x => $"{x.TokenId} : {x.Error}"))}"
+                );
             }
 
             return new RetractResult

@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres_gc_dev
+    environment:
+      POSTGRES_DB: gc.dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5400:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mssql-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql_gc_dev
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: Pass_Word!12345678
+      MSSQL_PID: "Express"
+    ports:
+      - "5401:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+volumes:
+  postgres_data:
+  mssql_data:

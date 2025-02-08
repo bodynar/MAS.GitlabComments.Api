@@ -3,13 +3,13 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Base;
     using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.WebApi.Attributes;
     using MAS.GitlabComments.WebApi.Models;
 
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
 
     [ApiController]
     [UseReadOnlyMode]
@@ -19,7 +19,7 @@
         /// <summary>
         /// Logger to store error information
         /// </summary>
-        private ILogger<RetractionTokenController> Logger { get; }
+        private ILogger Logger { get; }
 
         /// <inheritdoc cref="IRetractionTokenManager" />
         public IRetractionTokenManager TokenManager { get; }
@@ -31,7 +31,7 @@
         /// <param name="tokenManager">Retraction tokens manager</param>
         /// <exception cref="ArgumentNullException">Some parameters is null</exception>
         public RetractionTokenController(
-            ILogger<RetractionTokenController> logger,
+            ILogger logger,
             IRetractionTokenManager tokenManager
         )
         {
@@ -55,7 +55,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, $"Retracting \"{tokenId}\"");
+                Logger.Error(e, $"Retracting \"{tokenId}\"");
                 return BaseServiceResult.Error(e);
             }
         }
@@ -76,7 +76,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, $"Batch retracting tokens");
+                Logger.Error(e, $"Batch retracting tokens");
                 return BaseServiceResult<RetractResult>.Error(e);
             }
         }
@@ -96,7 +96,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, "Reading active tokens");
+                Logger.Error(e, "Reading active tokens");
                 return BaseServiceResult<IEnumerable<RetractionTokenReadModel>>.Error(e);
             }
         }
@@ -116,7 +116,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, "Removing expired");
+                Logger.Error(e, "Removing expired");
                 return BaseServiceResult.Error(e);
             }
         }

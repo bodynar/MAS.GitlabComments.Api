@@ -37,6 +37,19 @@
         }
 
         [Fact]
+        public void ShouldNotThrowArgumentNullException_WhenAddWithEmptyMessageAndIsImportIsTrue()
+        {
+            AddCommentModel model = new() { Message = string.Empty, IsImportAction = true };
+
+            var exception =
+                Record.Exception(
+                    () => TestedService.Add(model)
+                );
+
+            Assert.Null(exception);
+        }
+
+        [Fact]
         public void ShouldThrowArgumentNullException_WhenAddWithEmptyLinkToRuleValue()
         {
             AddCommentModel model = new() { Message = "Message", CommentWithLinkToRule = string.Empty };
@@ -48,6 +61,19 @@
 
             Assert.NotNull(exception);
             Assert.IsType<ArgumentNullException>(exception);
+        }
+
+        [Fact]
+        public void ShouldNotThrowArgumentNullException_WhenAddWithEmptyLinkToRuleValueAndIsImportIsTrue()
+        {
+            AddCommentModel model = new() { Message = "Message", CommentWithLinkToRule = string.Empty, IsImportAction = true };
+
+            var exception =
+                Record.Exception(
+                    () => TestedService.Add(model)
+                );
+
+            Assert.Null(exception);
         }
 
         [Fact]
@@ -81,21 +107,28 @@
                 Message = "TestedMessage",
                 CommentWithLinkToRule = "CommentWithLinkToRule",
                 Description = "Description",
+                AppearanceCount = 10
             };
             string expectedCommandName = "Add";
             string expectedCommentNumber = string.Format(CommentNumberTemplate, IntVariableValue + 1);
             Func<NewComment> testedAction = () => TestedService.Add(model);
             ReturnedCreatedCommentId = Guid.NewGuid();
 
+            
             var createdComment = ShouldExecuteCommand(testedAction, expectedCommandName, new object[] { });
 
+
             Assert.NotNull(LastAddedComment);
+
             Assert.Equal(expectedCommentNumber, LastAddedComment.Number);
             Assert.Equal(model.Message, LastAddedComment.Message);
             Assert.Equal(model.CommentWithLinkToRule, LastAddedComment.CommentWithLinkToRule);
             Assert.Equal(model.Description, LastAddedComment.Description);
+            Assert.Equal(model.AppearanceCount, LastAddedComment.AppearanceCount);
+            
             Assert.True(IsSetNumberVariableCalled);
             Assert.NotNull(createdComment);
+            
             Assert.Equal(expectedCommentNumber, createdComment.Number);
             Assert.Equal(ReturnedCreatedCommentId, createdComment.Id);
         }

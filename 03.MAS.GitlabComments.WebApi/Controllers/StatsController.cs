@@ -9,7 +9,7 @@
     using MAS.GitlabComments.Logic.Models;
 
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
+    using MAS.GitlabComments.Base;
 
     [ApiController]
     [UseReadOnlyMode]
@@ -19,7 +19,7 @@
         /// <summary>
         /// Logger to store error information
         /// </summary>
-        private ILogger<StatsApiController> Logger { get; }
+        private ILogger Logger { get; }
 
         /// <inheritdoc cref="ICommentStoryRecordService"/>
         private ICommentStoryRecordService StoryRecordService { get; }
@@ -31,7 +31,7 @@
         /// <param name="storyRecordService">Service for story records managing</param>
         /// <exception cref="ArgumentNullException">Parameter storyRecordService is null</exception>
         public StatsApiController(
-            ILogger<StatsApiController> logger,
+            ILogger logger,
             ICommentStoryRecordService storyRecordService
         )
         {
@@ -47,7 +47,7 @@
         /// <returns>Boxed result of query</returns>
         [AllowInReadOnly]
         [HttpGet("top")]
-        public BaseServiceResult<IEnumerable<StoryRecordViewModel>> Get([FromQuery]DateTime? startDate, [FromQuery] DateTime? endDate)
+        public BaseServiceResult<IEnumerable<StoryRecordViewModel>> Get([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             try
             {
@@ -57,7 +57,7 @@
             }
             catch (Exception e)
             {
-                Logger?.LogError(e, "Trying to: Get top stats");
+                Logger.Error(e, "Trying to: Get top stats");
                 return BaseServiceResult<IEnumerable<StoryRecordViewModel>>.Error(e);
             }
         }

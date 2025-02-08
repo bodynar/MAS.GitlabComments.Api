@@ -4,10 +4,10 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using MAS.GitlabComments.Base;
     using MAS.GitlabComments.Logic.Services;
 
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Hosted service for clearing expired retraction tokens
@@ -17,7 +17,7 @@
         /// <summary>
         /// Application logger
         /// </summary>
-        private ILogger<ClearExpiredTokensService> Logger { get; }
+        private ILogger Logger { get; }
 
         /// <inheritdoc cref="IRetractionTokenManager"/>
         private IRetractionTokenManager TokenManager { get; }
@@ -33,7 +33,7 @@
         /// <param name="logger">Application logger</param>
         /// <param name="tokenManager">Implementation of <see cref="IRetractionTokenManager"/></param>
         public ClearExpiredTokensService(
-            ILogger<ClearExpiredTokensService> logger,
+            ILogger logger,
             IRetractionTokenManager tokenManager
         )
         {
@@ -50,11 +50,17 @@
         /// <inheritdoc />
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"Hosted service \"{nameof(ClearExpiredTokensService)}\": Starting.");
+            Logger.Debug($"Hosted service \"{nameof(ClearExpiredTokensService)}\": Starting.");
 
             var now = DateTime.Now;
             var nextWednesday = GetNextWednesday(now);
             var initialDelay = nextWednesday - now;
+
+            while (initialDelay.TotalMilliseconds < 0)
+            {
+                nextWednesday = GetNextWednesday(now.AddDays(1));
+                initialDelay = nextWednesday - now;
+            }
 
             timer = new Timer(ClearExpiredTokens, null, initialDelay, TimeSpan.FromDays(7));
 
@@ -64,7 +70,7 @@
         /// <inheritdoc />
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"Hosted service \"{nameof(ClearExpiredTokensService)}\": Stopping.");
+            Logger.Debug($"Hosted service \"{nameof(ClearExpiredTokensService)}\": Stopping.");
 
             timer?.Change(Timeout.Infinite, 0);
 
@@ -89,11 +95,11 @@
         /// <param name="_">(unused operation state argument)</param>
         private void ClearExpiredTokens(object _ = null)
         {
-            Logger.LogDebug($"Hosted service \"{nameof(ClearExpiredTokensService)}\": Start executing task at: {DateTimeOffset.Now:time}.");
+            Logger.Debug($"Hosted service \"{nameof(ClearExpiredTokensService)}\": Start executing task at: {DateTimeOffset.Now:T}.");
 
             TokenManager.RemoveExpired();
 
-            Logger.LogDebug($"Hosted service \"{nameof(ClearExpiredTokensService)}\": End executing task at: {DateTimeOffset.Now:time}.");
+            Logger.Debug($"Hosted service \"{nameof(ClearExpiredTokensService)}\": End executing task at: {DateTimeOffset.Now:T}.");
         }
     }
 }

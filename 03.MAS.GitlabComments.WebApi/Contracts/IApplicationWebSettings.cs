@@ -5,7 +5,7 @@
     /// <summary>
     /// Web application settings
     /// </summary>
-    public interface IApplicationWebSettings : IApplicationSettings
+    public interface IApplicationWebSettings : IBusinessLogicSettings
     {
         /// <summary>
         /// Is application in read only mode

@@ -3,12 +3,12 @@
     using System;
     using System.Collections.Generic;
 
+    using MAS.GitlabComments.Base;
     using MAS.GitlabComments.Logic.Models;
     using MAS.GitlabComments.Logic.Services;
     using MAS.GitlabComments.WebApi.Controllers;
     using MAS.GitlabComments.WebApi.Models;
 
-    using Microsoft.Extensions.Logging;
 
     using Moq;
 
@@ -55,9 +55,9 @@
         /// Configure mock objects of required dependencies for tested class
         /// </summary>
         /// <returns>(Mock of logger, mock of <see cref="IRetractionTokenManager"/>></returns>
-        private (ILogger<RetractionTokenController>, IRetractionTokenManager) GetDependencies()
+        private (ILogger, IRetractionTokenManager) GetDependencies()
         {
-            var mockLogger = new Mock<ILogger<RetractionTokenController>>();
+            var mockLogger = new Mock<ILogger>();
             var mockTokenManager = new Mock<IRetractionTokenManager>();
 
             mockTokenManager

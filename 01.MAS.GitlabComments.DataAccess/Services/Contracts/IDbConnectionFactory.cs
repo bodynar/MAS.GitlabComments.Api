@@ -13,9 +13,14 @@
         DbConnectionQueryOptions QueryOptions { get; }
 
         /// <summary>
+        /// Database type
+        /// </summary>
+        public DatabaseType DatabaseType { get; }
+
+        /// <summary>
         /// Get DbConnection instance for current database
         /// </summary>
-        /// <returns><inheritdoc cref="IDbConnection"/> instance</returns>
+        /// <returns><see cref="IDbConnection"/> instance</returns>
         IDbConnection CreateDbConnection();
     }
 
@@ -27,6 +32,6 @@
         /// <summary>
         /// Maximum rows to select in single query
         /// </summary>
-        public int MaxRowCount { get; set; }
+        public int MaxRowCount { get; init; }
     }
 }
